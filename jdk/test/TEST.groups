@@ -218,8 +218,7 @@ svc_tools = \
     -sun/tools/java \
     -sun/tools/native2ascii \
     -sun/tools/jrunscript \
-    sun/jvmstat \
-    demo/jvmti
+    sun/jvmstat
 
 jdk_tools = \
     :core_tools \
