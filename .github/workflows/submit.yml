@@ -169,7 +169,7 @@ jobs:
         working-directory: jdk
 
       - name: Build
-        run: make CONF_NAME=linux-x64 images
+        run: make CONF_NAME=linux-x64 LOG_LEVEL=debug images
         working-directory: jdk
 
       - name: Persist test bundles
@@ -183,6 +183,7 @@ jobs:
   linux_x64_test:
     name: Linux x64
     runs-on: "ubuntu-20.04"
+    if: false
     needs:
       - prerequisites
       - linux_x64_build
@@ -557,7 +558,7 @@ jobs:
           sudo dpkg --add-architecture i386
           sudo apt-get update
           sudo apt-get install --only-upgrade apt
-          sudo apt-get install gcc-9-multilib g++-9-multilib libfreetype6-dev:i386 libxrandr-dev:i386 libxtst-dev:i386 libtiff-dev:i386 libcupsimage2-dev:i386 libcups2-dev:i386 libasound2-dev:i386
+          sudo apt-get install openjdk-8-jdk gcc-9-multilib g++-9-multilib libfreetype6-dev:i386 libxrandr-dev:i386 libxtst-dev:i386 libtiff-dev:i386 libcupsimage2-dev:i386 libcups2-dev:i386 libasound2-dev:i386
           sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 100 --slave /usr/bin/g++ g++ /usr/bin/g++-9
 
       - name: Configure
@@ -588,6 +589,7 @@ jobs:
   linux_x86_test:
     name: Linux x86
     runs-on: "ubuntu-20.04"
+    if: false
     needs:
       - prerequisites
       - linux_x86_build
@@ -840,7 +842,6 @@ jobs:
           $env:JT_HOME = cygpath "$HOME/jtreg" ;
           & bash configure
           --with-conf-name=windows-x64
-          --with-msvc-toolset-version=14.28
           ${{ matrix.flags }}
           --with-user-release-suffix="$env:GITHUB_ACTOR-$env:GITHUB_SHA"
           --with-build-number=0
@@ -867,6 +868,7 @@ jobs:
   windows_x64_test:
     name: Windows x64
     runs-on: "windows-2019"
+    if: false
     needs:
       - prerequisites
       - windows_x64_build
@@ -1163,6 +1165,7 @@ jobs:
   macos_x64_test:
     name: macOS x64
     runs-on: "macos-10.15"
+    if: false
     needs:
       - prerequisites
       - macos_x64_build
@@ -1353,10 +1356,10 @@ jobs:
     needs:
       - prerequisites
       - linux_additional_build
-      - linux_x64_test
-      - linux_x86_test
-      - windows_x64_test
-      - macos_x64_test
+      - linux_x64_build
+      - linux_x86_build
+      - windows_x64_build
+      - macos_x64_build
 
     steps:
       - name: Determine current artifacts endpoint
