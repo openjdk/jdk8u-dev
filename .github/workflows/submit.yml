@@ -169,7 +169,7 @@ jobs:
         working-directory: jdk
 
       - name: Build
-        run: make CONF_NAME=linux-x64 product-bundles test-bundles
+        run: make CONF_NAME=linux-x64 images
         working-directory: jdk
 
       - name: Persist test bundles
@@ -574,7 +574,7 @@ jobs:
         working-directory: jdk
 
       - name: Build
-        run: make CONF_NAME=linux-x86 product-bundles test-bundles
+        run: make CONF_NAME=linux-x86 images
         working-directory: jdk
 
       - name: Persist test bundles
@@ -852,7 +852,7 @@ jobs:
         run: |
           $env:Path = "$HOME\cygwin\cygwin64\bin;$HOME\cygwin\cygwin64\bin;$env:Path" ;
           $env:Path = $env:Path -split ";" -match "C:\\Windows|PowerShell|cygwin" -join ";" ;
-          & make CONF_NAME=windows-x64 product-bundles test-bundles
+          & make CONF_NAME=windows-x64 images
         working-directory: jdk
 
       - name: Persist test bundles
@@ -1149,7 +1149,7 @@ jobs:
         working-directory: jdk
 
       - name: Build
-        run: make CONF_NAME=macos-x64 product-bundles test-bundles
+        run: make CONF_NAME=macos-x64 images
         working-directory: jdk
 
       - name: Persist test bundles
