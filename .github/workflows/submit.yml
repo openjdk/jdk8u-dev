@@ -165,7 +165,7 @@ jobs:
           --with-user-release-suffix=${GITHUB_ACTOR}-${GITHUB_SHA}
           --with-build-number=0
           --with-jtreg=${HOME}/jtreg
-          --with-zlib=system
+          --with-zlib=bundled
         working-directory: jdk
 
       - name: Build
@@ -496,7 +496,7 @@ jobs:
           --with-build-number=0
           --with-boot-jdk=${BOOT_JDK}
           --with-build-jdk=${{ env.build_jdk_root }}
-          --with-zlib=system
+          --with-zlib=bundled
         working-directory: jdk
 
       - name: Build
@@ -571,7 +571,7 @@ jobs:
           --with-build-number=0
           --with-boot-jdk=${BOOT_JDK}
           --with-jtreg=${HOME}/jtreg
-          --with-zlib=system
+          --with-zlib=bundled
         working-directory: jdk
 
       - name: Build
