@@ -349,6 +349,7 @@ jobs:
   linux_additional_build:
     name: Linux additional
     runs-on: "ubuntu-20.04"
+    if: false
     needs:
       - prerequisites
       - linux_x64_build
