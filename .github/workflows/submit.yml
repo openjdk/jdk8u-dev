@@ -828,6 +828,9 @@ jobs:
           path: ~/jtreg/
         if: steps.jtreg_restore.outcome == 'failure'
 
+      - name: Fix OpenJDK permissions
+        run: bash -c "chmod -R 0777 jdk"
+
       - name: Ensure a specific version of MSVC is installed
         run: >
           Start-Process -FilePath 'C:\Program Files (x86)\Microsoft Visual Studio\Installer\vs_installer.exe' -Wait -NoNewWindow -ArgumentList
@@ -847,6 +850,7 @@ jobs:
           --with-build-number=0
           --with-boot-jdk="$env:BOOT_JDK"
           --with-jtreg="$env:JT_HOME"
+          bash -c "cat config.log"
         working-directory: jdk
 
       - name: Build
