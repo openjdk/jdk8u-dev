@@ -849,7 +849,7 @@ jobs:
           --with-user-release-suffix="$env:GITHUB_ACTOR-$env:GITHUB_SHA"
           --with-build-number=0
           --with-boot-jdk="$env:BOOT_JDK"
-          --with-jtreg="$env:JT_HOME"
+          --with-jtreg="$env:JT_HOME" ;
           bash -c "cat config.log"
         working-directory: jdk
 
