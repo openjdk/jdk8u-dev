@@ -29,10 +29,10 @@ BOOT_JDK_VERSION=8
 JTREG_VERSION=5.1
 JTREG_BUILD=b01
 
-WINDOWS_X64_BOOT_JDK_FILENAME=openjdk-11_windows-x64_bin.zip
+WINDOWS_X64_BOOT_JDK_FILENAME=openjdk-8_windows-x64_bin.zip
 WINDOWS_X64_BOOT_JDK_URL=https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u322-b06/OpenJDK8U-jdk_x64_windows_hotspot_8u322b06.zip
 WINDOWS_X64_BOOT_JDK_SHA256=c9e06afb5df850e90a4da9da31c2edf10bd6da9962c4b253e91b41237f8fb2fb
 
-MACOS_X64_BOOT_JDK_FILENAME=openjdk-11_osx-x64_bin.tar.gz
+MACOS_X64_BOOT_JDK_FILENAME=openjdk-8_osx-x64_bin.tar.gz
 MACOS_X64_BOOT_JDK_URL=https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u322-b06/OpenJDK8U-jdk_x64_mac_hotspot_8u322b06.tar.gz
 MACOS_X64_BOOT_JDK_SHA256=96a3124bf0f5ca777954239893cc89ea34c4bc9a9b7c1559aa2c69baa0ee84e3
