@@ -51,6 +51,7 @@ import java.util.concurrent.CountDownLatch;
  * @library /lib /
  *
  *
+ * @build jdk.jfr.event.io.EvilInstrument
  * @run shell MakeJAR.sh EvilInstrument 'Can-Redefine-Classes: true'
  * @run main/othervm -javaagent:EvilInstrument.jar jdk.jfr.event.io.EvilInstrument
  */
