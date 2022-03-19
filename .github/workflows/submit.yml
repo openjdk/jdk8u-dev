@@ -23,7 +23,7 @@ jobs:
     outputs:
       should_run: ${{ steps.check_submit.outputs.should_run }}
       bundle_id: ${{ steps.check_bundle_id.outputs.bundle_id }}
-      platform_linux_additional: ${{ steps.check_platforms.outputs.platform_linux_additional }}
+      platform_linux_additional: false
       platform_linux_x64: ${{ steps.check_platforms.outputs.platform_linux_x64 }}
       platform_linux_x86: ${{ steps.check_platforms.outputs.platform_linux_x86 }}
       platform_windows_x64: ${{ steps.check_platforms.outputs.platform_windows_x64 }}
@@ -868,7 +868,7 @@ jobs:
 
       - name: Install Visual Studio 2017
         run: >
-          Start-Process -FilePath '$HOME\$env:VS2017_FILENAME' -Wait -NoNewWindow -ArgumentList
+          Start-Process -FilePath "$HOME\$env:VS2017_FILENAME" -Wait -NoNewWindow -ArgumentList
           'install --productId Microsoft.VisualStudio.Product.Community --channelId VisualStudio.15.Release
           --add Microsoft.VisualStudio.Workload.NativeDesktop
           --add Microsoft.VisualStudio.Component.VC.Tools.x86.x64
@@ -923,7 +923,7 @@ jobs:
     name: Windows x86
     runs-on: "windows-2016"
     needs: prerequisites
-    if: needs.prerequisites.outputs.should_run != 'false' && needs.prerequisites.outputs.platform_windows_x64 != 'false'
+    if: needs.prerequisites.outputs.should_run != 'false' && needs.prerequisites.outputs.platform_windows_x86 != 'false'
 
     strategy:
       fail-fast: false
