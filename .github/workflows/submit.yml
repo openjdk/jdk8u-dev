@@ -1562,7 +1562,6 @@ jobs:
     continue-on-error: true
     needs:
       - prerequisites
-      - linux_additional_build
       - linux_x64_build
       - linux_x86_build
       - windows_x64_build
