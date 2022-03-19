@@ -900,7 +900,7 @@ jobs:
           --with-boot-jdk="$env:BOOT_JDK"
           --with-freetype-src="$env:FREETYPE_HOME"
           --with-jtreg="$env:JT_HOME" ;
-          bash -c "cat config.log"
+          bash -c "cat $(find -name config.log)"
         working-directory: jdk
 
       - name: Build
@@ -921,7 +921,7 @@ jobs:
 
   windows_x86_build:
     name: Windows x86
-    runs-on: "windows-2016"
+    runs-on: "windows-2019"
     needs: prerequisites
     if: needs.prerequisites.outputs.should_run != 'false' && needs.prerequisites.outputs.platform_windows_x86 != 'false'
 
@@ -1053,7 +1053,7 @@ jobs:
           --with-boot-jdk="$env:BOOT_JDK"
           --with-freetype-src="$env:FREETYPE_HOME"
           --with-jtreg="$env:JT_HOME" ;
-          bash -c "cat config.log"
+          bash -c "cat $(find -name config.log)"
         working-directory: jdk
 
       - name: Build
