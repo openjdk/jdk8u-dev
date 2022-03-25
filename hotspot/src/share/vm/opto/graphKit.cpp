@@ -3759,9 +3759,7 @@ void GraphKit::add_predicate(int nargs) {
     add_predicate_impl(Deoptimization::Reason_predicate, nargs);
   }
   // loop's limit check predicate should be near the loop.
-  if (LoopLimitCheck) {
-    add_predicate_impl(Deoptimization::Reason_loop_limit_check, nargs);
-  }
+  add_predicate_impl(Deoptimization::Reason_loop_limit_check, nargs);
 }
 
 //----------------------------- store barriers ----------------------------
