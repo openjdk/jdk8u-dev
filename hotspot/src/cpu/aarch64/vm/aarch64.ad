@@ -2246,10 +2246,12 @@ typedef void (MacroAssembler::* mem_vector_insn)(FloatRegister Rt,
     // encoder that the index needs to be sign extended, so we have to
     // enumerate all the cases.
     switch (opcode) {
+    case INDINDEXSCALEDOFFSETI2L:
     case INDINDEXSCALEDI2L:
+    case INDINDEXSCALEDOFFSETI2LN:
     case INDINDEXSCALEDI2LN:
-    case INDINDEXI2L:
-    case INDINDEXI2LN:
+    case INDINDEXOFFSETI2L:
+    case INDINDEXOFFSETI2LN:
       scale = Address::sxtw(size);
       break;
     default:
@@ -2264,7 +2266,7 @@ typedef void (MacroAssembler::* mem_vector_insn)(FloatRegister Rt,
       addr = masm.legitimize_address(addr, size_in_memory, rscratch1);
       (masm.*insn)(reg, addr);
     } else {
-      assert(disp == 0, "unsupported address mode: disp = %d", disp);
+      assert(disp == 0, "unsupported address mode");
       (masm.*insn)(reg, Address(base, as_Register(index), scale));
     }
   }
