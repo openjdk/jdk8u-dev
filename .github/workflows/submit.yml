@@ -1009,7 +1009,7 @@ jobs:
       - name: Install VS2010Express
         shell: cmd
         run: |
-          %HOMEPATH%\${{ env.VS2010_DIR }}\VCExpress\setup.exe /q /norestart
+          ${{ env.VS2010_DIR }}\VCExpress\setup.exe /q /norestart
 
       - name: Restore jtreg artifact
         id: jtreg_restore
