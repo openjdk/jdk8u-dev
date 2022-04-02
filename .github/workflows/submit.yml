@@ -1009,7 +1009,7 @@ jobs:
       - name: Install VS2010Express
         shell: cmd
         run: |
-          ${{ github.workspace }}\${{ env.VS2010_DIR }}\VCExpress\setup.exe /q /norestart
+          ${{ env.HOME }}\${{ env.VS2010_DIR }}\VCExpress\setup.exe /q /norestart
 
       - name: Restore jtreg artifact
         id: jtreg_restore
