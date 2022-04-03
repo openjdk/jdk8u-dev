@@ -1004,12 +1004,12 @@ jobs:
           $FileHash = Get-FileHash -Algorithm SHA256 "$HOME/$env:VS2010_FILENAME"
           $FileHash.Hash -eq $env:VS2010_SHA256
           & 7z x -o"$HOME/$env:VS2010_DIR" "$HOME/$env:VS2010_FILENAME"
+          & dir "$HOME/$env:VS2010_DIR"
         if: steps.vs2010.outputs.cache-hit != 'true'
 
       - name: Install VS2010Express
-        shell: cmd
         run: |
-          ${{ env.VS2010_DIR }}\VCExpress\setup.exe /q /norestart
+          $HOME\${{ env.VS2010_DIR }}\VCExpress\setup.exe /q /norestart
 
       - name: Restore jtreg artifact
         id: jtreg_restore
