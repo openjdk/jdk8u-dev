@@ -1009,7 +1009,7 @@ jobs:
 
       - name: Install VS2010Express
         run: |
-          $HOME\${{ env.VS2010_DIR }}\VCExpress\setup.exe /q /norestart
+          Start-Process -FilePath "$HOME\$env:VS2010_DIR\VCExpress\setup.exe" -ArgumentList "/q /norestart" -Wait -NoNewWindow
 
       - name: Restore jtreg artifact
         id: jtreg_restore
