@@ -98,7 +98,7 @@ public class NonVolatileMemoryAccessWithLongOffset {
     private static int maxStringLength = random.nextInt(100);
     private static int minStringLength = random.nextInt(100);
     private static final boolean maxStringIsNull = random.nextInt(100) > 20;
-    private static final boolean minStringIsNull = random.nextInt(100) > 60; 
+    private static final boolean minStringIsNull = random.nextInt(100) > 60;
 
     private static final short precision = (short)random.nextInt(100);
     private static final short scale = (short)random.nextInt(100);
