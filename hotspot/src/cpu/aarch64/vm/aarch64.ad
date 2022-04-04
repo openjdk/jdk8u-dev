@@ -2266,8 +2266,12 @@ typedef void (MacroAssembler::* mem_vector_insn)(FloatRegister Rt,
       addr = masm.legitimize_address(addr, size_in_memory, rscratch1);
       (masm.*insn)(reg, addr);
     } else {
-      assert(disp == 0, "unsupported address mode");
-      (masm.*insn)(reg, Address(base, as_Register(index), scale));
+      if (disp == 0) {
+        (masm.*insn)(reg, Address(base, as_Register(index), scale));
+      } else {
+        masm.lea(rscratch1, Address(base, disp));
+        (masm.*insn)(reg, Address(rscratch1, as_Register(index), scale));
+      }
     }
   }
 
