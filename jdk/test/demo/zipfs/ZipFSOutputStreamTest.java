@@ -52,95 +52,95 @@ import java.util.Random;
  * @run testng/timeout=3600 ZipFSOutputStreamTest
  */
 public class ZipFSOutputStreamTest {
-  // List of files to be added to the ZIP file along with their sizes in bytes
-  private static final Map<String, Long> ZIP_ENTRIES = Collections.unmodifiableMap(new HashMap<String, Long>() {{
-    put("f1", Integer.MAX_VALUE + 1L); // a value which when cast to an integer, becomes a negative value
-    put("f2", 25L * 1024L * 1024L); // 25 MB
-    put("d1/f3", 1234L);
-    put("d1/d2/f4", 0L);
+    // List of files to be added to the ZIP file along with their sizes in bytes
+    private static final Map<String, Long> ZIP_ENTRIES = Collections.unmodifiableMap(new HashMap<String, Long>() {{
+            put("f1", Integer.MAX_VALUE + 1L); // a value which when cast to an integer, becomes a negative value
+            put("f2", 25L * 1024L * 1024L); // 25 MB
+            put("d1/f3", 1234L);
+            put("d1/d2/f4", 0L);
   }});
 
-  private static final Path ZIP_FILE = Paths.get("zipfs-outputstream-test.zip");
+    private static final Path ZIP_FILE = Paths.get("zipfs-outputstream-test.zip");
 
-  @BeforeMethod
+    @BeforeMethod
     public void setUp() throws IOException {
-    deleteFiles();
-  }
+        deleteFiles();
+    }
 
-  @AfterMethod
+    @AfterMethod
     public void tearDown() throws IOException {
-    deleteFiles();
-  }
-
-  private static void deleteFiles() throws IOException {
-    Files.deleteIfExists(ZIP_FILE);
-  }
-
-  @DataProvider(name = "zipFSCreationEnv")
-  private Object[][] zipFSCreationEnv() {
-    return new Object[][] {
-      { Collections.unmodifiableMap(new HashMap<String,String>() {{ put("create", "true"); put("noCompression", "true"); }}) },
-      { Collections.unmodifiableMap(new HashMap<String,String>() {{ put("create", "true"); put("noCompression", "false"); }}) }
-    };
-  }
-
-  /**
-   * Create a zip filesystem and write out entries of varying sizes using the outputstream returned
-   * by the ZipFileSystem. Then verify that the generated zip file entries are as expected,
-   * both in size and content
-   */
-  @Test(dataProvider = "zipFSCreationEnv")
-  public void testOutputStream(final Map<String, ? > env) throws Exception {
-    final URI uri = URI.create("jar:" + ZIP_FILE.toUri());
-    final byte[] chunk = new byte[1024];
-    new Random().nextBytes(chunk);
-    try (final FileSystem zipfs = FileSystems.newFileSystem(uri, env)) {
-      // create the zip with varying sized entries
-      for (final Map.Entry<String, Long> entry : ZIP_ENTRIES.entrySet()) {
-        final Path entryPath = zipfs.getPath(entry.getKey());
-        if (entryPath.getParent() != null) {
-          Files.createDirectories(entryPath.getParent());
-        }
-        try (final OutputStream os = Files.newOutputStream(entryPath)) {
-          writeAsChunks(os, chunk, entry.getValue());
-        }
-      }
+        deleteFiles();
     }
-    // now verify the written content
-    try (final FileSystem zipfs = FileSystems.newFileSystem(uri, Collections.emptyMap())) {
-      for (final Map.Entry<String, Long> entry : ZIP_ENTRIES.entrySet()) {
-        final Path entryPath = zipfs.getPath(entry.getKey());
-        try (final InputStream is = Files.newInputStream(entryPath)) {
-          final byte[] buf = new byte[chunk.length];
-          int numRead;
-          long totalRead = 0;
-          while ((numRead = is.read(buf)) != -1) {
-            totalRead += numRead;
-            // verify the content
-            for (int i = 0, chunkoffset = (int)((totalRead - numRead) % chunk.length);
-              i < numRead; i++, chunkoffset++) {
-              Assert.assertEquals(buf[i], chunk[chunkoffset % chunk.length],
-                "Unexpected content in " + entryPath);
+
+    private static void deleteFiles() throws IOException {
+        Files.deleteIfExists(ZIP_FILE);
+    }
+
+    @DataProvider(name = "zipFSCreationEnv")
+    private Object[][] zipFSCreationEnv() {
+        return new Object[][] {
+                { Collections.unmodifiableMap(new HashMap<String,String>() {{ put("create", "true"); put("noCompression", "true"); }}) },
+                { Collections.unmodifiableMap(new HashMap<String,String>() {{ put("create", "true"); put("noCompression", "false"); }}) }
+        };
+    }
+
+    /**
+     * Create a zip filesystem and write out entries of varying sizes using the outputstream returned
+     * by the ZipFileSystem. Then verify that the generated zip file entries are as expected,
+     * both in size and content
+     */
+    @Test(dataProvider = "zipFSCreationEnv")
+    public void testOutputStream(final Map<String, ? > env) throws Exception {
+        final URI uri = URI.create("jar:" + ZIP_FILE.toUri());
+        final byte[] chunk = new byte[1024];
+        new Random().nextBytes(chunk);
+        try (final FileSystem zipfs = FileSystems.newFileSystem(uri, env)) {
+            // create the zip with varying sized entries
+            for (final Map.Entry<String, Long> entry : ZIP_ENTRIES.entrySet()) {
+                final Path entryPath = zipfs.getPath(entry.getKey());
+                if (entryPath.getParent() != null) {
+                    Files.createDirectories(entryPath.getParent());
+                }
+                try (final OutputStream os = Files.newOutputStream(entryPath)) {
+                    writeAsChunks(os, chunk, entry.getValue());
+                }
             }
-          }
-          Assert.assertEquals(totalRead, (long)entry.getValue(),
-            "Unexpected number of bytes read from zip entry " + entryPath);
         }
-      }
+        // now verify the written content
+        try (final FileSystem zipfs = FileSystems.newFileSystem(uri, Collections.emptyMap())) {
+            for (final Map.Entry<String, Long> entry : ZIP_ENTRIES.entrySet()) {
+                final Path entryPath = zipfs.getPath(entry.getKey());
+                try (final InputStream is = Files.newInputStream(entryPath)) {
+                    final byte[] buf = new byte[chunk.length];
+                    int numRead;
+                    long totalRead = 0;
+                    while ((numRead = is.read(buf)) != -1) {
+                        totalRead += numRead;
+                        // verify the content
+                        for (int i = 0, chunkoffset = (int)((totalRead - numRead) % chunk.length);
+                             i < numRead; i++, chunkoffset++) {
+                            Assert.assertEquals(buf[i], chunk[chunkoffset % chunk.length],
+                                    "Unexpected content in " + entryPath);
+                        }
+                    }
+                    Assert.assertEquals(totalRead, (long)entry.getValue(),
+                            "Unexpected number of bytes read from zip entry " + entryPath);
+                }
+            }
+        }
     }
-  }
 
-  /**
-   * Repeatedly writes out to the outputstream, the chunk of data, till the number of bytes
-   * written to the stream equals the totalSize
-   */
-  private static void writeAsChunks(final OutputStream os, final byte[] chunk,
-    final long totalSize) throws IOException {
-    long remaining = totalSize;
-    for (long l = 0; l < totalSize; l += chunk.length) {
-      final int numToWrite = (int)Math.min(remaining, chunk.length);
-      os.write(chunk, 0, numToWrite);
-      remaining -= numToWrite;
+    /**
+     * Repeatedly writes out to the outputstream, the chunk of data, till the number of bytes
+     * written to the stream equals the totalSize
+     */
+    private static void writeAsChunks(final OutputStream os, final byte[] chunk,
+                                      final long totalSize) throws IOException {
+        long remaining = totalSize;
+        for (long l = 0; l < totalSize; l += chunk.length) {
+            final int numToWrite = (int)Math.min(remaining, chunk.length);
+            os.write(chunk, 0, numToWrite);
+            remaining -= numToWrite;
+        }
     }
-  }
 }

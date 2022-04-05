@@ -48,54 +48,54 @@ import java.net.URI;
  */
 public class LargeCompressedEntrySizeTest {
 
-  private static final String LARGE_FILE_NAME = "LargeZipEntry.txt";
-  private static final String ZIP_FILE_NAME = "8190753-test-compressed-size.zip";
+    private static final String LARGE_FILE_NAME = "LargeZipEntry.txt";
+    private static final String ZIP_FILE_NAME = "8190753-test-compressed-size.zip";
 
-  @BeforeMethod
+    @BeforeMethod
     public void setUp() throws IOException {
-    deleteFiles();
-  }
-
-  @AfterMethod
-    public void tearDown() throws IOException {
-    deleteFiles();
-  }
-
-  /**
-   * Delete the files created for use by the test
-   *
-   * @throws IOException if an error occurs deleting the files
-   */
-  private static void deleteFiles() throws IOException {
-    Files.deleteIfExists(Paths.get(ZIP_FILE_NAME));
-  }
-
-
-  /**
-   * Using zip filesystem, creates a zip file and writes out a zip entry whose compressed size is
-   * expected to be greater than 2gb.
-   */
-  @Test
-  public void testLargeCompressedSizeWithZipFS() throws Exception {
-    final Path zipFile = Paths.get(ZIP_FILE_NAME);
-    final URI uri = URI.create("jar:" + zipFile.toUri());
-    final long largeEntrySize = 6L * 1024L * 1024L * 1024L; // large value which exceeds Integer.MAX_VALUE
-    try (FileSystem fs = FileSystems.newFileSystem(uri, Collections.singletonMap("create", "true"))) {
-      try (OutputStream os = Files.newOutputStream(fs.getPath(LARGE_FILE_NAME))) {
-        long remaining = largeEntrySize;
-        // create a chunk of random bytes which we keep writing out
-        final int chunkSize = 102400;
-        final byte[] chunk = new byte[chunkSize];
-        new Random().nextBytes(chunk);
-        final long start = System.currentTimeMillis();
-        for (long l = 0; l < largeEntrySize; l += chunkSize) {
-          final int numToWrite = (int)Math.min(remaining, chunkSize);
-          os.write(chunk, 0, numToWrite);
-          remaining -= numToWrite;
-        }
-        System.out.println("Took " + TimeUnit.SECONDS.toSeconds(System.currentTimeMillis() - start)
-          + " seconds to generate entry of size " + largeEntrySize);
-      }
+        deleteFiles();
     }
-  }
+
+    @AfterMethod
+    public void tearDown() throws IOException {
+        deleteFiles();
+    }
+
+    /**
+     * Delete the files created for use by the test
+     *
+     * @throws IOException if an error occurs deleting the files
+     */
+    private static void deleteFiles() throws IOException {
+        Files.deleteIfExists(Paths.get(ZIP_FILE_NAME));
+    }
+
+
+    /**
+     * Using zip filesystem, creates a zip file and writes out a zip entry whose compressed size is
+     * expected to be greater than 2gb.
+     */
+    @Test
+    public void testLargeCompressedSizeWithZipFS() throws Exception {
+        final Path zipFile = Paths.get(ZIP_FILE_NAME);
+        final URI uri = URI.create("jar:" + zipFile.toUri());
+        final long largeEntrySize = 6L * 1024L * 1024L * 1024L; // large value which exceeds Integer.MAX_VALUE
+        try (FileSystem fs = FileSystems.newFileSystem(uri, Collections.singletonMap("create", "true"))) {
+            try (OutputStream os = Files.newOutputStream(fs.getPath(LARGE_FILE_NAME))) {
+                long remaining = largeEntrySize;
+                // create a chunk of random bytes which we keep writing out
+                final int chunkSize = 102400;
+                final byte[] chunk = new byte[chunkSize];
+                new Random().nextBytes(chunk);
+                final long start = System.currentTimeMillis();
+                for (long l = 0; l < largeEntrySize; l += chunkSize) {
+                    final int numToWrite = (int)Math.min(remaining, chunkSize);
+                    os.write(chunk, 0, numToWrite);
+                    remaining -= numToWrite;
+                }
+                System.out.println("Took " + TimeUnit.SECONDS.toSeconds(System.currentTimeMillis() - start)
+                        + " seconds to generate entry of size " + largeEntrySize);
+            }
+        }
+    }
 }
