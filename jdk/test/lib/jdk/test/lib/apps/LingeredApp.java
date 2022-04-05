@@ -40,6 +40,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.UUID;
 import jdk.test.lib.process.OutputBuffer;
@@ -230,7 +231,11 @@ public class LingeredApp {
     public void waitAppTerminate() {
         // This code is modeled after tail end of ProcessTools.getOutput().
         try {
-            appProcess.waitFor();
+            // If the app hangs, we don't want to wait for the to test timeout.
+            if (!appProcess.waitFor(Utils.adjustTimeout(appWaitTime), TimeUnit.SECONDS)) {
+                appProcess.destroy();
+                appProcess.waitFor();
+            }
             outPumperThread.join();
             errPumperThread.join();
         } catch (InterruptedException e) {
