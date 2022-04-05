@@ -43,6 +43,8 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.UUID;
+
+import jdk.test.lib.Utils;
 import jdk.test.lib.process.OutputBuffer;
 import jdk.test.lib.process.ProcessTools;
 import jdk.test.lib.process.StreamPumper;
