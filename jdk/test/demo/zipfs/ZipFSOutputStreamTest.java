@@ -58,7 +58,7 @@ public class ZipFSOutputStreamTest {
             put("f2", 25L * 1024L * 1024L); // 25 MB
             put("d1/f3", 1234L);
             put("d1/d2/f4", 0L);
-  }});
+    }});
 
     private static final Path ZIP_FILE = Paths.get("zipfs-outputstream-test.zip");
 
