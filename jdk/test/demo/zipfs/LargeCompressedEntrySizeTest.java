@@ -89,7 +89,7 @@ public class LargeCompressedEntrySizeTest {
                 new Random().nextBytes(chunk);
                 final long start = System.currentTimeMillis();
                 for (long l = 0; l < largeEntrySize; l += chunkSize) {
-                    final int numToWrite = (int)Math.min(remaining, chunkSize);
+                    final int numToWrite = (int) Math.min(remaining, chunkSize);
                     os.write(chunk, 0, numToWrite);
                     remaining -= numToWrite;
                 }
