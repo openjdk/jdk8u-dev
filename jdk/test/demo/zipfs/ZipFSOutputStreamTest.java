@@ -123,7 +123,7 @@ public class ZipFSOutputStreamTest {
                                     "Unexpected content in " + entryPath);
                         }
                     }
-                    Assert.assertEquals(totalRead, (long)entry.getValue(),
+                    Assert.assertEquals(totalRead, (long) entry.getValue(),
                             "Unexpected number of bytes read from zip entry " + entryPath);
                 }
             }
