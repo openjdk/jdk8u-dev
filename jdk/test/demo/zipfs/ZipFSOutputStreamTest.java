@@ -138,7 +138,7 @@ public class ZipFSOutputStreamTest {
                                       final long totalSize) throws IOException {
         long remaining = totalSize;
         for (long l = 0; l < totalSize; l += chunk.length) {
-            final int numToWrite = (int)Math.min(remaining, chunk.length);
+            final int numToWrite = (int) Math.min(remaining, chunk.length);
             os.write(chunk, 0, numToWrite);
             remaining -= numToWrite;
         }
