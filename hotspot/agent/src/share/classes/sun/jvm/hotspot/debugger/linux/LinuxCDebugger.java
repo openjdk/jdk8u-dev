@@ -68,7 +68,7 @@ class LinuxCDebugger implements CDebugger {
       LoadObject ob = (LoadObject) objs.get(i);
       Address base = ob.getBase();
       long size = ob.getSize();
-      if ( pc.greaterThanOrEqual(base) && pc.lessThan(base.addOffsetTo(size))) {
+      if (pc.greaterThanOrEqual(base) && pc.lessThan(base.addOffsetTo(size))) {
         return ob;
       }
     }
