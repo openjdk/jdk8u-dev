@@ -263,11 +263,7 @@ int VMUptimeDCmd::num_arguments() {
 }
 
 void SystemGCDCmd::execute(DCmdSource source, TRAPS) {
-  if (!DisableExplicitGC) {
-    Universe::heap()->collect(GCCause::_java_lang_system_gc);
-  } else {
-    output()->print_cr("Explicit GC is disabled, no GC has been performed.");
-  }
+  Universe::heap()->collect(GCCause::GCCause::_java_lang_system_gc);
 }
 
 void RunFinalizationDCmd::execute(DCmdSource source, TRAPS) {
