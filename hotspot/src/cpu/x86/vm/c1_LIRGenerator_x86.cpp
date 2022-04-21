@@ -151,7 +151,7 @@ LIR_Address* LIRGenerator::generate_address(LIR_Opr base, LIR_Opr index,
   assert(base->is_register(), "must be");
   if (index->is_constant()) {
     return new LIR_Address(base,
-                           (index->as_constant_ptr()->as_jint() << shift) + disp,
+                           ((intx)(index->as_constant_ptr()->as_jint()) << shift) + disp,
                            type);
   } else {
     return new LIR_Address(base, index, (LIR_Address::Scale)shift, disp, type);
