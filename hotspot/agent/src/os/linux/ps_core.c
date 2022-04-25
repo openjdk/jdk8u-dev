@@ -802,6 +802,7 @@ static bool read_interp_segments(struct ps_prochandle* ph) {
 }
 
 // process segments of a a.out
+// returns base address of executable.
 static uintptr_t read_exec_segments(struct ps_prochandle* ph, ELF_EHDR* exec_ehdr) {
    int i = 0;
    ELF_PHDR* phbuf = NULL;
