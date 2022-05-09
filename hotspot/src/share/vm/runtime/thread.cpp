@@ -1231,6 +1231,10 @@ void NamedThread::set_name(const char* format, ...) {
   va_end(ap);
 }
 
+void NamedThread::initialize_named_thread() {
+  set_native_thread_name(name());
+}
+
 // ======= WatcherThread ========
 
 // The watcher thread exists to simulate timer interrupts.  It should
