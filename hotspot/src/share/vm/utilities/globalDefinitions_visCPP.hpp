@@ -182,7 +182,7 @@ const jlong max_jlong = CONST64(0x7fffffffffffffff);
 
 // Visual Studio 2010-2012 doesn't provide inttypes.h so provide appropriate definitions here.
 // The 32 bits ones might need I32 but seem to work ok without it.
-#if _MSC_VER < 1800 
+#if _MSC_VER < 1800
 #define PRId32       "d"
 #define PRIu32       "u"
 #define PRIx32       "x"
