@@ -204,7 +204,7 @@ create-source-revision-tracker:
 
 # Remove everything, except the output from configure.
 clean: clean-langtools clean-corba clean-jaxp clean-jaxws clean-hotspot clean-jdk clean-nashorn clean-images clean-overlay-images clean-bootcycle-build clean-docs clean-test
-	@($(CD) $(OUTPUT_ROOT) && $(RM) -r tmp $(patsubst $(OUTPUT_ROOT)/%,%,$(SOURCE_REVISION_TRACKER)) build.log* build-trace*.log*)
+	@($(CD) $(OUTPUT_ROOT) && $(RM) -r tmp $(wildcard $(patsubst $(OUTPUT_ROOT)/%,%,$(SOURCE_REVISION_TRACKER))) build.log* build-trace*.log*)
 	@$(ECHO) Cleaned all build artifacts.
 
 # Remove everything, including configure configuration.

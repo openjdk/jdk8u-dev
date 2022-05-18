@@ -119,8 +119,7 @@ else
 	exit 2
 
     create-source-revision-tracker:
-	$(ECHO) $(LOG_WARN) Error: No mercurial configuration present and no .src-rev
-	exit 2
+	$(ECHO) $(LOG_WARN) Warning: No mercurial configuration present and no .src-rev
   endif
 
 endif

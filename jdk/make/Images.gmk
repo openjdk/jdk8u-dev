@@ -620,22 +620,23 @@ SOURCE_REVISION = $(shell \
       $(CAT) $(SOURCE_REVISION_TRACKER) ; \
     fi)
 
-$(JRE_INFO_FILE): $(OUTPUT_ROOT)/spec.gmk $(SOURCE_REVISION_TRACKER)
+# The SOURCE_REVISION_TRACKER file may not exist. Only depend on it if it does.
+$(JRE_INFO_FILE): $(OUTPUT_ROOT)/spec.gmk $(wildcard $(SOURCE_REVISION_TRACKER))
 	$(ECHO) $(LOG_INFO) Generating $(patsubst $(OUTPUT_ROOT)/%,%,$@)
 	$(call create-info-file)
         ifneq ($(PROFILE), )
 	  $(call info-file-item, "JAVA_PROFILE", "$(call profile_name, $(call profile_number, $(PROFILE)))")
         endif
 
-$(JDK_INFO_FILE): $(OUTPUT_ROOT)/spec.gmk $(SOURCE_REVISION_TRACKER)
+$(JDK_INFO_FILE): $(OUTPUT_ROOT)/spec.gmk $(wildcard $(SOURCE_REVISION_TRACKER))
 	$(ECHO) $(LOG_INFO) Generating $(patsubst $(OUTPUT_ROOT)/%,%,$@)
 	$(call create-info-file)
 
-$(JRE_OVERLAY_INFO_FILE): $(OUTPUT_ROOT)/spec.gmk $(SOURCE_REVISION_TRACKER)
+$(JRE_OVERLAY_INFO_FILE): $(OUTPUT_ROOT)/spec.gmk $(wildcard $(SOURCE_REVISION_TRACKER))
 	$(ECHO) $(LOG_INFO) Generating $(patsubst $(OUTPUT_ROOT)/%,%,$@)
 	$(call create-info-file)
 
-$(JDK_OVERLAY_INFO_FILE): $(OUTPUT_ROOT)/spec.gmk $(SOURCE_REVISION_TRACKER)
+$(JDK_OVERLAY_INFO_FILE): $(OUTPUT_ROOT)/spec.gmk $(wildcard $(SOURCE_REVISION_TRACKER))
 	$(ECHO) $(LOG_INFO) Generating $(patsubst $(OUTPUT_ROOT)/%,%,$@)
 	$(call create-info-file)
 
