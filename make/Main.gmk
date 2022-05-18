@@ -196,14 +196,16 @@ test-only: start-make
 		exit $${EXIT}; \
 	  fi)
 
-# Stores the tips for each repository. This file is be used when constructing the jdk image and can be
-# used to track the exact sources used to build that image.
+# Stores the tips for each repository. This file is be used when constructing
+# the jdk image and can be used to track the exact sources used to build that
+# image.
 source-tips: $(OUTPUT_ROOT)/source_tips
 $(OUTPUT_ROOT)/source_tips: FRC
 	@$(MKDIR) -p $(@D)
-	@$(RM) $@
-	@$(call GetSourceTips)
+	$(call GetSourceTips)
 
+create-hgtip-files:
+	+($(CD) $(SRC_ROOT)/make && $(MAKE) $(MAKE_ARGS) -f CreateHgtipFiles.gmk)
 
 # Remove everything, except the output from configure.
 clean: clean-langtools clean-corba clean-jaxp clean-jaxws clean-hotspot clean-jdk clean-nashorn clean-images clean-overlay-images clean-bootcycle-build clean-docs clean-test
@@ -265,6 +267,7 @@ reconfigure:
 .PHONY: default all clean dist-clean bootcycle-images start-make
 .PHONY: clean-langtools clean-corba clean-jaxp clean-jaxws clean-hotspot clean-jdk clean-nashorn clean-images clean-docs clean-docs-zip clean-test clean-overlay-images clean-bootcycle-build
 .PHONY: profiles profiles-only
+.PHONY: create-hgtip-files
 
 include $(root_dir)/make/Jprt.gmk
 
