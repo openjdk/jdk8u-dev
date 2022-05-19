@@ -79,7 +79,7 @@ ifeq ($(USE_SCM), true)
     $1_FILENAME := $$(call MakeFilenameFromRepo, $1)
 
     $$(OUTPUT_ROOT)/src-rev/$$($1_FILENAME): FRC
-	$$(call MakeDir, $$(@D))
+	$$(eval $$(call MakeDir, $$(@D)))
 	$$(ECHO) $$(strip $1):`$$(CD) $$($1_REPO_PATH) && $$(ID_COMMAND)` > $$@
 
     REPO_REVISIONS += $$(OUTPUT_ROOT)/src-rev/$$($1_FILENAME)
@@ -95,7 +95,7 @@ ifeq ($(USE_SCM), true)
   # Param 1: The output file
   define CreateSourceRevisionFile
     $1: $$(REPO_REVISIONS)
-	$$(call MakeDir, $$(@D))
+	$$(eval $$(call MakeDir, $$(@D)))
 	$$(ECHO) `$$(CAT) $$(REPO_REVISIONS)` > $$@.tmp
 	if [ ! -f $$@ ] || [ "`$$(CAT) $$@`" != "`$$(CAT) $$@.tmp`" ]; then \
 	  $$(MV) $$@.tmp $$@ ; \
