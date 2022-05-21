@@ -73,7 +73,13 @@ ifeq ($(USE_SCM), true)
   #
   # Argument 1 is the relative path to the repository from the top dir.
   #
-  SetupGetRevisionForRepo = $(NamedParamsMacroTemplate)
+  define SetupGetRevisionForRepo
+    $(call LogSetupMacroEntry,SetupGetRevisionForRepo($(strip $1)))
+    $(if $(2),$(error Internal makefile error: Too many arguments to SetupGetRevisionForRepo, please update SourceRevision.gmk))
+
+    $(call $(0)Body,$(strip $1))
+  endef
+
   define SetupGetRevisionForRepoBody
     $1_REPO_PATH :=  $$(TOPDIR)/$$(strip $1)
     $1_FILENAME := $$(call MakeFilenameFromRepo, $1)
