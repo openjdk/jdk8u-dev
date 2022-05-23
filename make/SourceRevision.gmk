@@ -138,11 +138,11 @@ else
     src-create-source-revision-tracker: $(SOURCE_REVISION_TRACKER)
   else
     src-store-source-revision:
-	$(ECHO) $(LOG_WARN) Error: No SCM configuration present, cannot create .src-rev)
+	$(ECHO) $(LOG_WARN) Error: No SCM configuration present, cannot create .src-rev
 	exit 2
 
     src-create-source-revision-tracker:
-	$(ECHO) $(LOG_WARN) Warning: No SCM configuration present and no .src-rev)
+	$(ECHO) $(LOG_WARN) Warning: No SCM configuration present and no .src-rev
   endif
 
   STORE_SOURCE_REVISION_TARGET := src-store-source-revision
