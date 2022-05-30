@@ -326,6 +326,9 @@ public class Keywords {
     public static final String FUNC_UNPARSED_ENTITY_URI_STRING
             = "unparsed-entity-uri";
 
+  /** here function string (XML Signature). */
+  public static final String FUNC_HERE_STRING = "here";
+
   // Proprietary, built in functions
     /**
      * current function string (Proprietary).
