@@ -23,32 +23,28 @@
 
 /*
  * @test
- * @bug 8285445
- * @requires (os.family == "windows")
- * @summary Verify behavior of opening "NUL:" with ADS enabled and disabled.
- * @run main/othervm OpenNUL
- * @run main/othervm -Djdk.io.File.enableADS OpenNUL
- * @run main/othervm -Djdk.io.File.enableADS=FalsE OpenNUL
- * @run main/othervm -Djdk.io.File.enableADS=true OpenNUL
+ * @bug 8280963
+ * @summary "%-16lu" formatting string is used to format uintx (uintptr_t)
+ *          flag values for output. uintx is 64-bit on win64, and "lu" format
+ *          is intended to be used with unsigned long that is 32-bit on win64.
+ *          Thus flag values that are exact multiple of 4 GiB will be formatted
+ *          into 0 in PrintFlags output.
+ * @library /testlibrary
  */
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import com.oracle.java.testlibrary.*;
 
-public class OpenNUL {
-    public static void main(String args[]) throws IOException {
-        String enableADS = System.getProperty("jdk.io.File.enableADS", "true");
-        boolean fails = enableADS.equalsIgnoreCase(Boolean.FALSE.toString());
-
-        FileOutputStream fos;
-        try {
-            fos = new FileOutputStream("NUL:");
-            if (fails)
-                throw new RuntimeException("Should have failed");
-        } catch (FileNotFoundException fnfe) {
-            if (!fails)
-                throw new RuntimeException("Should not have failed");
+public class PrintFlagsUintxTest {
+    public static void main(String[] args) throws Exception {
+        if (!Platform.is64bit()) {
+            System.out.println("Test needs a 4GB heap and can only be run as a 64bit process, skipping.");
+            return;
         }
+
+        ProcessBuilder pb = ProcessTools.createJavaProcessBuilder(
+                "-Xmx4g", "-XX:+PrintFlagsFinal", "-version");
+
+        OutputAnalyzer output = new OutputAnalyzer(pb.start());
+        output.stdoutShouldMatch(".*MaxHeapSize\\s+:= 4294967296\\s+.*");
     }
 }
