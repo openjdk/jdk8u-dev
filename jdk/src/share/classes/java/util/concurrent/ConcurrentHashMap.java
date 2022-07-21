@@ -2277,7 +2277,7 @@ public class ConcurrentHashMap<K,V> extends AbstractMap<K,V>
                 int rs = resizeStamp(n) << RESIZE_STAMP_SHIFT;
                 if (sc < 0) {
                     if (sc == rs + MAX_RESIZERS || sc == rs + 1 ||
-                            (nt = nextTable) == null || transferIndex <= 0)
+                        (nt = nextTable) == null || transferIndex <= 0)
                         break;
                     if (U.compareAndSwapInt(this, SIZECTL, sc, sc + 1))
                         transfer(tab, nt);
@@ -2300,7 +2300,7 @@ public class ConcurrentHashMap<K,V> extends AbstractMap<K,V>
             while (nextTab == nextTable && table == tab &&
                    (sc = sizeCtl) < 0) {
                 if (sc == rs + MAX_RESIZERS || sc == rs + 1 ||
-                        transferIndex <= 0)
+                    transferIndex <= 0)
                     break;
                 if (U.compareAndSwapInt(this, SIZECTL, sc, sc + 1)) {
                     transfer(tab, nextTab);
