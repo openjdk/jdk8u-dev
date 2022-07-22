@@ -44,8 +44,12 @@ import java.util.Map;
  * from value to name. A small entities resource is loaded into memory the
  * first time any of these methods is called for fast and efficient access.
  *
- *
  * @author <a href="mailto:arkin@intalio.com">Assaf Arkin</a>
+ *
+ * @deprecated As of JDK 1.9, Xerces 2.9.0, Xerces DOM L3 Serializer implementation
+ * is replaced by that of Xalan. Main class
+ * {@link com.sun.org.apache.xml.internal.serialize.DOMSerializerImpl} is replaced
+ * by {@link com.sun.org.apache.xml.internal.serializer.dom3.LSSerializerImpl}.
  */
 public final class HTMLdtd
 {
