@@ -375,6 +375,7 @@ class Arguments : AllStatic {
   static void process_java_compiler_argument(char* arg);
   static jint parse_options_environment_variable(const char* name, SysClassPath* scp_p, bool* scp_assembly_required_p);
   static jint parse_java_tool_options_environment_variable(SysClassPath* scp_p, bool* scp_assembly_required_p);
+  static jint parse_options_buffer(const char* name, char* buffer, const size_t buf_len, SysClassPath* scp_p, bool* scp_assembly_required_p);
   static jint parse_java_options_environment_variable(SysClassPath* scp_p, bool* scp_assembly_required_p);
   static jint parse_vm_init_args(const JavaVMInitArgs* args);
   static jint parse_each_vm_init_arg(const JavaVMInitArgs* args, SysClassPath* scp_p, bool* scp_assembly_required_p, Flag::Flags origin);
