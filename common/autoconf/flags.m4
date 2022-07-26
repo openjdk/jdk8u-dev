@@ -857,7 +857,7 @@ AC_DEFUN([FLAGS_CXX_COMPILER_CHECK_ARGUMENTS],
   supports=yes
 
   saved_cxxflags="$CXXFLAGS"
-  CXXFLAGS="$CXXFLAG $1"
+  CXXFLAGS="$CXXFLAGS $1"
   AC_LANG_PUSH([C++])
   AC_COMPILE_IFELSE([AC_LANG_SOURCE([[int i;]])], [], 
       [supports=no])
