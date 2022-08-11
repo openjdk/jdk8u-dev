@@ -214,6 +214,8 @@ Java_java_lang_System_initProperties(JNIEnv *env, jclass cla, jobject props)
 
     PUTPROP(props, "java.specification.version",
             JDK_MAJOR_VERSION "." JDK_MINOR_VERSION);
+    PUTPROP(props, "java.specification.maintenance.version",
+            "4");
     PUTPROP(props, "java.specification.name",
             "Java Platform API Specification");
     PUTPROP(props, "java.specification.vendor",
