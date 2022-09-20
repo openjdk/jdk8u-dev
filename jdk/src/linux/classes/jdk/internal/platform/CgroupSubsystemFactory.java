@@ -26,8 +26,6 @@
 package jdk.internal.platform;
 
 import java.io.IOException;
-import java.lang.System.Logger;
-import java.lang.System.Logger.Level;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
@@ -81,12 +79,10 @@ class CgroupSubsystemFactory {
         if (!anyControllersEnabled) {
             return null;
         }
-        // Warn about mixed cgroups v1 and cgroups v2 controllers. The code is
-        // not ready to deal with that on a per-controller basis. Return no metrics
-        // in that case
+        // The code is not ready to deal with mixed cgroups v1 and cgroups v2
+        // controllers on a per-controller basis. Return no metrics in that
+        // case
         if (anyCgroupsV1Controller && anyCgroupsV2Controller) {
-            Logger logger = System.getLogger("jdk.internal.platform");
-            logger.log(Level.DEBUG, "Mixed cgroupv1 and cgroupv2 not supported. Metrics disabled.");
             return null;
         }
 
