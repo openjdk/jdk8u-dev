@@ -79,15 +79,15 @@ public class TestCgroupSubsystemController {
         try {
             existingDirectory = Utils.createTempDirectory(TestCgroupSubsystemController.class.getSimpleName());
             existingFile = Paths.get(existingDirectory.toString(), existingFileName);
-            Files.writeString(existingFile, existingFileContents, StandardCharsets.UTF_8);
+            Files.write(existingFile, existingFileContents.getBytes(StandardCharsets.UTF_8));
             Path longFile = Paths.get(existingDirectory.toString(), longValueName);
-            Files.writeString(longFile, longValueContents);
+            Files.write(longFile, longValueContents.getBytes());
             Path doubleFile = Paths.get(existingDirectory.toString(), doubleValueName);
-            Files.writeString(doubleFile, doubleValueContents);
+            Files.write(doubleFile, doubleValueContents.getBytes());
             Path longEntryFile = Paths.get(existingDirectory.toString(), longEntryName);
-            Files.writeString(longEntryFile, longEntryContents);
+            Files.write(longEntryFile, longEntryContents.getBytes());
             Path longMatchingLine = Paths.get(existingDirectory.toString(), longEntryMatchingLineName);
-            Files.writeString(longMatchingLine, longValueMatchingLineContents);
+            Files.write(longMatchingLine, longValueMatchingLineContents.getBytes());
             mockController = new MockCgroupSubsystemController(existingDirectory.toString());
         } catch (IOException e) {
             throw new RuntimeException(e);
