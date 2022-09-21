@@ -39,13 +39,14 @@ import org.junit.Test;
 
 import jdk.internal.platform.CgroupSubsystemController;
 import jdk.test.lib.Utils;
-import jdk.test.lib.util.FileUtils;
+import jdk.testlibrary.FileUtils;
 
 /*
  * @test
  * @requires os.family == "linux"
  * @modules java.base/jdk.internal.platform
  * @library /lib
+ * @library /lib/testlibrary
  * @run junit/othervm TestCgroupSubsystemController
  */
 
