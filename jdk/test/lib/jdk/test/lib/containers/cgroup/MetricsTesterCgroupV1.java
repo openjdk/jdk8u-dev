@@ -421,7 +421,7 @@ public class MetricsTesterCgroupV1 implements CgroupMetricsTester {
         // Parse range string in the format 1,2-6,7
         Integer[] newVal = CgroupMetricsTester.convertCpuSetsToArray(cpusstr);
         Arrays.sort(newVal);
-        if (Arrays.compare(oldVal, newVal) != 0) {
+        if (! Arrays.equals(oldVal, newVal)) {
             fail(Controller.CPUSET, "cpuset.cpus", Arrays.toString(oldVal),
                 Arrays.toString(newVal));
         }
@@ -435,7 +435,7 @@ public class MetricsTesterCgroupV1 implements CgroupMetricsTester {
             cpusstr = getFileContents(Controller.CPUSET, "cpuset.effective_cpus");
             newVal = CgroupMetricsTester.convertCpuSetsToArray(cpusstr);
             Arrays.sort(newVal);
-            if (Arrays.compare(oldVal, newVal) != 0) {
+            if (! Arrays.equals(oldVal, newVal)) {
                 fail(Controller.CPUSET, "cpuset.effective_cpus", Arrays.toString(oldVal),
                         Arrays.toString(newVal));
             }
@@ -446,7 +446,7 @@ public class MetricsTesterCgroupV1 implements CgroupMetricsTester {
         cpusstr = getFileContents(Controller.CPUSET, "cpuset.mems");
         newVal = CgroupMetricsTester.convertCpuSetsToArray(cpusstr);
         Arrays.sort(newVal);
-        if (Arrays.compare(oldVal, newVal) != 0) {
+        if (! Arrays.equals(oldVal, newVal)) {
             fail(Controller.CPUSET, "cpuset.mems", Arrays.toString(oldVal),
                     Arrays.toString(newVal));
         }
@@ -460,7 +460,7 @@ public class MetricsTesterCgroupV1 implements CgroupMetricsTester {
             cpusstr = getFileContents(Controller.CPUSET, "cpuset.effective_mems");
             newVal = CgroupMetricsTester.convertCpuSetsToArray(cpusstr);
             Arrays.sort(newVal);
-            if (Arrays.compare(oldVal, newVal) != 0) {
+            if (! Arrays.equals(oldVal, newVal)) {
                 fail(Controller.CPUSET, "cpuset.effective_mems", Arrays.toString(oldVal),
                         Arrays.toString(newVal));
             }
