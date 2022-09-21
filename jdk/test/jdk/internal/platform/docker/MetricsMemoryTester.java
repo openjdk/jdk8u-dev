@@ -27,6 +27,9 @@ import jdk.internal.platform.Metrics;
 import jdk.internal.platform.CgroupV1Metrics;
 
 public class MetricsMemoryTester {
+
+    private static final long UNLIMITED = -1;
+
     public static void main(String[] args) {
         System.out.println(Arrays.toString(args));
         switch (args[0]) {
