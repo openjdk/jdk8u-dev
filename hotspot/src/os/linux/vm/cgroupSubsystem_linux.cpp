@@ -66,7 +66,7 @@ CgroupSubsystem* CgroupSubsystemFactory::create() {
   if (cgroups == NULL) {
       if(PrintContainerInfo)
         tty->print_cr("Can't open /proc/cgroups, %s",
-                                 os::strerror(errno));
+                                 strerror(errno));
       return NULL;
   }
 
@@ -123,7 +123,7 @@ CgroupSubsystem* CgroupSubsystemFactory::create() {
   if (cgroup == NULL) {
     if(PrintContainerInfo)
       tty->print_cr("Can't open /proc/self/cgroup, %s",
-                               os::strerror(errno));
+                               strerror(errno));
     return NULL;
   }
 
@@ -173,7 +173,7 @@ CgroupSubsystem* CgroupSubsystemFactory::create() {
     if (mntinfo == NULL) {
         if(PrintContainerInfo)
           tty->print_cr("Can't open /proc/self/mountinfo, %s",
-                                   os::strerror(errno));
+                                   strerror(errno));
         return NULL;
     }
 
@@ -231,7 +231,7 @@ CgroupSubsystem* CgroupSubsystemFactory::create() {
   if (mntinfo == NULL) {
       if(PrintContainerInfo)
         tty->print_cr("Can't open /proc/self/mountinfo, %s",
-                                 os::strerror(errno));
+                                 strerror(errno));
       return NULL;
   }
 

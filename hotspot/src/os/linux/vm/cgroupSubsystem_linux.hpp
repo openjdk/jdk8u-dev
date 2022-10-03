@@ -130,7 +130,7 @@ template <typename T> int subsystem_file_line_contents(CgroupController* c,
     }
   } else {
     if(PrintContainerInfo)
-      tty->print_cr("Open of file %s failed, %s", file, os::strerror(errno));
+      tty->print_cr("Open of file %s failed, %s", file, strerror(errno));
   }
   if (fp != NULL)
     fclose(fp);
