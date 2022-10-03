@@ -39,7 +39,7 @@ int CgroupV2Subsystem::cpu_shares() {
                      "Raw value for CPU shares is: %d", "%d", shares);
   // Convert default value of 100 to no shares setup
   if (shares == 100) {
-    log_debug(os, container)("CPU Shares is: %d", -1);
+    tty->print_cr("CPU Shares is: %d", -1);
     return -1;
   }
 
@@ -53,12 +53,13 @@ int CgroupV2Subsystem::cpu_shares() {
   int x = 262142 * shares - 1;
   double frac = x/9999.0;
   x = ((int)frac) + 2;
-  log_trace(os, container)("Scaled CPU shares value is: %d", x);
+  if(PrintContainerInfo)
+    tty->print_cr("Scaled CPU shares value is: %d", x);
   // Since the scaled value is not precise, return the closest
   // multiple of PER_CPU_SHARES for a more conservative mapping
   if ( x <= PER_CPU_SHARES ) {
      // will always map to 1 CPU
-     log_debug(os, container)("CPU Shares is: %d", x);
+     tty->print_cr("CPU Shares is: %d", x);
      return x;
   }
   int f = x/PER_CPU_SHARES;
@@ -67,8 +68,10 @@ int CgroupV2Subsystem::cpu_shares() {
   int distance_lower = MAX2(lower_multiple, x) - MIN2(lower_multiple, x);
   int distance_upper = MAX2(upper_multiple, x) - MIN2(upper_multiple, x);
   x = distance_lower <= distance_upper ? lower_multiple : upper_multiple;
-  log_trace(os, container)("Closest multiple of %d of the CPU Shares value is: %d", PER_CPU_SHARES, x);
-  log_debug(os, container)("CPU Shares is: %d", x);
+  if(PrintContainerInfo) {
+    tty->print_cr("Closest multiple of %d of the CPU Shares value is: %d", PER_CPU_SHARES, x);
+    tty->print_cr("CPU Shares is: %d", x);
+  }
   return x;
 }
 
@@ -85,7 +88,8 @@ int CgroupV2Subsystem::cpu_shares() {
 int CgroupV2Subsystem::cpu_quota() {
   char * cpu_quota_str = cpu_quota_val();
   int limit = (int)limit_from_str(cpu_quota_str);
-  log_trace(os, container)("CPU Quota is: %d", limit);
+  if(PrintContainerInfo)
+    tty->print_cr("CPU Quota is: %d", limit);
   return limit;
 }
 
@@ -144,7 +148,8 @@ jlong CgroupV2Subsystem::memory_soft_limit_in_bytes() {
 
 jlong CgroupV2Subsystem::memory_max_usage_in_bytes() {
   // Log this string at trace level so as to make tests happy.
-  log_trace(os, container)("Maximum Memory Usage is not supported.");
+  if(PrintContainerInfo)
+    tty->print_cr("Maximum Memory Usage is not supported.");
   return OSCONTAINER_ERROR; // not supported
 }
 
@@ -182,11 +187,11 @@ char* CgroupV2Subsystem::mem_swp_limit_val() {
 jlong CgroupV2Subsystem::read_memory_limit_in_bytes() {
   char * mem_limit_str = mem_limit_val();
   jlong limit = limit_from_str(mem_limit_str);
-  if (log_is_enabled(Trace, os, container)) {
+  if (PrintContainerInfo) {
     if (limit == -1) {
-      log_trace(os, container)("Memory Limit is: Unlimited");
+      tty->print_cr("Memory Limit is: Unlimited");
     } else {
-      log_trace(os, container)("Memory Limit is: " JLONG_FORMAT, limit);
+      tty->print_cr("Memory Limit is: " JLONG_FORMAT, limit);
     }
   }
   return limit;

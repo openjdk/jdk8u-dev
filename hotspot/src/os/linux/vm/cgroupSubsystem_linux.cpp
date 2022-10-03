@@ -28,7 +28,6 @@
 #include "cgroupSubsystem_linux.hpp"
 #include "cgroupV1Subsystem_linux.hpp"
 #include "cgroupV2Subsystem_linux.hpp"
-#include "logging/log.hpp"
 #include "memory/allocation.hpp"
 #include "runtime/globals.hpp"
 #include "runtime/os.hpp"
@@ -65,8 +64,9 @@ CgroupSubsystem* CgroupSubsystemFactory::create() {
    */
   cgroups = fopen("/proc/cgroups", "r");
   if (cgroups == NULL) {
-      log_debug(os, container)("Can't open /proc/cgroups, %s",
-                               os::strerror(errno));
+      if(PrintContainerInfo)
+        tty->print_cr("Can't open /proc/cgroups, %s",
+                                 os::strerror(errno));
       return NULL;
   }
 
@@ -108,7 +108,8 @@ CgroupSubsystem* CgroupSubsystemFactory::create() {
 
   if (!all_controllers_enabled) {
     // one or more controllers disabled, disable container support
-    log_debug(os, container)("One or more required controllers disabled at kernel level.");
+    if(PrintContainerInfo)
+      tty->print_cr("One or more required controllers disabled at kernel level.");
     return NULL;
   }
 
@@ -120,8 +121,9 @@ CgroupSubsystem* CgroupSubsystemFactory::create() {
    */
   cgroup = fopen("/proc/self/cgroup", "r");
   if (cgroup == NULL) {
-    log_debug(os, container)("Can't open /proc/self/cgroup, %s",
-                             os::strerror(errno));
+    if(PrintContainerInfo)
+      tty->print_cr("Can't open /proc/self/cgroup, %s",
+                               os::strerror(errno));
     return NULL;
   }
 
@@ -169,8 +171,9 @@ CgroupSubsystem* CgroupSubsystemFactory::create() {
     // Find the cgroup2 mount point by reading /proc/self/mountinfo
     mntinfo = fopen("/proc/self/mountinfo", "r");
     if (mntinfo == NULL) {
-        log_debug(os, container)("Can't open /proc/self/mountinfo, %s",
-                                 os::strerror(errno));
+        if(PrintContainerInfo)
+          tty->print_cr("Can't open /proc/self/mountinfo, %s",
+                                   os::strerror(errno));
         return NULL;
     }
 
@@ -192,7 +195,8 @@ CgroupSubsystem* CgroupSubsystemFactory::create() {
     }
     fclose(mntinfo);
     if (!mount_point_found) {
-      log_trace(os, container)("Mount point for cgroupv2 not found in /proc/self/mountinfo");
+      if(PrintContainerInfo)
+        tty->print_cr("Mount point for cgroupv2 not found in /proc/self/mountinfo");
       return NULL;
     }
     // Cgroups v2 case, we have all the info we need.
@@ -204,12 +208,14 @@ CgroupSubsystem* CgroupSubsystemFactory::create() {
       os::free(cg_infos[i]._name);
       os::free(cg_infos[i]._cgroup_path);
     }
-    log_debug(os, container)("Detected cgroups v2 unified hierarchy");
+    if(PrintContainerInfo)
+      tty->print_cr("Detected cgroups v2 unified hierarchy");
     return new CgroupV2Subsystem(unified);
   }
 
   // What follows is cgroups v1
-  log_debug(os, container)("Detected cgroups hybrid or legacy hierarchy, using cgroups v1 controllers");
+  if(PrintContainerInfo)
+    tty->print_cr("Detected cgroups hybrid or legacy hierarchy, using cgroups v1 controllers");
 
   /*
    * Find the cgroup mount point for memory and cpuset
@@ -223,8 +229,9 @@ CgroupSubsystem* CgroupSubsystemFactory::create() {
    */
   mntinfo = fopen("/proc/self/mountinfo", "r");
   if (mntinfo == NULL) {
-      log_debug(os, container)("Can't open /proc/self/mountinfo, %s",
-                               os::strerror(errno));
+      if(PrintContainerInfo)
+        tty->print_cr("Can't open /proc/self/mountinfo, %s",
+                                 os::strerror(errno));
       return NULL;
   }
 
@@ -253,19 +260,23 @@ CgroupSubsystem* CgroupSubsystemFactory::create() {
   fclose(mntinfo);
 
   if (memory == NULL) {
-    log_debug(os, container)("Required cgroup v1 memory subsystem not found");
+    if(PrintContainerInfo)
+      tty->print_cr("Required cgroup v1 memory subsystem not found");
     return NULL;
   }
   if (cpuset == NULL) {
-    log_debug(os, container)("Required cgroup v1 cpuset subsystem not found");
+    if(PrintContainerInfo)
+      tty->print_cr("Required cgroup v1 cpuset subsystem not found");
     return NULL;
   }
   if (cpu == NULL) {
-    log_debug(os, container)("Required cgroup v1 cpu subsystem not found");
+    if(PrintContainerInfo)
+      tty->print_cr("Required cgroup v1 cpu subsystem not found");
     return NULL;
   }
   if (cpuacct == NULL) {
-    log_debug(os, container)("Required cgroup v1 cpuacct subsystem not found");
+    if(PrintContainerInfo)
+      tty->print_cr("Required cgroup v1 cpuacct subsystem not found");
     return NULL;
   }
 
@@ -356,7 +367,8 @@ int CgroupSubsystem::active_processor_count() {
   CachedMetric* cpu_limit = contrl->metrics_cache();
   if (!cpu_limit->should_check_metric()) {
     int val = (int)cpu_limit->value();
-    log_trace(os, container)("CgroupSubsystem::active_processor_count (cached): %d", val);
+    if(PrintContainerInfo)
+      tty->print_cr("CgroupSubsystem::active_processor_count (cached): %d", val);
     return val;
   }
 
@@ -367,11 +379,13 @@ int CgroupSubsystem::active_processor_count() {
 
   if (quota > -1 && period > 0) {
     quota_count = ceilf((float)quota / (float)period);
-    log_trace(os, container)("CPU Quota count based on quota/period: %d", quota_count);
+    if(PrintContainerInfo)
+      tty->print_cr("CPU Quota count based on quota/period: %d", quota_count);
   }
   if (share > -1) {
     share_count = ceilf((float)share / (float)PER_CPU_SHARES);
-    log_trace(os, container)("CPU Share count based on shares: %d", share_count);
+    if(PrintContainerInfo)
+      tty->print_cr("CPU Share count based on shares: %d", share_count);
   }
 
   // If both shares and quotas are setup results depend
@@ -391,7 +405,8 @@ int CgroupSubsystem::active_processor_count() {
   }
 
   result = MIN2(cpu_count, limit_count);
-  log_trace(os, container)("OSContainer::active_processor_count: %d", result);
+  if(PrintContainerInfo)
+    tty->print_cr("OSContainer::active_processor_count: %d", result);
 
   // Update cached metric to avoid re-reading container settings too often
   cpu_limit->set_value(result, OSCONTAINER_CACHE_TIMEOUT);
