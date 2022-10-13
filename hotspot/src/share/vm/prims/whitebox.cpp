@@ -167,7 +167,6 @@ WB_END
 
 #ifdef LINUX
 #include "utilities/elfFile.hpp"
-#include "osContainer_linux.hpp"
 #endif
 
 WB_ENTRY(jlong, WB_GetCompressedOopsMaxHeapSize(JNIEnv* env, jobject o)) {
