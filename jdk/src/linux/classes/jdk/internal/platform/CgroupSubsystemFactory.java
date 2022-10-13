@@ -52,7 +52,7 @@ public class CgroupSubsystemFactory {
             return null;
         }
 
-        if (optResult.isEmpty()) {
+        if (optResult.equals(Optional.empty())) {
             return null;
         }
         CgroupTypeResult result = optResult.get();
