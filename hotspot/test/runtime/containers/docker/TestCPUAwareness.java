@@ -232,7 +232,11 @@ private static final String imageName = Common.imageName("cpu");
         DockerRunOptions opts = Common.newOpts(imageName, "CheckOperatingSystemMXBean")
             .addDockerOpts(
                 "--cpus", cpuAllocation
-            );
+            )
+            // CheckOperatingSystemMXBean uses Metrics (jdk.internal.platform) for
+            // diagnostics
+            .addJavaOpts("--add-exports")
+            .addJavaOpts("java.base/jdk.internal.platform=ALL-UNNAMED");
 
         DockerTestUtils.dockerRunJava(opts)
             .shouldHaveExitValue(0)
