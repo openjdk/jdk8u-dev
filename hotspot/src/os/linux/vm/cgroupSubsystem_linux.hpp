@@ -75,13 +75,15 @@ template <typename T> int subsystem_file_line_contents(CgroupController* c,
   bool found_match = false;
 
   if (c == NULL) {
-    if(PrintContainerInfo)
+    if (PrintContainerInfo) {
       tty->print_cr("subsystem_file_line_contents: CgroupController* is NULL");
+    }
     return OSCONTAINER_ERROR;
   }
   if (c->subsystem_path() == NULL) {
-    if(PrintContainerInfo)
+    if (PrintContainerInfo) {
       tty->print_cr("subsystem_file_line_contents: subsystem path is NULL");
+    }
     return OSCONTAINER_ERROR;
   }
 
@@ -89,13 +91,15 @@ template <typename T> int subsystem_file_line_contents(CgroupController* c,
   file[MAXPATHLEN-1] = '\0';
   int filelen = strlen(file);
   if ((filelen + strlen(filename)) > (MAXPATHLEN-1)) {
-    if(PrintContainerInfo)
+    if (PrintContainerInfo) {
       tty->print_cr("File path too long %s, %s", file, filename);
+    }
     return OSCONTAINER_ERROR;
   }
   strncat(file, filename, MAXPATHLEN-filelen);
-  if(PrintContainerInfo)
+  if (PrintContainerInfo) {
     tty->print_cr("Path to %s is %s", filename, file);
+  }
   fp = fopen(file, "r");
   if (fp != NULL) {
     int err = 0;
@@ -120,17 +124,20 @@ template <typename T> int subsystem_file_line_contents(CgroupController* c,
         return 0;
       } else {
         err = 1;
-        if(PrintContainerInfo)
+        if (PrintContainerInfo) {
           tty->print_cr("Type %s not found in file %s", scan_fmt, file);
+        }
       }
     }
     if (err == 0) {
-      if(PrintContainerInfo)
+      if (PrintContainerInfo) {
         tty->print_cr("Empty file %s", file);
+      }
     }
   } else {
-    if(PrintContainerInfo)
+    if (PrintContainerInfo) {
       tty->print_cr("Open of file %s failed, %s", file, strerror(errno));
+    }
   }
   if (fp != NULL)
     fclose(fp);
@@ -151,8 +158,9 @@ PRAGMA_DIAG_POP
   if (err != 0)                                                           \
     return (return_type) OSCONTAINER_ERROR;                               \
                                                                           \
-  if(PrintContainerInfo)                                                  \
+  if (PrintContainerInfo) {                                               \
     tty->print_cr(logstring, variable);                                   \
+  }                                                                       \
 }
 
 #define GET_CONTAINER_INFO_CPTR(return_type, subsystem, filename,         \
@@ -168,8 +176,9 @@ PRAGMA_DIAG_POP
   if (err != 0)                                                           \
     return (return_type) NULL;                                            \
                                                                           \
-  if(PrintContainerInfo)                                                  \
+  if (PrintContainerInfo) {                                               \
     tty->print_cr(logstring, variable);                                   \
+  }                                                                       \
 }
 
 #define GET_CONTAINER_INFO_LINE(return_type, controller, filename,        \
@@ -185,8 +194,9 @@ PRAGMA_DIAG_POP
   if (err != 0)                                                           \
     return (return_type) OSCONTAINER_ERROR;                               \
                                                                           \
-  if(PrintContainerInfo)                                                  \
+  if (PrintContainerInfo) {                                               \
     tty->print_cr(logstring, variable);                                   \
+  }                                                                       \
 }
 
 // Four controllers: cpu, cpuset, cpuacct, memory

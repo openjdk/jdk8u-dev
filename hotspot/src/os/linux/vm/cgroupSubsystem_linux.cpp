@@ -64,9 +64,10 @@ CgroupSubsystem* CgroupSubsystemFactory::create() {
    */
   cgroups = fopen("/proc/cgroups", "r");
   if (cgroups == NULL) {
-      if(PrintContainerInfo)
+      if (PrintContainerInfo) {
         tty->print_cr("Can't open /proc/cgroups, %s",
                                  strerror(errno));
+      }
       return NULL;
   }
 
@@ -108,8 +109,9 @@ CgroupSubsystem* CgroupSubsystemFactory::create() {
 
   if (!all_controllers_enabled) {
     // one or more controllers disabled, disable container support
-    if(PrintContainerInfo)
+    if (PrintContainerInfo) {
       tty->print_cr("One or more required controllers disabled at kernel level.");
+    }
     return NULL;
   }
 
@@ -121,9 +123,10 @@ CgroupSubsystem* CgroupSubsystemFactory::create() {
    */
   cgroup = fopen("/proc/self/cgroup", "r");
   if (cgroup == NULL) {
-    if(PrintContainerInfo)
+    if (PrintContainerInfo) {
       tty->print_cr("Can't open /proc/self/cgroup, %s",
                                strerror(errno));
+    }
     return NULL;
   }
 
@@ -171,9 +174,10 @@ CgroupSubsystem* CgroupSubsystemFactory::create() {
     // Find the cgroup2 mount point by reading /proc/self/mountinfo
     mntinfo = fopen("/proc/self/mountinfo", "r");
     if (mntinfo == NULL) {
-        if(PrintContainerInfo)
+        if (PrintContainerInfo) {
           tty->print_cr("Can't open /proc/self/mountinfo, %s",
                                    strerror(errno));
+        }
         return NULL;
     }
 
@@ -195,8 +199,9 @@ CgroupSubsystem* CgroupSubsystemFactory::create() {
     }
     fclose(mntinfo);
     if (!mount_point_found) {
-      if(PrintContainerInfo)
+      if (PrintContainerInfo) {
         tty->print_cr("Mount point for cgroupv2 not found in /proc/self/mountinfo");
+      }
       return NULL;
     }
     // Cgroups v2 case, we have all the info we need.
@@ -208,14 +213,16 @@ CgroupSubsystem* CgroupSubsystemFactory::create() {
       os::free(cg_infos[i]._name);
       os::free(cg_infos[i]._cgroup_path);
     }
-    if(PrintContainerInfo)
+    if (PrintContainerInfo) {
       tty->print_cr("Detected cgroups v2 unified hierarchy");
+    }
     return new CgroupV2Subsystem(unified);
   }
 
   // What follows is cgroups v1
-  if(PrintContainerInfo)
+  if (PrintContainerInfo) {
     tty->print_cr("Detected cgroups hybrid or legacy hierarchy, using cgroups v1 controllers");
+  }
 
   /*
    * Find the cgroup mount point for memory and cpuset
@@ -229,9 +236,10 @@ CgroupSubsystem* CgroupSubsystemFactory::create() {
    */
   mntinfo = fopen("/proc/self/mountinfo", "r");
   if (mntinfo == NULL) {
-      if(PrintContainerInfo)
+      if (PrintContainerInfo) {
         tty->print_cr("Can't open /proc/self/mountinfo, %s",
                                  strerror(errno));
+      }
       return NULL;
   }
 
@@ -260,23 +268,27 @@ CgroupSubsystem* CgroupSubsystemFactory::create() {
   fclose(mntinfo);
 
   if (memory == NULL) {
-    if(PrintContainerInfo)
+    if (PrintContainerInfo) {
       tty->print_cr("Required cgroup v1 memory subsystem not found");
+    }
     return NULL;
   }
   if (cpuset == NULL) {
-    if(PrintContainerInfo)
+    if (PrintContainerInfo) {
       tty->print_cr("Required cgroup v1 cpuset subsystem not found");
+    }
     return NULL;
   }
   if (cpu == NULL) {
-    if(PrintContainerInfo)
+    if (PrintContainerInfo) {
       tty->print_cr("Required cgroup v1 cpu subsystem not found");
+    }
     return NULL;
   }
   if (cpuacct == NULL) {
-    if(PrintContainerInfo)
+    if (PrintContainerInfo) {
       tty->print_cr("Required cgroup v1 cpuacct subsystem not found");
+    }
     return NULL;
   }
 
@@ -367,8 +379,9 @@ int CgroupSubsystem::active_processor_count() {
   CachedMetric* cpu_limit = contrl->metrics_cache();
   if (!cpu_limit->should_check_metric()) {
     int val = (int)cpu_limit->value();
-    if(PrintContainerInfo)
+    if (PrintContainerInfo) {
       tty->print_cr("CgroupSubsystem::active_processor_count (cached): %d", val);
+    }
     return val;
   }
 
@@ -379,13 +392,15 @@ int CgroupSubsystem::active_processor_count() {
 
   if (quota > -1 && period > 0) {
     quota_count = ceilf((float)quota / (float)period);
-    if(PrintContainerInfo)
+    if (PrintContainerInfo) {
       tty->print_cr("CPU Quota count based on quota/period: %d", quota_count);
+    }
   }
   if (share > -1) {
     share_count = ceilf((float)share / (float)PER_CPU_SHARES);
-    if(PrintContainerInfo)
+    if (PrintContainerInfo) {
       tty->print_cr("CPU Share count based on shares: %d", share_count);
+    }
   }
 
   // If both shares and quotas are setup results depend
@@ -405,8 +420,9 @@ int CgroupSubsystem::active_processor_count() {
   }
 
   result = MIN2(cpu_count, limit_count);
-  if(PrintContainerInfo)
+  if (PrintContainerInfo) {
     tty->print_cr("OSContainer::active_processor_count: %d", result);
+  }
 
   // Update cached metric to avoid re-reading container settings too often
   cpu_limit->set_value(result, OSCONTAINER_CACHE_TIMEOUT);
