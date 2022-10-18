@@ -39,7 +39,9 @@ int CgroupV2Subsystem::cpu_shares() {
                      "Raw value for CPU shares is: %d", "%d", shares);
   // Convert default value of 100 to no shares setup
   if (shares == 100) {
-    tty->print_cr("CPU Shares is: %d", -1);
+    if (PrintContainerInfo) {
+      tty->print_cr("CPU Shares is: %d", -1);
+    }
     return -1;
   }
 
@@ -60,7 +62,9 @@ int CgroupV2Subsystem::cpu_shares() {
   // multiple of PER_CPU_SHARES for a more conservative mapping
   if ( x <= PER_CPU_SHARES ) {
      // will always map to 1 CPU
-     tty->print_cr("CPU Shares is: %d", x);
+     if (PrintContainerInfo) {
+        tty->print_cr("CPU Shares is: %d", x);
+     }
      return x;
   }
   int f = x/PER_CPU_SHARES;
