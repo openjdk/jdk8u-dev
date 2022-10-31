@@ -97,10 +97,10 @@ class CgroupV1Subsystem: public CgroupSubsystem {
     julong _unlimited_memory;
 
     /* controllers */
-    CachingCgroupController* _memory = NULL;
-    CgroupV1Controller* _cpuset = NULL;
-    CachingCgroupController* _cpu = NULL;
-    CgroupV1Controller* _cpuacct = NULL;
+    CachingCgroupController* _memory;
+    CgroupV1Controller* _cpuset;
+    CachingCgroupController* _cpu;
+    CgroupV1Controller* _cpuacct;
 
   public:
     CgroupV1Subsystem(CgroupV1Controller* cpuset,
