@@ -24,7 +24,7 @@
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-/**
+/*
  * @test
  * @bug 8271459
  * @summary C2 applies string opts to StringBuilder object created with a negative size and misses the NegativeArraySizeException.
