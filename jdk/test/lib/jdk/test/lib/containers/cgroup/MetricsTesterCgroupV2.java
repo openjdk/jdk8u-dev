@@ -326,7 +326,7 @@ public class MetricsTesterCgroupV2 implements CgroupMetricsTester {
         // Parse range string in the format 1,2-6,7
         Integer[] newVal = CgroupMetricsTester.convertCpuSetsToArray(cpusstr);
         Arrays.sort(newVal);
-        if (! Arrays.equals(oldVal, newVal)) {
+        if (!Arrays.equals(oldVal, newVal)) {
             fail("cpuset.cpus", Arrays.toString(oldVal),
                                 Arrays.toString(newVal));
         }
@@ -337,7 +337,7 @@ public class MetricsTesterCgroupV2 implements CgroupMetricsTester {
         cpusstr = getStringVal("cpuset.cpus.effective");
         newVal = CgroupMetricsTester.convertCpuSetsToArray(cpusstr);
         Arrays.sort(newVal);
-        if (! Arrays.equals(oldVal, newVal)) {
+        if (!Arrays.equals(oldVal, newVal)) {
             fail("cpuset.cpus.effective", Arrays.toString(oldVal),
                                           Arrays.toString(newVal));
         }
@@ -348,7 +348,7 @@ public class MetricsTesterCgroupV2 implements CgroupMetricsTester {
         cpusstr = getStringVal("cpuset.mems");
         newVal = CgroupMetricsTester.convertCpuSetsToArray(cpusstr);
         Arrays.sort(newVal);
-        if (! Arrays.equals(oldVal, newVal)) {
+        if (!Arrays.equals(oldVal, newVal)) {
             fail("cpuset.mems", Arrays.toString(oldVal),
                                 Arrays.toString(newVal));
         }
@@ -359,7 +359,7 @@ public class MetricsTesterCgroupV2 implements CgroupMetricsTester {
         cpusstr = getStringVal("cpuset.mems.effective");
         newVal = CgroupMetricsTester.convertCpuSetsToArray(cpusstr);
         Arrays.sort(newVal);
-        if (! Arrays.equals(oldVal, newVal)) {
+        if (!Arrays.equals(oldVal, newVal)) {
             fail("cpuset.mems.effective", Arrays.toString(oldVal),
                                           Arrays.toString(newVal));
         }
