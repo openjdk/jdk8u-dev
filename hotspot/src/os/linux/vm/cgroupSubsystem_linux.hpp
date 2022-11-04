@@ -170,7 +170,9 @@ PRAGMA_DIAG_POP
                                      scan_fmt,                            \
                                      &variable);                          \
   if (err != 0) {                                                         \
-    log_trace(os, container)(logstring, (return_type) OSCONTAINER_ERROR); \
+    if (PrintContainerInfo) {                                             \
+      tty->print_cr(logstring, (return_type) OSCONTAINER_ERROR);          \
+    }                                                                     \
     return (return_type) OSCONTAINER_ERROR;                               \
   }                                                                       \
                                                                           \
