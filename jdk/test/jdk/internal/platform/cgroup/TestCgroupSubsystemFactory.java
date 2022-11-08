@@ -36,15 +36,15 @@ import org.junit.Test;
 
 import jdk.internal.platform.CgroupSubsystemFactory;
 import jdk.internal.platform.CgroupSubsystemFactory.CgroupTypeResult;
-import jdk.test.lib.Utils;
-import jdk.test.lib.util.FileUtils;
+import jdk.testlibrary.Utils;
+import jdk.testlibrary.FileUtils;
 
 
 /*
  * @test
  * @requires os.family == "linux"
  * @modules java.base/jdk.internal.platform
- * @library /test/lib
+ * @library /lib/testlibrary
  * @run junit/othervm TestCgroupSubsystemFactory
  */
 public class TestCgroupSubsystemFactory {
@@ -104,20 +104,20 @@ public class TestCgroupSubsystemFactory {
         try {
             existingDirectory = Utils.createTempDirectory(TestCgroupSubsystemFactory.class.getSimpleName());
             Path cgroupsZero = Paths.get(existingDirectory.toString(), "cgroups_zero");
-            Files.writeString(cgroupsZero, cgroupsZeroHierarchy, StandardCharsets.UTF_8);
+            Files.write(cgroupsZero, cgroupsZeroHierarchy.getBytes(StandardCharsets.UTF_8));
             cgroupv1CgInfoZeroHierarchy = cgroupsZero;
             cgroupv2CgInfoZeroHierarchy = cgroupsZero;
             cgroupv1MntInfoZeroHierarchy = Paths.get(existingDirectory.toString(), "mountinfo_empty");
-            Files.writeString(cgroupv1MntInfoZeroHierarchy, mntInfoEmpty);
+            Files.write(cgroupv1MntInfoZeroHierarchy, mntInfoEmpty.getBytes());
 
             cgroupv2MntInfoZeroHierarchy = Paths.get(existingDirectory.toString(), "mountinfo_cgroupv2");
-            Files.writeString(cgroupv2MntInfoZeroHierarchy, mntInfoCgroupsV2Only);
+            Files.write(cgroupv2MntInfoZeroHierarchy, mntInfoCgroupsV2Only.getBytes());
 
             cgroupv1CgInfoNonZeroHierarchy = Paths.get(existingDirectory.toString(), "cgroups_non_zero");
-            Files.writeString(cgroupv1CgInfoNonZeroHierarchy, cgroupsNonZeroHierarchy);
+            Files.write(cgroupv1CgInfoNonZeroHierarchy, cgroupsNonZeroHierarchy.getBytes());
 
             cgroupv1MntInfoNonZeroHierarchy = Paths.get(existingDirectory.toString(), "mountinfo_non_zero");
-            Files.writeString(cgroupv1MntInfoNonZeroHierarchy, mntInfoHybrid);
+            Files.write(cgroupv1MntInfoNonZeroHierarchy, mntInfoHybrid.getBytes());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -149,7 +149,7 @@ public class TestCgroupSubsystemFactory {
         String mountInfo = cgroupv1MntInfoZeroHierarchy.toString();
         Optional<CgroupTypeResult> result = CgroupSubsystemFactory.determineType(mountInfo, cgroups);
 
-        assertTrue("zero hierarchy ids with no mounted controllers => empty result", result.isEmpty());
+        assertTrue("zero hierarchy ids with no mounted controllers => empty result", Optional.empty().equals(result));
     }
 
     @Test
