@@ -164,13 +164,13 @@ public class CgroupSubsystemFactory {
             Files.write(cgroupv1MntInfoMissingMemoryController, mntInfoHybridMissingMemory.getBytes());
 
             cgroupV2MntInfoMissingCgroupv2 = Paths.get(existingDirectory.toString(), "mnt_info_missing_cgroup2");
-            Files.writeString(cgroupV2MntInfoMissingCgroupv2, mntInfoHybridStub);
+            Files.write(cgroupV2MntInfoMissingCgroupv2, mntInfoHybridStub.getBytes());
 
             cgroupv1MntInfoDoubleCpuset = Paths.get(existingDirectory.toString(), "mnt_info_cgroupv1_double_cpuset");
-            Files.writeString(cgroupv1MntInfoDoubleCpuset, mntInfoCgroupv1DoubleCpuset);
+            Files.write(cgroupv1MntInfoDoubleCpuset, mntInfoCgroupv1DoubleCpuset.getBytes());
 
             cgroupv1MntInfoDoubleCpuset2 = Paths.get(existingDirectory.toString(), "mnt_info_cgroupv1_double_cpuset2");
-            Files.writeString(cgroupv1MntInfoDoubleCpuset2, mntInfoCgroupv1DoubleCpuset2);
+            Files.write(cgroupv1MntInfoDoubleCpuset2, mntInfoCgroupv1DoubleCpuset2.getBytes());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
