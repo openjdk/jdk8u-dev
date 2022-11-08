@@ -49,7 +49,7 @@ import sun.hotspot.WhiteBox;
  */
 public class CgroupSubsystemFactory {
 
-    // Mirrored from src/hotspot/os/linux/cgroupSubsystem_linux.hpp
+    // Mirrored from hotspot/src/os/linux/vm/cgroupSubsystem_linux.hpp
     private static final int CGROUPS_V1 = 1;
     private static final int CGROUPS_V2 = 2;
     private static final int INVALID_CGROUPS_V2 = 3;
