@@ -24,9 +24,9 @@
 /*
  * @test CgroupSubsystemFactory
  * @requires os.family == "linux"
- * @library /testlibrary /test/lib
- * @build sun.hotspot.WhiteBox
- * @run driver ClassFileInstaller sun.hotspot.WhiteBox
+ * @library /testlibrary /testlibrary/whitebox
+ * @build CgroupSubsystemFactory
+ * @run main ClassFileInstaller sun.hotspot.WhiteBox
  *                              sun.hotspot.WhiteBox$WhiteBoxPermission
  * @run main/othervm -Xbootclasspath/a:. -XX:+UnlockDiagnosticVMOptions -XX:+WhiteBoxAPI CgroupSubsystemFactory
  */
@@ -36,10 +36,12 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.FileVisitResult;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 
-import jdk.test.lib.Asserts;
-import jdk.test.lib.Utils;
-import jdk.test.lib.util.FileUtils;
+import com.oracle.java.testlibrary.Asserts;
+import com.oracle.java.testlibrary.Utils;
 import sun.hotspot.WhiteBox;
 
 /*
@@ -129,35 +131,35 @@ public class CgroupSubsystemFactory {
         try {
             existingDirectory = Utils.createTempDirectory(CgroupSubsystemFactory.class.getSimpleName());
             Path cgroupsZero = Paths.get(existingDirectory.toString(), "cgroups_zero");
-            Files.writeString(cgroupsZero, cgroupsZeroHierarchy, StandardCharsets.UTF_8);
+            Files.write(cgroupsZero, cgroupsZeroHierarchy.getBytes(StandardCharsets.UTF_8));
             cgroupv1CgInfoZeroHierarchy = cgroupsZero;
             cgroupv2CgInfoZeroHierarchy = cgroupsZero;
             cgroupv1MntInfoZeroHierarchy = Paths.get(existingDirectory.toString(), "mountinfo_empty");
-            Files.writeString(cgroupv1MntInfoZeroHierarchy, mntInfoEmpty);
+            Files.write(cgroupv1MntInfoZeroHierarchy, mntInfoEmpty.getBytes());
 
             cgroupv2MntInfoZeroHierarchy = Paths.get(existingDirectory.toString(), "mountinfo_cgroupv2");
-            Files.writeString(cgroupv2MntInfoZeroHierarchy, mntInfoCgroupsV2Only);
+            Files.write(cgroupv2MntInfoZeroHierarchy, mntInfoCgroupsV2Only.getBytes());
 
             cgroupv1CgInfoNonZeroHierarchy = Paths.get(existingDirectory.toString(), "cgroups_non_zero");
-            Files.writeString(cgroupv1CgInfoNonZeroHierarchy, cgroupsNonZeroHierarchy);
+            Files.write(cgroupv1CgInfoNonZeroHierarchy, cgroupsNonZeroHierarchy.getBytes());
 
             cgroupv1MntInfoNonZeroHierarchy = Paths.get(existingDirectory.toString(), "mountinfo_non_zero");
-            Files.writeString(cgroupv1MntInfoNonZeroHierarchy, mntInfoHybrid);
+            Files.write(cgroupv1MntInfoNonZeroHierarchy, mntInfoHybrid.getBytes());
 
             cgroupv1MntInfoNonZeroHierarchyOtherOrder = Paths.get(existingDirectory.toString(), "mountinfo_non_zero_cgroupv2_last");
-            Files.writeString(cgroupv1MntInfoNonZeroHierarchyOtherOrder, mntInfoHybridFlippedOrder);
+            Files.write(cgroupv1MntInfoNonZeroHierarchyOtherOrder, mntInfoHybridFlippedOrder.getBytes());
 
             cgroupV1SelfCgroup = Paths.get(existingDirectory.toString(), "cgroup_self_hybrid");
-            Files.writeString(cgroupV1SelfCgroup, procSelfCgroupHybridContent);
+            Files.write(cgroupV1SelfCgroup, procSelfCgroupHybridContent.getBytes());
 
             cgroupV2SelfCgroup = Paths.get(existingDirectory.toString(), "cgroup_self_v2");
-            Files.writeString(cgroupV2SelfCgroup, procSelfCgroupV2UnifiedContent);
+            Files.write(cgroupV2SelfCgroup, procSelfCgroupV2UnifiedContent.getBytes());
 
             cgroupv1MntInfoMissingMemoryController = Paths.get(existingDirectory.toString(), "mnt_info_missing_memory");
-            Files.writeString(cgroupv1MntInfoMissingMemoryController, mntInfoHybridMissingMemory);
+            Files.write(cgroupv1MntInfoMissingMemoryController, mntInfoHybridMissingMemory.getBytes());
 
             cgroupV2MntInfoMissingCgroupv2 = Paths.get(existingDirectory.toString(), "mnt_info_missing_cgroup2");
-            Files.writeString(cgroupV2MntInfoMissingCgroupv2, mntInfoHybridStub);
+            Files.write(cgroupV2MntInfoMissingCgroupv2, mntInfoHybridStub.getBytes());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -165,10 +167,29 @@ public class CgroupSubsystemFactory {
 
     private void teardown() {
         try {
-            FileUtils.deleteFileTreeWithRetry(existingDirectory);
+            deleteFileTree(existingDirectory);
         } catch (IOException e) {
             System.err.println("Teardown failed. " + e.getMessage());
         }
+    }
+
+    private static void deleteFileTree(Path dir) throws IOException {
+        java.nio.file.Files.walkFileTree(dir, new SimpleFileVisitor<Path>() {
+            @Override
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                Files.delete(file);
+                return FileVisitResult.CONTINUE;
+            }
+            @Override
+            public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                Files.delete(dir);
+                return FileVisitResult.CONTINUE;
+            }
+            @Override
+            public FileVisitResult visitFileFailed(Path file, IOException exc) {
+                return FileVisitResult.CONTINUE;
+            }
+        });
     }
 
     private boolean isValidCgroup(int value) {
