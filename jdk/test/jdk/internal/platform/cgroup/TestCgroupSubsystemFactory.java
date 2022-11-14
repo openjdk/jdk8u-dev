@@ -145,7 +145,7 @@ public class TestCgroupSubsystemFactory {
         String mountInfo = cgroupv1MntInfoSystemdOnly.toString();
         Optional<CgroupTypeResult> result = CgroupSubsystemFactory.determineType(mountInfo, cgroups);
 
-        assertTrue("zero hierarchy ids with no *relevant* controllers mounted", result.isEmpty());
+        assertTrue("zero hierarchy ids with no *relevant* controllers mounted", Optional.empty().equals(result));
     }
 
     @Test
