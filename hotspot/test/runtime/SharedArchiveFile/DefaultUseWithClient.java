@@ -60,6 +60,10 @@ public class DefaultUseWithClient {
            "-version");
 
         output = new OutputAnalyzer(pb.start());
+        if (!output.getOutput().contains("Client")) {
+            System.out.println("Client VM not available. Skipping...");
+            return;
+        }
         try {
             output.shouldContain("sharing");
         } catch (RuntimeException e) {
