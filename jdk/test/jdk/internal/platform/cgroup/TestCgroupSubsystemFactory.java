@@ -253,13 +253,13 @@ public class TestCgroupSubsystemFactory {
             Files.write(cgroupv1MountInfoJoinControllers, mntInfoCgroupv1JoinControllers.getBytes());
 
             cgroupv1MntInfoColonsHierarchy = Paths.get(existingDirectory.toString(), "mountinfo_colons");
-            Files.writeString(cgroupv1MntInfoColonsHierarchy, mntInfoColons);
+            Files.write(cgroupv1MntInfoColonsHierarchy, mntInfoColons.getBytes());
 
             cgroupv1SelfCgroup = Paths.get(existingDirectory.toString(), "self_cgroup_cgv1");
             Files.write(cgroupv1SelfCgroup, cgroupv1SelfCgroupContent.getBytes());
 
             cgroupv1SelfColons = Paths.get(existingDirectory.toString(), "self_colons_cgv1");
-            Files.writeString(cgroupv1SelfColons, cgroupv1SelfColonsContent);
+            Files.write(cgroupv1SelfColons, cgroupv1SelfColonsContent.getBytes());
 
             cgroupv2SelfCgroup = Paths.get(existingDirectory.toString(), "self_cgroup_cgv2");
             Files.write(cgroupv2SelfCgroup, cgroupv2SelfCgroupContent.getBytes());
