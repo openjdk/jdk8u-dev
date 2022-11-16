@@ -458,7 +458,6 @@ public class TimestampCheck {
                         .shouldContain("treated as unsigned")
                         .shouldMatch("Timestamp.*digest.*SHA-1.*(disabled)");
 
-                // Disabled algorithms
                 sign("tsdisabled", "-digestalg", "MD5",
                                 "-sigalg", "MD5withRSA", "-tsadigestalg", "MD5")
                         .shouldHaveExitValue(68)

@@ -24,7 +24,7 @@
  * @test
  * @bug 4504355 4744260
  * @summary problems if signed crypto provider is the most preferred provider
- * @library /lib /lib/testlibrary
+ * @library /lib/testlibrary
  * @run main/othervm DynStatic
  */
 
@@ -33,7 +33,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
-import jdk.test.lib.process.ProcessTools;
+import jdk.testlibrary.ProcessTools;
 import jdk.testlibrary.JarUtils;
 
 public class DynStatic {
@@ -53,7 +53,7 @@ public class DynStatic {
     private static final String STATIC_PROPS =
         Paths.get(TEST_SRC, "Static.props").toString();
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws Throwable {
 
         // Compile the provider
         CompilerUtils.compile(EXP_SRC_DIR, EXP_DEST_DIR);
