@@ -37,8 +37,7 @@ import com.oracle.java.testlibrary.DockerRunOptions;
 import com.oracle.java.testlibrary.DockerTestUtils;
 import com.oracle.java.testlibrary.OutputAnalyzer;
 
-
-import static jdk.test.lib.Asserts.assertNotNull;
+import com.oracle.java.testlibrary.Asserts;
 
 public class TestMemoryAwareness {
     private static final String imageName = Common.imageName("memory");
@@ -106,7 +105,7 @@ public class TestMemoryAwareness {
         // first run: establish physical memory in test environment and derive
         // a bad value one power of ten larger
         String goodMem = Common.run(opts).firstMatch("total physical memory: (\\d+)", 1);
-        assertNotNull(goodMem, "no match for 'total physical memory' in trace output");
+        Asserts.assertNotNull(goodMem, "no match for 'total physical memory' in trace output");
         String badMem = goodMem + "0";
 
         // second run: set a container memory limit to the bad value
