@@ -544,7 +544,9 @@ jlong CgroupSubsystem::memory_limit_in_bytes() {
     return memory_limit->value();
   }
   jlong phys_mem = os::Linux::physical_memory();
-  log_trace(os, container)("total physical memory: " JLONG_FORMAT, phys_mem);
+  if (PrintContainerInfo) {
+    tty->print_cr("total physical memory: " JLONG_FORMAT, phys_mem);
+  }
   jlong mem_limit = read_memory_limit_in_bytes();
 
   if (mem_limit <= 0 || mem_limit >= phys_mem) {
@@ -563,8 +565,10 @@ jlong CgroupSubsystem::memory_limit_in_bytes() {
       assert(mem_limit == -1, "Expected unlimited");
       reason = "unlimited";
     }
-    log_debug(os, container)("container memory limit %s: " JLONG_FORMAT ", using host value " JLONG_FORMAT,
-                             reason, read_mem_limit, phys_mem);
+    if (PrintContainerInfo) {
+      tty->print_cr("container memory limit %s: " JLONG_FORMAT ", using host value " JLONG_FORMAT,
+                    reason, read_mem_limit, phys_mem);
+    }
   }
 
   // Update cached metric to avoid re-reading container settings too often
