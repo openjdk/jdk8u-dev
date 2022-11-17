@@ -79,7 +79,8 @@ ${TESTJAVA}${FS}bin${FS}jarsigner \
     -digestalg SHA1 \
     B.jar c
 
-echo "${TESTJAVA}${FS}bin${FS}jarsigner -verify ${KS_ARGS} ${PROP_ARGS} -verbose B.jar"
-LINES=`${TESTJAVA}${FS}bin${FS}jarsigner -verify ${KS_ARGS} ${PROP_ARGS} -verbose B.jar | grep smk | grep B.class | wc -l`
+JAR_VERIFY_CMD="${TESTJAVA}${FS}bin${FS}jarsigner -verify ${KS_ARGS} ${PROP_ARGS} -verbose B.jar"
+echo ${JAR_VERIFY_CMD}
+LINES=`${JAR_VERIFY_CMD} | grep smk | grep B.class | wc -l`
 [ $LINES = 1 ] || exit 1
 
