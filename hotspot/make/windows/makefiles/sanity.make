@@ -31,8 +31,8 @@ checkCL:
 	if "$(MSC_VER)" NEQ "1800" \
 	if "$(MSC_VER)" NEQ "1900" \
 	if "$(MSC_VER)" NEQ "1912" \
-    if "$(MSC_VER)" NEQ "1920" if "$(MSC_VER)" NEQ "1921" if "$(MSC_VER)" NEQ "1922" if "$(MSC_VER)" NEQ "1923" if "$(MSC_VER)" NEQ "1924" \
-    if "$(MSC_VER)" NEQ "1925" if "$(MSC_VER)" NEQ "1926" if "$(MSC_VER)" NEQ "1927" if "$(MSC_VER)" NEQ "1928" if "$(MSC_VER)" NEQ "1929" \
+	if "$(MSC_VER)" NEQ "1920" if "$(MSC_VER)" NEQ "1921" if "$(MSC_VER)" NEQ "1922" if "$(MSC_VER)" NEQ "1923" if "$(MSC_VER)" NEQ "1924" \
+	if "$(MSC_VER)" NEQ "1925" if "$(MSC_VER)" NEQ "1926" if "$(MSC_VER)" NEQ "1927" if "$(MSC_VER)" NEQ "1928" if "$(MSC_VER)" NEQ "1929" \
 	echo *** WARNING *** unrecognized cl.exe version $(MSC_VER) ($(RAW_MSC_VER)).  Use FORCE_MSC_VER to override automatic detection.
 
 checkLink:
