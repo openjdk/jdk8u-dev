@@ -1,7 +1,7 @@
 /* Javadoc style sheet */
 /*
- Overall document style
- */
+Overall document style
+*/
 
 @import url('resources/fonts/dejavu.css');
 
@@ -528,6 +528,7 @@ Table styles
     position:relative;
     background-color:#4D7A97;
     float:left;
+	
 }
 .rowColor th, .altColor th {
     font-weight:normal;
@@ -671,6 +672,7 @@ div.block div.deprecationComment, div.block div.block span.emphasizedPhrase,
 div.block div.block span.interfaceName {
     font-style:normal;
 }
+
 div.contentContainer ul.blockList li.blockList h2{
     padding-bottom:0px;
 }
