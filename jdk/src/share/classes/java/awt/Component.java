@@ -7759,6 +7759,15 @@ public abstract class Component implements ImageObserver, MenuContainer,
             }
         }
 
+        boolean ret = Component.requestFocusController.acceptRequestFocus(focusOwner,
+                                                                          this,
+                                                                          temporary,
+                                                                          focusedWindowChangeAllowed,
+                                                                          cause);
+        if (focusLog.isLoggable(PlatformLogger.Level.FINEST)) {
+            focusLog.finest("RequestFocusController returns {0}", ret);
+        }
+
         if (focusOwner == this || focusOwner == null) {
             // Controller is supposed to verify focus transfers and for this it
             // should know both from and to components.  And it shouldn't verify
@@ -7780,15 +7789,6 @@ public abstract class Component implements ImageObserver, MenuContainer,
                 focusLog.finest("cause is activation");
             }
             return true;
-        }
-
-        boolean ret = Component.requestFocusController.acceptRequestFocus(focusOwner,
-                                                                          this,
-                                                                          temporary,
-                                                                          focusedWindowChangeAllowed,
-                                                                          cause);
-        if (focusLog.isLoggable(PlatformLogger.Level.FINEST)) {
-            focusLog.finest("RequestFocusController returns {0}", ret);
         }
 
         return ret;
