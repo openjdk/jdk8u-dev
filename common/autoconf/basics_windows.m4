@@ -112,6 +112,7 @@ AC_DEFUN([BASIC_FIXUP_PATH_CYGWIN],
   # unix format.
   path="[$]$1"
   new_path=`$CYGPATH -u "$path"`
+  original_basename=`basename "${new_path}"`
 
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
@@ -129,6 +130,11 @@ AC_DEFUN([BASIC_FIXUP_PATH_CYGWIN],
   # Call helper function which possibly converts this using DOS-style short mode.
   # If so, the updated path is stored in $new_path.
   BASIC_MAKE_WINDOWS_SPACE_SAFE_CYGWIN([$new_path])
+  fixed_basename=`basename "${new_path}"`
+
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     $1="$new_path"

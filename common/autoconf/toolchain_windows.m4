@@ -510,17 +510,7 @@ AC_DEFUN([TOOLCHAIN_CHECK_POSSIBLE_MSVC_DLL],
     if $ECHO "$MSVC_DLL_FILETYPE" | $GREP "$CORRECT_MSVCR_ARCH" 2>&1 > /dev/null; then
       AC_MSG_RESULT([ok])
       MSVC_DLL="$POSSIBLE_MSVC_DLL"
-      #
-      # 8297996: since 2019 there is 8.3 conflict between VC runtime DLL's so we cannot fixup the
-      # file names. On other hand 2013 and the earliers REQUIRE fixup cuz they use different DLL's
-      # for 32/64-bits builds and if for example you try to build 32-bits target on 64-bit host
-      # then required 32-bits DLL's are located somewhere in
-      #
-      # "C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\redist\x86\Microsoft.VC110.CRT"
-      #
-      if test "$VS_VERSION" -lt 2019; then
-        BASIC_FIXUP_PATH(MSVC_DLL)
-      fi
+      BASIC_FIXUP_PATH(MSVC_DLL)
       AC_MSG_CHECKING([for $DLL_NAME])
       AC_MSG_RESULT([$MSVC_DLL])
     else
