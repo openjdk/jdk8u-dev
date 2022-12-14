@@ -44,7 +44,7 @@ public class bug6632953 {
                         : UIManager.getInstalledLookAndFeels()) {
                     try {
                         UIManager.setLookAndFeel(lafInfo.getClassName());
-                    } catch (final UnsupportedLookAndFeelException ignored) {
+                    } catch (UnsupportedLookAndFeelException ignored) {
                         continue;
                     } catch (Exception e) {
                         throw new RuntimeException(e);
