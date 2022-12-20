@@ -212,10 +212,10 @@ public class CgroupSubsystemFactory {
             Files.write(cgroupv2MntInfoZeroHierarchy, mntInfoCgroupsV2Only.getBytes());
 
             cgroupv2MntInfoDouble = Paths.get(existingDirectory.toString(), "mountinfo_cgroupv2_double");
-            Files.writeString(cgroupv2MntInfoDouble, mntInfoCgroupsV2Double);
+            Files.write(cgroupv2MntInfoDouble, mntInfoCgroupsV2Double.getBytes());
 
             cgroupv2MntInfoDouble2 = Paths.get(existingDirectory.toString(), "mountinfo_cgroupv2_double2");
-            Files.writeString(cgroupv2MntInfoDouble2, mntInfoCgroupsV2Double2);
+            Files.write(cgroupv2MntInfoDouble2, mntInfoCgroupsV2Double2.getBytes());
 
             cgroupv1CgInfoNonZeroHierarchy = Paths.get(existingDirectory.toString(), "cgroups_non_zero");
             Files.write(cgroupv1CgInfoNonZeroHierarchy, cgroupsNonZeroHierarchy.getBytes());
@@ -245,22 +245,22 @@ public class CgroupSubsystemFactory {
             Files.write(cgroupv1MntInfoDoubleCpuset2, mntInfoCgroupv1DoubleCpuset2.getBytes());
 
             cgroupv1MntInfoDoubleMemory = Paths.get(existingDirectory.toString(), "mnt_info_cgroupv1_double_memory");
-            Files.writeString(cgroupv1MntInfoDoubleMemory, mntInfoCgroupv1DoubleMemory);
+            Files.write(cgroupv1MntInfoDoubleMemory, mntInfoCgroupv1DoubleMemory.getBytes());
 
             cgroupv1MntInfoDoubleMemory2 = Paths.get(existingDirectory.toString(), "mnt_info_cgroupv1_double_memory2");
-            Files.writeString(cgroupv1MntInfoDoubleMemory2, mntInfoCgroupv1DoubleMemory2);
+            Files.write(cgroupv1MntInfoDoubleMemory2, mntInfoCgroupv1DoubleMemory2.getBytes());
 
             cgroupv1MntInfoDoubleCpu = Paths.get(existingDirectory.toString(), "mnt_info_cgroupv1_double_cpu");
-            Files.writeString(cgroupv1MntInfoDoubleCpu, mntInfoCgroupv1DoubleCpu);
+            Files.write(cgroupv1MntInfoDoubleCpu, mntInfoCgroupv1DoubleCpu.getBytes());
 
             cgroupv1MntInfoDoubleCpu2 = Paths.get(existingDirectory.toString(), "mnt_info_cgroupv1_double_cpu2");
-            Files.writeString(cgroupv1MntInfoDoubleCpu2, mntInfoCgroupv1DoubleCpu2);
+            Files.write(cgroupv1MntInfoDoubleCpu2, mntInfoCgroupv1DoubleCpu2.getBytes());
 
             cgroupv1MntInfoDoublePids = Paths.get(existingDirectory.toString(), "mnt_info_cgroupv1_double_pids");
-            Files.writeString(cgroupv1MntInfoDoublePids, mntInfoCgroupv1DoublePids);
+            Files.write(cgroupv1MntInfoDoublePids, mntInfoCgroupv1DoublePids.getBytes());
 
             cgroupv1MntInfoDoublePids2 = Paths.get(existingDirectory.toString(), "mnt_info_cgroupv1_double_pids2");
-            Files.writeString(cgroupv1MntInfoDoublePids2, mntInfoCgroupv1DoublePids2);
+            Files.write(cgroupv1MntInfoDoublePids2, mntInfoCgroupv1DoublePids2.getBytes());
 
             cgroupv1MntInfoSystemdOnly = Paths.get(existingDirectory.toString(), "mnt_info_cgroupv1_systemd_only");
             Files.write(cgroupv1MntInfoSystemdOnly, mntInfoCgroupsV1SystemdOnly.getBytes());
