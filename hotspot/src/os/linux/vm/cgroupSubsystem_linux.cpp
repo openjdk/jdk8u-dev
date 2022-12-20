@@ -121,15 +121,19 @@ void CgroupSubsystemFactory::set_controller_paths(CgroupInfo* cg_infos,
     // the main cgroup controllers most likely under /sys/fs/cgroup. In that
     // case pick the one under /sys/fs/cgroup and discard others.
     if (strstr(cg_infos[controller]._mount_path, "/sys/fs/cgroup") != cg_infos[controller]._mount_path) {
-      log_debug(os, container)("Duplicate %s controllers detected. Picking %s, skipping %s.",
-                               name, mount_path, cg_infos[controller]._mount_path);
+      if(PrintContainerInfo) {
+        tty->print_cr("Duplicate %s controllers detected. Picking %s, skipping %s.",
+                      name, mount_path, cg_infos[controller]._mount_path);
+      }
       os::free(cg_infos[controller]._mount_path);
       os::free(cg_infos[controller]._root_mount_path);
       cg_infos[controller]._mount_path = os::strdup(mount_path);
       cg_infos[controller]._root_mount_path = os::strdup(root_path);
     } else {
-      log_debug(os, container)("Duplicate %s controllers detected. Picking %s, skipping %s.",
-                               name, cg_infos[controller]._mount_path, mount_path);
+      if(PrintContainerInfo) {
+        tty->print_cr("Duplicate %s controllers detected. Picking %s, skipping %s.",
+                      name, cg_infos[controller]._mount_path, mount_path);
+      }
     }
   } else {
     cg_infos[controller]._mount_path = os::strdup(mount_path);
