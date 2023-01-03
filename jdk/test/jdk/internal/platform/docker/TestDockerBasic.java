@@ -25,8 +25,7 @@
  * @test
  * @bug 8293540
  * @summary Verify that -XshowSettings:system works
- * @requires docker.support
- * @library /test/lib
+ * @library /lib /
  * @run main/timeout=360 TestDockerBasic
  */
 
@@ -43,7 +42,7 @@ public class TestDockerBasic {
             return;
         }
 
-        DockerTestUtils.buildJdkContainerImage(imageName);
+        DockerTestUtils.buildJdkDockerImage(imageName, "Dockerfile-BasicTest", "jdk-docker");
 
         try {
             testXshowSettingsSystem(true);
