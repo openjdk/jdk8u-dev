@@ -45,7 +45,7 @@ public class TestMemoryAwareness {
     private static String getHostMaxMemory() throws Exception {
         DockerRunOptions opts = Common.newOpts(imageName);
         String goodMem = Common.run(opts).firstMatch("total physical memory: (\\d+)", 1);
-        assertNotNull(goodMem, "no match for 'total physical memory' in trace output");
+        Asserts.assertNotNull(goodMem, "no match for 'total physical memory' in trace output");
         return goodMem;
     }
 
