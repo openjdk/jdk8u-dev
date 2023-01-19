@@ -32,7 +32,7 @@ import jdk.jfr.Recording;
  * @summary Tests that it's possible to dump to /dev/null without a livelock
  * @key jfr
  * @requires vm.hasJFR
- * @library /test/lib
+ * @library /lib /
  * @run main/othervm -Xlog:jfr jdk.jfr.api.recording.dump.TestDumpDevNull
  */
 public class TestDumpDevNull {
