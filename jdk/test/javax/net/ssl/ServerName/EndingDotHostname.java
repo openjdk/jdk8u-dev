@@ -27,7 +27,7 @@
  * @summary Trailing dot in hostname causes TLS handshake to fail
  * @library /javax/net/ssl/templates
  * @run main/othervm EndingDotHostname
-*/
+ */
 
 import javax.net.ssl.*;
 import java.io.InputStream;
