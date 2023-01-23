@@ -33,7 +33,7 @@ import jdk.jfr.Recording;
  * @key jfr
  *
  * @library /lib /
- * @run main/othervm -Xlog:jfr jdk.jfr.api.recording.dump.TestDumpDevNull
+ * @run main/othervm jdk.jfr.api.recording.dump.TestDumpDevNull
  */
 public class TestDumpDevNull {
 
