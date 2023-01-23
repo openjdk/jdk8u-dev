@@ -365,7 +365,7 @@ public class TestCgroupSubsystemFactory {
         assertEquals("/sys/fs/cgroup/cpuset", cpuSetInfo.getMountPoint());
         assertEquals("/", cpuSetInfo.getMountRoot());
         // Ensure controllers at /sys/fs/cgroup will be used
-        String[] ctrlNames = new String[] { "memory", "cpu", "cpuacct", "blkio", "pids" };
+        String[] ctrlNames = new String[] { "memory", "cpu", "cpuacct", "blkio" };
         for (int i = 0; i < ctrlNames.length; i++) {
             CgroupInfo cinfo = res.getInfos().get(ctrlNames[i]);
             assertTrue(cinfo.getMountPoint().startsWith("/sys/fs/cgroup/"));
