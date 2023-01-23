@@ -23,7 +23,7 @@
 
 package jdk.jfr.api.recording.dump;
 
-import java.nio.file.Path;
+import java.io.File;
 
 import jdk.jfr.Recording;
 
@@ -39,7 +39,7 @@ public class TestDumpDevNull {
 
     public static void main(String[] args) throws Exception {
         try (Recording r1 = new Recording()) {
-            r1.setDestination(Path.of("/dev/null"));
+            r1.setDestination(new File("/dev/null").toPath());
             r1.start();
             // Force a chunk rotation which ensures that jdk.jfr.internal.ChunkChannel
             // invokes FileChannel::transferFrom(ReadableByteChannel, position, count) twice.
