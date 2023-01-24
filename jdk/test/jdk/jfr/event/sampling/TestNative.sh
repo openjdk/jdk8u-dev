@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -exo pipefail
+set -ex
 
 OS=`uname -s`
 if [  "${OS}" != "Linux" -a "${OS}" != "Darwin" ]; then
