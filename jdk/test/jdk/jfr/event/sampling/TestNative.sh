@@ -3,26 +3,26 @@
 set -ex
 
 OS=`uname -s`
-if [  "${OS}" != "Linux" -a "${OS}" != "Darwin" ]; then
+if test  "${OS}" != "Linux" -a "${OS}" != "Darwin" ; then
     echo "This is a Linux/MacOSX only test"
     exit 0;
 fi
 
-if [ "x$TESTGCC" == "x" ]; then
+if test "x$TESTGCC" == "x" ; then
   TESTGCC=$(readlink -f $(which gcc))
 fi
 
-if [ "x$TESTGCC" == "x" ]; then
+if test "x$TESTGCC" == "x" ; then
   echo "WARNING: gcc not found. Cannot execute test." 2>&1
   exit 1;
 fi
 
-if [ "x$TESTROOT" == "x" ]; then
+if test "x$TESTROOT" == "x" ; then
   echo "TESTROOT pointintg to top level sources is not set. that is fatal"
   exit 2;
 fi
 
-if [ "x$TESTJAVA" == "x" ]; then
+if test "x$TESTJAVA" == "x" ; then
   TESTJAVA=$(dirname $(dirname $(readlink -f $(which java))))
 fi
 
