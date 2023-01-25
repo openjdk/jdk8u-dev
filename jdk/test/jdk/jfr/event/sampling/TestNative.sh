@@ -8,21 +8,21 @@ if [  "${OS}" != "Linux" -a "${OS}" != "Darwin" ]; then
     exit 0;
 fi
 
-if [ "x$TESTGCC" == "x" ]; then
+if [ "x$TESTGCC" = "x" ]; then
   TESTGCC=$(readlink -f $(which gcc))
 fi
 
-if [ "x$TESTGCC" == "x" ]; then
+if [ "x$TESTGCC" = "x" ]; then
   echo "WARNING: gcc not found. Cannot execute test." 2>&1
   exit 1;
 fi
 
-if [ "x$TESTROOT" == "x" ]; then
+if [ "x$TESTROOT" = "x" ]; then
   echo "TESTROOT pointintg to top level sources is not set. that is fatal"
   exit 2;
 fi
 
-if [ "x$TESTJAVA" == "x" ]; then
+if [ "x$TESTJAVA" = "x" ]; then
   TESTJAVA=$(dirname $(dirname $(readlink -f $(which java))))
 fi
 
