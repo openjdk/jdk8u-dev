@@ -29,9 +29,16 @@ fi
 JDK_TOPDIR="${TESTROOT}/.."
 JAVAC="${TESTJAVA}/bin/javac"
 JAVA="${TESTJAVA}/bin/java"
+TEST_ENV_SH="${JDK_TOPDIR}/../hotspot/test/test_env.sh"
+
+ls -l "${TEST_ENV_SH}"
+set +e
+  source "${TEST_ENV_SH}"
+set -e
 
 "${TESTGCC}" \
     -shared \
+    ${CFLAGBITS} \
     -o ${TESTCLASSES}/libTestNative.so \
     -I${JDK_TOPDIR}/src/share/bin \
     -I${JDK_TOPDIR}/src/share/javavm/export \
