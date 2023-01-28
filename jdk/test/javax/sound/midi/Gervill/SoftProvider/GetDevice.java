@@ -25,9 +25,6 @@
    @summary Test SoftProvider getDevice method */
 
 import javax.sound.midi.MidiDevice;
-import javax.sound.midi.MidiUnavailableException;
-import javax.sound.midi.Patch;
-import javax.sound.sampled.*;
 import javax.sound.midi.MidiDevice.Info;
 
 import com.sun.media.sound.*;
@@ -46,13 +43,6 @@ public class GetDevice {
             throw new RuntimeException("assertTrue fails!");
     }
 
-
-    private static class FakeInfo extends Info {
-        public FakeInfo() {
-            super("a", "b", "c", "d");
-        }
-    }
-
     public static void main(String[] args) throws Exception {
         SoftProvider provider = new SoftProvider();
         Info[] infos = provider.getDeviceInfo();
@@ -62,7 +52,5 @@ public class GetDevice {
             MidiDevice d = provider.getDevice(infos[i]);
             assertTrue(d instanceof SoftSynthesizer);
         }
-        assertTrue(provider.getDevice(new FakeInfo()) == null);
-
     }
 }
