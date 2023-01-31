@@ -38,6 +38,11 @@ import jdk.jfr.Recording;
 public class TestDumpDevNull {
 
     public static void main(String[] args) throws Exception {
+        String os = System.getProperty("os.name").toLowerCase();
+        if (os.startsWith("win")) {
+          System.out.println("Skipping TestDumpDevNull on windows: it uses /dev/null which is not present on windows");
+          System.exit(0);
+        }
         try (Recording r1 = new Recording()) {
             r1.setDestination(new File("/dev/null").toPath());
             r1.start();
