@@ -35,7 +35,7 @@ import sun.security.ssl.SupportedGroupsExtension.NamedGroupType;
 import static sun.security.ssl.SupportedGroupsExtension.NamedGroupType.*;
 
 /**
- * Enum for SSL/(D)TLS cipher suites
+ * Enum for SSL/TLS cipher suites
  *
  * Please refer to the "TLS Cipher Suite Registry" section for more details
  * about each cipher suite:
