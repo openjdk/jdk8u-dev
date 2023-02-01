@@ -27,6 +27,8 @@ import java.io.File;
 
 import jdk.jfr.Recording;
 
+import jdk.test.lib.Platform;
+
 /**
  * @test
  * @summary Tests that it's possible to dump to /dev/null without a livelock
@@ -38,7 +40,7 @@ import jdk.jfr.Recording;
 public class TestDumpDevNull {
 
     public static void main(String[] args) throws Exception {
-        if (jdk.testlibrary.Platform.isWindows()) {
+        if (Platform.isWindows()) {
           System.out.println("Skipping TestDumpDevNull on windows: it uses /dev/null which is not present on windows");
           System.exit(0);
         }
