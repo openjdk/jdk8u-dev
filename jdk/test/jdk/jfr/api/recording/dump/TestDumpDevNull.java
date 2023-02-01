@@ -32,14 +32,13 @@ import jdk.jfr.Recording;
  * @summary Tests that it's possible to dump to /dev/null without a livelock
  * @key jfr
  *
- * @library /lib /
+ * @library /lib / /testlibrary
  * @run main/othervm jdk.jfr.api.recording.dump.TestDumpDevNull
  */
 public class TestDumpDevNull {
 
     public static void main(String[] args) throws Exception {
-        String os = System.getProperty("os.name").toLowerCase();
-        if (os.startsWith("win")) {
+        if (jdk.testlibrary.Platform.isWindows()) {
           System.out.println("Skipping TestDumpDevNull on windows: it uses /dev/null which is not present on windows");
           System.exit(0);
         }
