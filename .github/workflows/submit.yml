@@ -441,7 +441,7 @@ jobs:
         run: >
           ${{ env.cross_conf_env }}
           bash configure
-          --with-conf-name=linux-${{ matrix.gnu-arch }}-hotspot
+          --with-conf-name=linux-${{ matrix.gnu-arch }}
           ${{ matrix.flags }}
           ${{ env.cross_flags }}
           --with-user-release-suffix=${GITHUB_ACTOR}-${GITHUB_SHA}
@@ -452,7 +452,7 @@ jobs:
         working-directory: jdk
 
       - name: Build
-        run: make CONF_NAME=linux-${{ matrix.gnu-arch }}-hotspot hotspot
+        run: make CONF_NAME=linux-${{ matrix.gnu-arch }} LOG_LEVEL=debug images
         working-directory: jdk
 
   linux_x86_build:
