@@ -27,23 +27,17 @@ import java.io.File;
 
 import jdk.jfr.Recording;
 
-import jdk.test.lib.Platform;
-
 /**
  * @test
  * @summary Tests that it's possible to dump to /dev/null without a livelock
  * @key jfr
- *
+ * @requires (os.family != "windows")
  * @library /lib /
  * @run main/othervm jdk.jfr.api.recording.dump.TestDumpDevNull
  */
 public class TestDumpDevNull {
 
     public static void main(String[] args) throws Exception {
-        if (Platform.isWindows()) {
-          System.out.println("Skipping TestDumpDevNull on windows: it uses /dev/null which is not present on windows");
-          System.exit(0);
-        }
         try (Recording r1 = new Recording()) {
             r1.setDestination(new File("/dev/null").toPath());
             r1.start();
