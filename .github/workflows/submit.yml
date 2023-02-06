@@ -447,7 +447,6 @@ jobs:
           --with-user-release-suffix=${GITHUB_ACTOR}-${GITHUB_SHA}
           --with-build-number=b00
           --with-boot-jdk=${BOOT_JDK}
-          --disable-headful
           --with-zlib=bundled
         working-directory: jdk
 
