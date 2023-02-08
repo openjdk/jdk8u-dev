@@ -290,9 +290,7 @@ public enum SSLExampleCert {
         @Override
         public InetAddress[] lookupAllHostAddr(String hostName) throws UnknownHostException {
                 if ("www.example.com".equals(hostName) || "www.example.com.".equals(hostName)) {
-                        final byte[] arrayOfByte = sun.net.util.IPAddressUtil.textToNumericFormatV4("127.0.0.1");
-                        final InetAddress address = InetAddress.getByAddress(hostName, arrayOfByte);
-                        return new InetAddress[] { address };
+                        return new InetAddress[] { InetAddress.getLoopbackAddress() };
                 } else {
                         throw new UnknownHostException();
                 }
