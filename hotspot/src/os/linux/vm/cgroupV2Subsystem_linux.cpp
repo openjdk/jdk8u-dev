@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020, Red Hat Inc.
+ * Copyright (c) 2020, 2022, Red Hat Inc.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -36,7 +36,7 @@
  */
 int CgroupV2Subsystem::cpu_shares() {
   GET_CONTAINER_INFO(int, _unified, "/cpu.weight",
-                     "Raw value for CPU shares is: %d", "%d", shares);
+                     "Raw value for CPU Shares is: %d", "%d", shares);
   // Convert default value of 100 to no shares setup
   if (shares == 100) {
     if (PrintContainerInfo) {
@@ -82,11 +82,11 @@ int CgroupV2Subsystem::cpu_shares() {
 
 /* cpu_quota
  *
- * Return the number of milliseconds per period
+ * Return the number of microseconds per period
  * process is guaranteed to run.
  *
  * return:
- *    quota time in milliseconds
+ *    quota time in microseconds
  *    -1 for no quota
  *    OSCONTAINER_ERROR for not supported
  */
@@ -161,7 +161,7 @@ jlong CgroupV2Subsystem::memory_max_usage_in_bytes() {
 }
 
 char* CgroupV2Subsystem::mem_soft_limit_val() {
-  GET_CONTAINER_INFO_CPTR(cptr, _unified, "/memory.high",
+  GET_CONTAINER_INFO_CPTR(cptr, _unified, "/memory.low",
                          "Memory Soft Limit is: %s", "%s", mem_soft_limit_str, 1024);
   if (mem_soft_limit_str == NULL) {
     return NULL;
@@ -169,9 +169,20 @@ char* CgroupV2Subsystem::mem_soft_limit_val() {
   return os::strdup(mem_soft_limit_str);
 }
 
+// Note that for cgroups v2 the actual limits set for swap and
+// memory live in two different files, memory.swap.max and memory.max
+// respectively. In order to properly report a cgroup v1 like
+// compound value we need to sum the two values. Setting a swap limit
+// without also setting a memory limit is not allowed.
 jlong CgroupV2Subsystem::memory_and_swap_limit_in_bytes() {
   char* mem_swp_limit_str = mem_swp_limit_val();
-  return limit_from_str(mem_swp_limit_str);
+  jlong swap_limit = limit_from_str(mem_swp_limit_str);
+  if (swap_limit >= 0) {
+    jlong memory_limit = read_memory_limit_in_bytes();
+    assert(memory_limit >= 0, "swap limit without memory limit?");
+    return memory_limit + swap_limit;
+  }
+  return swap_limit;
 }
 
 char* CgroupV2Subsystem::mem_swp_limit_val() {

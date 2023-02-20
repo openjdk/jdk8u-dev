@@ -53,11 +53,25 @@
  */
 #define PER_CPU_SHARES 1024
 
+#define CGROUPS_V1               1
+#define CGROUPS_V2               2
+#define INVALID_CGROUPS_V2       3
+#define INVALID_CGROUPS_V1       4
+#define INVALID_CGROUPS_NO_MOUNT 5
+#define INVALID_CGROUPS_GENERIC  6
+
+// Four controllers: cpu, cpuset, cpuacct, memory
+#define CG_INFO_LENGTH 4
+#define CPUSET_IDX     0
+#define CPU_IDX        1
+#define CPUACCT_IDX    2
+#define MEMORY_IDX     3
+
 typedef char * cptr;
 
 class CgroupController: public CHeapObj<mtInternal> {
   public:
-    virtual char *subsystem_path();
+    virtual char *subsystem_path() = 0;
 };
 
 PRAGMA_DIAG_PUSH
@@ -155,8 +169,12 @@ PRAGMA_DIAG_POP
                                      NULL,                                \
                                      scan_fmt,                            \
                                      &variable);                          \
-  if (err != 0)                                                           \
+  if (err != 0) {                                                         \
+    if (PrintContainerInfo) {                                             \
+      tty->print_cr(logstring, (return_type) OSCONTAINER_ERROR);          \
+    }                                                                     \
     return (return_type) OSCONTAINER_ERROR;                               \
+  }                                                                       \
                                                                           \
   if (PrintContainerInfo) {                                               \
     tty->print_cr(logstring, variable);                                   \
@@ -199,8 +217,6 @@ PRAGMA_DIAG_POP
   }                                                                       \
 }
 
-// Four controllers: cpu, cpuset, cpuacct, memory
-#define CG_INFO_LENGTH 4
 
 class CachedMetric : public CHeapObj<mtInternal>{
   private:
@@ -246,38 +262,82 @@ class CgroupSubsystem: public CHeapObj<mtInternal> {
     jlong memory_limit_in_bytes();
     int active_processor_count();
 
-    virtual int cpu_quota();
-    virtual int cpu_period();
-    virtual int cpu_shares();
-    virtual jlong memory_usage_in_bytes();
-    virtual jlong memory_and_swap_limit_in_bytes();
-    virtual jlong memory_soft_limit_in_bytes();
-    virtual jlong memory_max_usage_in_bytes();
-    virtual char * cpu_cpuset_cpus();
-    virtual char * cpu_cpuset_memory_nodes();
-    virtual jlong read_memory_limit_in_bytes();
-    virtual const char * container_type();
-    virtual CachingCgroupController* memory_controller();
-    virtual CachingCgroupController* cpu_controller();
+    virtual int cpu_quota() = 0;
+    virtual int cpu_period() = 0;
+    virtual int cpu_shares() = 0;
+    virtual jlong memory_usage_in_bytes() = 0;
+    virtual jlong memory_and_swap_limit_in_bytes() = 0;
+    virtual jlong memory_soft_limit_in_bytes() = 0;
+    virtual jlong memory_max_usage_in_bytes() = 0;
+    virtual char * cpu_cpuset_cpus() = 0;
+    virtual char * cpu_cpuset_memory_nodes() = 0;
+    virtual jlong read_memory_limit_in_bytes() = 0;
+    virtual const char * container_type() = 0;
+    virtual CachingCgroupController* memory_controller() = 0;
+    virtual CachingCgroupController* cpu_controller() = 0;
+};
+
+// Utility class for storing info retrieved from /proc/cgroups,
+// /proc/self/cgroup and /proc/self/mountinfo
+// For reference see man 7 cgroups and CgroupSubsystemFactory
+class CgroupInfo : public StackObj {
+  friend class CgroupSubsystemFactory;
+  friend class WhiteBox;
+
+  private:
+    char* _name;
+    int _hierarchy_id;
+    bool _enabled;
+    bool _data_complete;    // indicating cgroup v1 data is complete for this controller
+    char* _cgroup_path;     // cgroup controller path from /proc/self/cgroup
+    char* _root_mount_path; // root mount path from /proc/self/mountinfo. Unused for cgroup v2
+    char* _mount_path;      // mount path from /proc/self/mountinfo.
+
+  public:
+    CgroupInfo() {
+      _name = NULL;
+      _hierarchy_id = -1;
+      _enabled = false;
+      _data_complete = false;
+      _cgroup_path = NULL;
+      _root_mount_path = NULL;
+      _mount_path = NULL;
+    }
+
 };
 
 class CgroupSubsystemFactory: AllStatic {
+  friend class WhiteBox;
+
   public:
     static CgroupSubsystem* create();
-};
-
-// Class representing info in /proc/self/cgroup.
-// See man 7 cgroups
-class CgroupInfo : public StackObj {
-  friend class CgroupSubsystemFactory;
-
   private:
-  char* _name;
-  int _hierarchy_id;
-  bool _enabled;
-  char* _cgroup_path;
+    static inline bool is_cgroup_v2(u1* flags) {
+       return *flags == CGROUPS_V2;
+    }
 
+#ifdef ASSERT
+    static inline bool is_valid_cgroup(u1* flags) {
+       return *flags == CGROUPS_V1 || *flags == CGROUPS_V2;
+    }
+    static inline bool is_cgroup_v1(u1* flags) {
+       return *flags == CGROUPS_V1;
+    }
+#endif
+
+    static void set_controller_paths(CgroupInfo* cg_infos,
+                                     int controller,
+                                     const char* name,
+                                     char* mount_path,
+                                     char* root_path);
+    // Determine the cgroup type (version 1 or version 2), given
+    // relevant paths to files. Sets 'flags' accordingly.
+    static bool determine_type(CgroupInfo* cg_infos,
+                               const char* proc_cgroups,
+                               const char* proc_self_cgroup,
+                               const char* proc_self_mountinfo,
+                               u1* flags);
+    static void cleanup(CgroupInfo* cg_infos);
 };
-
 
 #endif // CGROUP_SUBSYSTEM_LINUX_HPP
