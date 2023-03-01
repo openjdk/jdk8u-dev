@@ -238,23 +238,21 @@ public class LayoutFocusTraversalPolicy extends SortingFocusTraversalPolicy
             if (SunToolkit.isInstanceOf(aComponent,
                                                  "javax.swing.JToggleButton")) {
                 ButtonModel buttonModel = ((JToggleButton) aComponent).getModel();
-                if (buttonModel instanceof DefaultButtonModel) {
-                    JToggleButton.ToggleButtonModel model = (JToggleButton.ToggleButtonModel) buttonModel;
-                    if (model != null) {
-                        ButtonGroup group = model.getGroup();
-                        if (group != null) {
-                            Enumeration<AbstractButton> elements =
-                                                                group.getElements();
-                            int idx = 0;
-                            while (elements.hasMoreElements()) {
-                                AbstractButton member = elements.nextElement();
-                                if (member.isVisible() && member.isDisplayable() &&
-                                    member.isEnabled() && member.isFocusable()) {
-                                    if (member == aComponent) {
-                                        return idx == 0;
-                                    }
-                                    idx++;
+                if (buttonModel != null && buttonModel instanceof DefaultButtonModel) {
+                    DefaultButtonModel model = (DefaultButtonModel) buttonModel;
+                    ButtonGroup group = model.getGroup();
+                    if (group != null) {
+                        Enumeration<AbstractButton> elements =
+                                                            group.getElements();
+                        int idx = 0;
+                        while (elements.hasMoreElements()) {
+                            AbstractButton member = elements.nextElement();
+                            if (member.isVisible() && member.isDisplayable() &&
+                                member.isEnabled() && member.isFocusable()) {
+                                if (member == aComponent) {
+                                    return idx == 0;
                                 }
+                                idx++;
                             }
                         }
                     }
