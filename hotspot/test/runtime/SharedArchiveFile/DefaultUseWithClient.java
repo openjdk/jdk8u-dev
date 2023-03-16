@@ -38,7 +38,6 @@ public class DefaultUseWithClient {
         String fileName = "test.jsa";
 
         // On 32-bit windows CDS should be on by default in "-client" config
-        // Skip this test on any other platform
 
         // create the archive
         ProcessBuilder pb = ProcessTools.createJavaProcessBuilder(
