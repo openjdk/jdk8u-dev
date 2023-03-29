@@ -508,7 +508,7 @@ public:
   }
 
   // Sweeper support
-  void nmethods_do(CodeBlobClosure* cf);
+  virtual void nmethods_do(CodeBlobClosure* cf);
 
   // jvmtiRedefineClasses support
   void metadata_do(void f(Metadata*));
