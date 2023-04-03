@@ -4349,3 +4349,35 @@ void OptoRuntime::generate_exception_blob() {
   _exception_blob =  ExceptionBlob::create(&buffer, oop_maps, SimpleRuntimeFrame::framesize >> 1);
 }
 #endif // COMPILER2
+
+#if defined(TARGET_COMPILER_gcc) && !defined(_WIN64)
+JRT_LEAF(jfloat, SharedRuntime::frem(jfloat x, jfloat y))
+  jfloat retval;
+  asm ("\
+1:               \n\
+fprem            \n\
+fnstsw %%ax      \n\
+test   $0x4,%%ah \n\
+jne    1b        \n\
+"
+    :"=t"(retval)
+    :"0"(x), "u"(y)
+    :"cc", "ax");
+  return retval;
+JRT_END
+
+JRT_LEAF(jdouble, SharedRuntime::drem(jdouble x, jdouble y))
+  jdouble retval;
+  asm ("\
+1:               \n\
+fprem            \n\
+fnstsw %%ax      \n\
+test   $0x4,%%ah \n\
+jne    1b        \n\
+"
+    :"=t"(retval)
+    :"0"(x), "u"(y)
+    :"cc", "ax");
+  return retval;
+JRT_END
+#endif // TARGET_COMPILER_gcc && !_WIN64

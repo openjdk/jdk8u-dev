@@ -3537,3 +3537,35 @@ RuntimeStub* SharedRuntime::generate_resolve_blob(address destination, const cha
   // frame_size_words or bytes??
   return RuntimeStub::new_runtime_stub(name, &buffer, frame_complete, frame_size_words, oop_maps, true);
 }
+
+#if defined(TARGET_COMPILER_gcc) && !defined(_WIN64)
+JRT_LEAF(jfloat, SharedRuntime::frem(jfloat x, jfloat y))
+  jfloat retval;
+  asm ("\
+1:               \n\
+fprem            \n\
+fnstsw %%ax      \n\
+test   $0x4,%%ah \n\
+jne    1b        \n\
+"
+    :"=t"(retval)
+    :"0"(x), "u"(y)
+    :"cc", "ax");
+  return retval;
+JRT_END
+
+JRT_LEAF(jdouble, SharedRuntime::drem(jdouble x, jdouble y))
+  jdouble retval;
+  asm ("\
+1:               \n\
+fprem            \n\
+fnstsw %%ax      \n\
+test   $0x4,%%ah \n\
+jne    1b        \n\
+"
+    :"=t"(retval)
+    :"0"(x), "u"(y)
+    :"cc", "ax");
+  return retval;
+JRT_END
+#endif // TARGET_COMPILER_gcc && !_WIN64
