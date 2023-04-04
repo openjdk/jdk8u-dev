@@ -51,12 +51,12 @@ public final class CheckCommonColors {
         frame.setSize(400, 400);
         frame.setLocationRelativeTo(null);
         frame.setUndecorated(true);
-        for (final Color color : List.of(Color.WHITE, Color.LIGHT_GRAY,
+        for (final Color color : new Color[]{Color.WHITE, Color.LIGHT_GRAY,
                                          Color.GRAY, Color.DARK_GRAY,
                                          Color.BLACK, Color.RED, Color.PINK,
                                          Color.ORANGE, Color.YELLOW,
                                          Color.GREEN, Color.MAGENTA, Color.CYAN,
-                                         Color.BLUE)) {
+                                         Color.BLUE}) {
             frame.dispose();
             frame.setBackground(color);
             frame.setVisible(true);
