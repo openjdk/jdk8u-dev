@@ -289,6 +289,7 @@ JRT_LEAF(jfloat, SharedRuntime::frem(jfloat x, jfloat y))
   return ((jfloat)fmod((double)x,(double)y));
 JRT_END
 
+
 JRT_LEAF(jdouble, SharedRuntime::drem(jdouble x, jdouble y))
 #ifdef _WIN64
   union { jdouble d; julong l; } xbits, ybits;
