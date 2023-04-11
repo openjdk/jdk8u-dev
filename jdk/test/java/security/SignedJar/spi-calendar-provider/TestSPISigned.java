@@ -105,7 +105,7 @@ public class TestSPISigned {
             // run test, which must not throw a NPE
             List<String> testRun = new ArrayList<>();
             String extDir = System.getProperty("java.home") + File.separator + "lib" + File.separator + "ext";
-            testRun.add("-Djava.ext.dirs=" + System.getProperty("java.home") + extDir + File.pathSeparator + MODS_DIR.toAbsolutePath().toString());
+            testRun.add("-Djava.ext.dirs=" + extDir + File.pathSeparator + MODS_DIR.toAbsolutePath().toString());
             testRun.add("-cp");
             String classPath = System.getProperty("java.class.path");
             testRun.add(classPath);
