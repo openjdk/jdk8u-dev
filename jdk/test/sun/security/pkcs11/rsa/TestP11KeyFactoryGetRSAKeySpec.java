@@ -40,7 +40,6 @@ import java.security.spec.*;
  * @run main/othervm TestP11KeyFactoryGetRSAKeySpec
  * @run main/othervm TestP11KeyFactoryGetRSAKeySpec sm rsakeys.ks.policy
  * @run main/othervm -DCUSTOM_P11_CONFIG_NAME=p11-nss-sensitive.txt -DNO_DEIMOS=true -DNO_DEFAULT=true TestP11KeyFactoryGetRSAKeySpec
- * @modules jdk.crypto.cryptoki
  */
 
 public class TestP11KeyFactoryGetRSAKeySpec extends PKCS11Test {
