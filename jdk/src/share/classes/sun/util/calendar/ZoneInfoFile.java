@@ -635,6 +635,16 @@ public final class ZoneInfoFile {
                     params[8] = 86400000;
                 }
 
+                // Note: known mismatching -> Africa/Cairo
+                // ZoneInfo :      startDayOfWeek=5     <= Thursday
+                //                 startTime=86400000   <= 24:00
+                // This:           startDayOfWeek=6     <= Friday
+                //                 startTime=0          <= 0:00
+                if (zoneId.equals("Africa/Cairo") &&
+                        params[7] == Calendar.FRIDAY && params[8] == 0) {
+                    params[7] = Calendar.THURSDAY;
+                    params[8] = SECONDS_PER_DAY * 1000;
+                }
             } else if (nTrans > 0) {  // only do this if there is something in table already
                 if (lastyear < LASTYEAR) {
                     // ZoneInfo has an ending entry for 2037
@@ -907,7 +917,6 @@ public final class ZoneInfoFile {
             this.dow = dowByte == 0 ? -1 : dowByte;
             this.secondOfDay = timeByte == 31 ? in.readInt() : timeByte * 3600;
             this.timeDefinition = (data & (3 << 12)) >>> 12;
-
             this.standardOffset = stdByte == 255 ? in.readInt() : (stdByte - 128) * 900;
             this.offsetBefore = beforeByte == 3 ? in.readInt() : standardOffset + beforeByte * 1800;
             this.offsetAfter = afterByte == 3 ? in.readInt() : standardOffset + afterByte * 1800;
