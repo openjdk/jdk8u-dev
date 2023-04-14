@@ -628,13 +628,6 @@ public final class ZoneInfoFile {
                     params[2] = 6;        // Friday
                     params[3] = 86400000; // 24h
                 }
-                //endDayOfWeek and endTime workaround
-                if (params[7] == 6 && params[8] == 0 &&
-                    (zoneId.equals("Africa/Cairo"))) {
-                    params[7] = 5;
-                    params[8] = 86400000;
-                }
-
                 // Note: known mismatching -> Africa/Cairo
                 // ZoneInfo :      startDayOfWeek=5     <= Thursday
                 //                 startTime=86400000   <= 24:00
