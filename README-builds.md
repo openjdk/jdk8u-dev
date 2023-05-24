@@ -472,8 +472,8 @@ happens, read more below in [the `configure` options](#configureoptions).
 
 Some examples:
 
->  **Windows 32bit build with freetype specified:**  
->  `bash ./configure --with-freetype=/cygdrive/c/freetype-i586 --with-target-
+>  **Windows 32bit build with msvcr-dll specified:**  
+>  `bash ./configure --with-msvcr-dll=/cygdrive/c/msvcr100.dll --with-target-
 bits=32`
 
 >  **Debug 64bit Build:**  
