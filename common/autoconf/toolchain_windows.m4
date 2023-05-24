@@ -152,12 +152,6 @@ AC_DEFUN([TOOLCHAIN_CHECK_POSSIBLE_VISUAL_STUDIO_ROOT],
 
       if test "x$VS_ENV_CMD" = x; then
         AC_MSG_NOTICE([Warning: None of $VCVARSFILES were found, Visual Studio installation not recognized. Ignoring])
-      else
-        # PLATFORM_TOOLSET is used during the compilation of the freetype sources
-        # (see 'LIB_BUILD_FREETYPE' in libraries.m4) and must be one of 'v100',
-        # 'v110' or 'v120' for VS 2010, 2012 or VS2013
-        eval PLATFORM_TOOLSET="\${VS_VS_PLATFORM_NAME_${VS_VERSION}}"
-
       fi
     fi
   fi
@@ -186,10 +180,6 @@ AC_DEFUN([TOOLCHAIN_CHECK_POSSIBLE_WIN_SDK_ROOT],
         else
           VS_ENV_ARGS="/x64"
         fi
-        # PLATFORM_TOOLSET is used during the compilation of the freetype sources (see
-        # 'LIB_BUILD_FREETYPE' in libraries.m4) and must be 'Windows7.1SDK' for Windows7.1SDK
-        # TODO: improve detection for other versions of SDK
-        eval PLATFORM_TOOLSET="\${VS_SDK_PLATFORM_NAME_${VS_VERSION}}"
       else
         AC_MSG_NOTICE([Found Windows SDK installation at $WIN_SDK_BASE using $METHOD])
         AC_MSG_NOTICE([Warning: Installation is broken, SetEnv.Cmd is missing. Ignoring])
@@ -298,7 +288,6 @@ AC_DEFUN([TOOLCHAIN_FIND_VISUAL_STUDIO],
     eval VCRUNTIME_1_NAME="\${VS_VCRUNTIME_1_${VS_VERSION}}"
     eval MSVCP_NAME="\${VS_MSVCP_${VS_VERSION}}"
     eval USE_UCRT="\${VS_USE_UCRT_${VS_VERSION}}"
-    eval PLATFORM_TOOLSET="\${VS_VS_PLATFORM_NAME_${VS_VERSION}}"
     VS_PATH="$TOOLCHAIN_PATH:$PATH"
 
     # Convert DEVKIT_VS_INCLUDE into windows style VS_INCLUDE so that it
