@@ -259,7 +259,7 @@ public final class OCSP {
                 out.write(bytes);
                 out.flush();
             }
-            
+
             // Check the response
             if (debug != null &&
                 con.getResponseCode() != HttpURLConnection.HTTP_OK) {
@@ -273,7 +273,7 @@ public final class OCSP {
                 contentLength = Integer.MAX_VALUE;
             }
             byte[] response = new byte[contentLength > 2048 ? 2048 : contentLength];
-            
+
             int total = 0;
             while (total < contentLength) {
                 int count = in.read(response, total, response.length - total);
