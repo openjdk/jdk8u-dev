@@ -31,6 +31,7 @@ import java.net.URI;
 import java.net.URL;
 import java.net.HttpURLConnection;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.security.cert.CertificateException;
 import java.security.cert.CertPathValidatorException;
 import java.security.cert.CertPathValidatorException.BasicReason;
@@ -225,20 +226,24 @@ public final class OCSP {
             List<Extension> extensions) throws IOException {
         OCSPRequest request = new OCSPRequest(certIds, extensions);
         byte[] bytes = request.encodeBytes();
+        String responder = responderURI.toString();
 
         if (debug != null) {
-            debug.println("connecting to OCSP service at: " + responderURI);
+            debug.println("connecting to OCSP service at: " + responder);
         }
 
         HttpURLConnection con = null;
 
         try {
-            String encodedGetReq = responderURI.toString() + "/" +
-                    URLEncoder.encode(Base64.getEncoder().encodeToString(bytes),
-                            "UTF-8");
+            StringBuilder encodedGetReq = new StringBuilder(responder);
+            if (!responder.endsWith("/")) {
+                encodedGetReq.append("/");
+            }
+            encodedGetReq.append(URLEncoder.encode(
+                    Base64.getEncoder().encodeToString(bytes), "UTF-8"));
 
             if (encodedGetReq.length() <= 255) {
-                URL url = new URL(encodedGetReq);
+                URL url = new URL(encodedGetReq.toString());
                 con = (HttpURLConnection)url.openConnection();
                 con.setDoOutput(true);
                 con.setDoInput(true);

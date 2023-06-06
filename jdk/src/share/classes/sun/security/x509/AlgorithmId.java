@@ -291,7 +291,7 @@ public class AlgorithmId implements Serializable, DerEncoder {
      *
      * @return DER encoded parameters, or null not present.
      */
-    public byte[] getEncodedParams() throws IOException {
+    public byte[] getEncodedParams() {
         return (encodedParams == null || algid.equals(specifiedWithECDSA_oid))
                 ? null
                 : encodedParams.clone();
@@ -1070,6 +1070,33 @@ public class AlgorithmId implements Serializable, DerEncoder {
         return null;
     }
 
+    /**
+     * Returns the default signature algorithm for a private key. The digest
+     * part might evolve with time. Remember to update the spec of
+     * {@link jdk.security.jarsigner.JarSigner.Builder#getDefaultSignatureAlgorithm(PrivateKey)}
+     * if updated.
+     *
+     * @param k cannot be null
+     * @return the default alg, might be null if unsupported
+     */
+    public static String getDefaultSigAlgForKey(PrivateKey k) {
+        switch (k.getAlgorithm().toUpperCase(Locale.ENGLISH)) {
+            case "EC":
+                return ecStrength(KeyUtil.getKeySize(k))
+                    + "withECDSA";
+            case "DSA":
+                return ifcFfcStrength(KeyUtil.getKeySize(k))
+                    + "withDSA";
+            case "RSA":
+                return ifcFfcStrength(KeyUtil.getKeySize(k))
+                    + "withRSA";
+            case "RSASSA-PSS":
+                return "RSASSA-PSS";
+            default:
+                return null;
+        }
+    }
+
     // Most commonly used PSSParameterSpec and AlgorithmId
     private static class PSSParamsHolder {
 
@@ -1142,6 +1169,17 @@ public class AlgorithmId implements Serializable, DerEncoder {
             }
         } else {
             return null;
+        }
+    }
+
+    // Values from SP800-57 part 1 rev 4 tables 2 and 3
+    private static String ecStrength (int bitLength) {
+        if (bitLength >= 512) { // 256 bits of strength
+            return "SHA512";
+        } else if (bitLength >= 384) {  // 192 bits of strength
+            return "SHA384";
+        } else { // 128 bits of strength and less
+            return "SHA256";
         }
     }
 
