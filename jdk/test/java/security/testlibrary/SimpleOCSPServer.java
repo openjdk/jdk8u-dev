@@ -327,7 +327,7 @@ public class SimpleOCSPServer {
      * @return the hexdump of the byte array
      */
     private static String dumpHexBytes(byte[] data) {
-        return dumpHexBytes(data, 16, "\n", " ");
+        return dumpHexBytes(data, data.length, 16, "\n", " ");
     }
 
     /**
@@ -341,11 +341,11 @@ public class SimpleOCSPServer {
      *
      * @return The hexdump of the byte array
      */
-    private static String dumpHexBytes(byte[] data, int itemsPerLine,
-            String lineDelim, String itemDelim) {
+    private static String dumpHexBytes(byte[] data, int dataLen,
+            int itemsPerLine, String lineDelim, String itemDelim) {
         StringBuilder sb = new StringBuilder();
         if (data != null) {
-            for (int i = 0; i < data.length; i++) {
+            for (int i = 0; i < dataLen; i++) {
                 if (i % itemsPerLine == 0 && i != 0) {
                     sb.append(lineDelim);
                 }
@@ -495,6 +495,7 @@ public class SimpleOCSPServer {
             throws NoSuchAlgorithmException {
         if (!started) {
             sigAlgId = AlgorithmId.get(algName);
+            log("Signature algorithm set to " + sigAlgId.getName());
         }
     }
 
@@ -558,6 +559,8 @@ public class SimpleOCSPServer {
     public void setDisableContentLength(boolean isDisabled) {
         if (!started) {
             omitContentLength = isDisabled;
+            log("Response Content-Length field " +
+                    (isDisabled ? "disabled" : "enabled"));
         }
     }
 
@@ -740,12 +743,12 @@ public class SimpleOCSPServer {
                     if (headerTokens[0] != null) {
                         log("Received incoming HTTP " + headerTokens[0] +
                                 " from " + peerSockAddr);
-                        switch (headerTokens[0]) {
+                        switch (headerTokens[0].toUpperCase()) {
                             case "POST":
                                 ocspReq = parseHttpOcspPost(in);
                                 break;
                             case "GET":
-                                ocspReq = parseHttpOcspGet(headerTokens);
+                                ocspReq = parseHttpOcspGet(headerTokens, in);
                                 break;
                             default:
                                 respStat = ResponseStatus.MALFORMED_REQUEST;
@@ -779,6 +782,9 @@ public class SimpleOCSPServer {
                     ocspResp = new LocalOcspResponse(respStat);
                 }
                 sendResponse(out, ocspResp);
+                out.flush();
+
+                log("Closing " + ocspSocket);
             } catch (IOException | CertificateException exc) {
                 err(exc);
             }
@@ -876,6 +882,8 @@ public class SimpleOCSPServer {
          *
          * @param headerTokens the individual String tokens from the first
          * line of the HTTP GET.
+         * @param inStream the input stream from the socket bound to this
+         * {@code OcspHandler}.
          *
          * @return the OCSP Request as a {@code LocalOcspRequest}
          *
@@ -884,8 +892,26 @@ public class SimpleOCSPServer {
          * @throws CertificateException if one or more of the certificates in
          * the OCSP request cannot be read/parsed.
          */
-        private LocalOcspRequest parseHttpOcspGet(String[] headerTokens)
-                throws IOException, CertificateException {
+        private LocalOcspRequest parseHttpOcspGet(String[] headerTokens,
+                InputStream inStream) throws IOException, CertificateException {
+            // Before we process the remainder of the GET URL, we should drain
+            // the InputStream of any other header data.  We (for now) won't
+            // use it, but will display the contents if logging is enabled.
+            boolean endOfHeader = false;
+            while (!endOfHeader) {
+                String[] lineTokens = readLine(inStream).split(":", 2);
+                // We expect to see a type and value pair delimited by a colon.
+                if (lineTokens[0].isEmpty()) {
+                    endOfHeader = true;
+                } else if (lineTokens.length == 2) {
+                    log(String.format("ReqHdr: %s: %s", lineTokens[0].trim(),
+                            lineTokens[1].trim()));
+                } else {
+                    // A colon wasn't found and token 0 should be the whole line
+                    log("ReqHdr: " + lineTokens[0].trim());
+                }
+            }
+            
             // We have already established headerTokens[0] to be "GET".
             // We should have the URL-encoded base64 representation of the
             // OCSP request in headerTokens[1].  We need to strip any leading
@@ -1206,10 +1232,14 @@ public class SimpleOCSPServer {
                 sb.append("CertId, Algorithm = ");
                 sb.append(cid.getHashAlgorithm()).append("\n");
                 sb.append("\tIssuer Name Hash: ");
-                sb.append(dumpHexBytes(cid.getIssuerNameHash(), 256, "", ""));
+                byte[] cidHashBuf = cid.getIssuerNameHash();
+                sb.append(dumpHexBytes(cidHashBuf, cidHashBuf.length,
+                        256, "", ""));
                 sb.append("\n");
                 sb.append("\tIssuer Key Hash: ");
-                sb.append(dumpHexBytes(cid.getIssuerKeyHash(), 256, "", ""));
+                cidHashBuf = cid.getIssuerKeyHash();
+                sb.append(dumpHexBytes(cidHashBuf, cidHashBuf.length,
+                        256, "", ""));
                 sb.append("\n");
                 sb.append("\tSerial Number: ").append(cid.getSerialNumber());
                 if (!extensions.isEmpty()) {
@@ -1549,10 +1579,14 @@ public class SimpleOCSPServer {
                 sb.append("CertId, Algorithm = ");
                 sb.append(certId.getHashAlgorithm()).append("\n");
                 sb.append("\tIssuer Name Hash: ");
-                sb.append(dumpHexBytes(certId.getIssuerNameHash(), 256, "", ""));
+                byte[] cidHashBuf = certId.getIssuerNameHash();
+                sb.append(dumpHexBytes(cidHashBuf, cidHashBuf.length,
+                        256, "", ""));
                 sb.append("\n");
                 sb.append("\tIssuer Key Hash: ");
-                sb.append(dumpHexBytes(certId.getIssuerKeyHash(), 256, "", ""));
+                cidHashBuf = certId.getIssuerKeyHash();
+                sb.append(dumpHexBytes(cidHashBuf, cidHashBuf.length,
+                        256, "", ""));
                 sb.append("\n");
                 sb.append("\tSerial Number: ").append(certId.getSerialNumber());
                 sb.append("\n");
