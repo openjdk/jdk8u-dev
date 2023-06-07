@@ -432,8 +432,8 @@ public class SSLSocketWithStapling {
         rootOcsp.acceptConnections();
 
         // Wait 5 seconds for server ready
-        boolean readyStatus = rootOcsp.awaitServerReady(5, TimeUnit.SECONDS);
-        if (!readyStatus) {
+        boolean rootOcspReady = rootOcsp.awaitServerReady(5, TimeUnit.SECONDS);
+        if (!rootOcspReady) {
             throw new RuntimeException("Server not ready");
         }
     }
@@ -650,8 +650,8 @@ public class SSLSocketWithStapling {
 
         // Wait 5 seconds for server ready
         // Wait up to 5 seconds for each server
-        boolean rootOcspReady = rootOcsp.awaitServerReady(5, TimeUnit.SECONDS);
-        boolean intOcspReady = intOcsp.awaitServerReady(5, TimeUnit.SECONDS);
+        rootOcspReady = rootOcsp.awaitServerReady(5, TimeUnit.SECONDS);
+        intOcspReady = intOcsp.awaitServerReady(5, TimeUnit.SECONDS);
         if (!rootOcspReady || !intOcspReady) {
             throw new RuntimeException("Server not ready");
         }
@@ -726,9 +726,11 @@ public class SSLSocketWithStapling {
     void doClientSide(ClientParameters cliParams) throws Exception {
 
         // Wait 5 seconds for server ready
-        boolean readyStatus = rootOcsp.awaitServerReady(5, TimeUnit.SECONDS);
-        if (!readyStatus) {
-            throw new RuntimeException("Server not ready");
+        for (int i = 0; (i < 100 && !serverReady); i++) {
+            Thread.sleep(50);
+        }
+        if (!serverReady) {
+            throw new RuntimeException("Server not ready yet");
         }
 
         // Selectively enable or disable the feature
@@ -1002,7 +1004,7 @@ public class SSLSocketWithStapling {
         intOcsp.start();
 
         // Wait 5 seconds for server ready
-        boolean readyStatus = rootOcsp.awaitServerReady(5, TimeUnit.SECONDS);
+        readyStatus = intOcsp.awaitServerReady(5, TimeUnit.SECONDS);
         if (!readyStatus) {
             throw new RuntimeException("Server not ready");
         }

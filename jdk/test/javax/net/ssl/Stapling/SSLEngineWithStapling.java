@@ -556,7 +556,7 @@ public class SSLEngineWithStapling {
         intOcsp.start();
 
         // Wait 5 seconds for server ready
-        boolean readyStatus = rootOcsp.awaitServerReady(5, TimeUnit.SECONDS);
+        readyStatus = intOcsp.awaitServerReady(5, TimeUnit.SECONDS);
         if (!readyStatus) {
             throw new RuntimeException("Server not ready");
         }

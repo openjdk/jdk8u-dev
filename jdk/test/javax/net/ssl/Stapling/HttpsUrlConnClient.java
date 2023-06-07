@@ -313,9 +313,11 @@ public class HttpsUrlConnClient {
     void doClientSide(ClientParameters cliParams) throws Exception {
 
         // Wait 5 seconds for server ready
-        boolean readyStatus = rootOcsp.awaitServerReady(5, TimeUnit.SECONDS);
-        if (!readyStatus) {
-            throw new RuntimeException("Server not ready");
+        for (int i = 0; (i < 100 && !serverReady); i++) {
+            Thread.sleep(50);
+        }
+        if (!serverReady) {
+            throw new RuntimeException("Server not ready yet");
         }
 
         // Selectively enable or disable the feature
@@ -611,11 +613,9 @@ public class HttpsUrlConnClient {
         intOcsp.start();
 
         // Wait 5 seconds for server ready
-        for (int i = 0; (i < 100 && !intOcsp.isServerReady()); i++) {
-            Thread.sleep(50);
-        }
-        if (!intOcsp.isServerReady()) {
-            throw new RuntimeException("Server not ready yet");
+        readyStatus = intOcsp.awaitServerReady(5, TimeUnit.SECONDS);
+        if (!readyStatus) {
+            throw new RuntimeException("Server not ready");
         }
 
         intOcspPort = intOcsp.getPort();
