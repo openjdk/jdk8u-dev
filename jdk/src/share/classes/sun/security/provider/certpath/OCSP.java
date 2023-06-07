@@ -264,31 +264,57 @@ public final class OCSP {
                 out.flush();
             }
 
-            // Check the response
-            if (debug != null &&
-                con.getResponseCode() != HttpURLConnection.HTTP_OK) {
-                debug.println("Received HTTP error: " + con.getResponseCode()
-                    + " - " + con.getResponseMessage());
+            // Check the response.  Non-200 codes will generate an exception
+            // but path validation may complete successfully if revocation info
+            // can be obtained elsewhere (e.g. CRL).
+            int respCode = con.getResponseCode();
+            if (respCode != HttpURLConnection.HTTP_OK) {
+                String msg = "Received HTTP error: " + respCode + " - " +
+                        con.getResponseMessage();
+                if (debug != null) {
+                    debug.println(msg);
+                }
+                throw new IOException(msg);
             }
-            InputStream in = con.getInputStream();
 
             int contentLength = con.getContentLength();
-            if (contentLength == -1) {
-                contentLength = Integer.MAX_VALUE;
-            }
-            byte[] response = new byte[contentLength > 2048 ? 2048 : contentLength];
-
-            int total = 0;
-            while (total < contentLength) {
-                int count = in.read(response, total, response.length - total);
-                if (count < 0)
-                    break;
-                total += count;
-                if (total == response.length && total < contentLength) {
-                    response = Arrays.copyOf(response, total * 2);
+            if (contentLength == -1){
+                // read all available content from the input stream
+                InputStream in = con.getInputStream();
+                final int initialBufferSize = 2048;
+                byte[] response = new byte[initialBufferSize];
+                int total = 0;
+                while (true) {
+                    int read = in.read(response, total, response.length - total);
+                    if (read == -1){
+                        break;
+                    }
+                    total += read;
+                    if (total == response.length){
+                        response = Arrays.copyOf(response, 2 * response.length);
+                    }
                 }
+                return Arrays.copyOf(response, total);
             }
-            return  Arrays.copyOf(response, total);
+            else {
+                // read exactly contentLength bytes from the input stream
+                InputStream in = con.getInputStream();
+                byte[] response = new byte[contentLength];
+                int total = 0;
+                while (total < contentLength) {
+                    int read = in.read(response, total, contentLength - total);
+                    if (read == -1){
+                        String msg = "ACTUAL content length = " + total + " vs. " +
+                            contentLength + " EXPECTED";
+                        if (debug != null) {
+                            debug.println(msg);
+                        }
+                        throw new IOException(msg);
+                    }
+                    total += read;
+                }
+                return response;
+            }
         } finally {
             if (con != null) {
                 con.disconnect();
