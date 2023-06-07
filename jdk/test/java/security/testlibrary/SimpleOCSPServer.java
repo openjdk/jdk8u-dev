@@ -911,7 +911,7 @@ public class SimpleOCSPServer {
                     log("ReqHdr: " + lineTokens[0].trim());
                 }
             }
-            
+
             // We have already established headerTokens[0] to be "GET".
             // We should have the URL-encoded base64 representation of the
             // OCSP request in headerTokens[1].  We need to strip any leading
