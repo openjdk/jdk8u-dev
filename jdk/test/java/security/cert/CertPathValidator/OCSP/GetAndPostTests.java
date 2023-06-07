@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2023, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -66,6 +66,7 @@ import java.util.HashMap;
 import java.util.Objects;
 import java.util.Set;
 import java.util.HashSet;
+import java.util.concurrent.TimeUnit;
 import sun.security.testlibrary.SimpleOCSPServer;
 import sun.security.util.DerOutputStream;
 import sun.security.util.DerValue;
@@ -118,13 +119,12 @@ public class GetAndPostTests {
             }} ));
             ocspResponder.start();
             // Wait 5 seconds for server ready
-            for (int i = 0; (i < 100 && !ocspResponder.isServerReady()); i++) {
-                Thread.sleep(50);
+            boolean readyStatus =
+                    ocspResponder.awaitServerReady(5, TimeUnit.SECONDS);
+            if (!readyStatus) {
+                throw new RuntimeException("Server not ready");
             }
-            if (!ocspResponder.isServerReady()) {
-                throw new RuntimeException("Server not ready yet");
-            }
-
+            
             int ocspPort = ocspResponder.getPort();
             URI ocspURI = new URI("http://localhost:" + ocspPort);
             System.out.println("Configured CPV to connect to " + ocspURI);
