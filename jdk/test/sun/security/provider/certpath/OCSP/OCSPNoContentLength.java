@@ -74,7 +74,7 @@ public class OCSPNoContentLength {
             createPKI();
 
             CertificateFactory cf = CertificateFactory.getInstance("X.509");
-            CertPath path = cf.generateCertPath( 
+            CertPath path = cf.generateCertPath(
                 Collections.unmodifiableList(
                     new ArrayList<Certificate>() {{ add(eeCert); }}
                 )

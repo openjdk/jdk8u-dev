@@ -124,7 +124,7 @@ public class GetAndPostTests {
             if (!readyStatus) {
                 throw new RuntimeException("Server not ready");
             }
-            
+
             int ocspPort = ocspResponder.getPort();
             URI ocspURI = new URI("http://localhost:" + ocspPort);
             System.out.println("Configured CPV to connect to " + ocspURI);
