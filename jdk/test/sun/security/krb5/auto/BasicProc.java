@@ -26,7 +26,7 @@
  * @bug 8009977 8186884 8201627
  * @summary A test to launch multiple Java processes using either Java GSS
  *          or native GSS
- * @library ../../../../java/security/testlibrary /lib/testlibrary
+ * @library ../../../../java/security/testlibrary /lib/testlibrary /lib
  * @compile -XDignore.symbol.file BasicProc.java
  * @run main/othervm -Dsun.net.spi.nameservice.provider.1=ns,mock BasicProc launcher
  */
@@ -40,6 +40,7 @@ import java.util.HashSet;
 import java.util.PropertyPermission;
 import java.util.Set;
 
+import jdk.test.lib.Platform;
 import jdk.testlibrary.Asserts;
 import org.ietf.jgss.Oid;
 import sun.security.krb5.Config;
@@ -229,12 +230,14 @@ public class BasicProc {
             pc.perm(new PropertyPermission("user.name", "read"));
         } else {
             Files.copy(Paths.get("base.ccache"), Paths.get(label + ".ccache"));
-            Set<PosixFilePermission> perms = new HashSet<>();
-            perms.add(PosixFilePermission.OWNER_READ);
-            perms.add(PosixFilePermission.OWNER_WRITE);
-            Files.setPosixFilePermissions(Paths.get(label + ".ccache"),
+            if (!Platform.isWindows()) {
+                Set<PosixFilePermission> perms = new HashSet<>();
+                perms.add(PosixFilePermission.OWNER_READ);
+                perms.add(PosixFilePermission.OWNER_WRITE);
+                Files.setPosixFilePermissions(Paths.get(label + ".ccache"),
                                           Collections.unmodifiableSet(perms));
-            pc.env("KRB5CCNAME", label + ".ccache");
+                pc.env("KRB5CCNAME", label + ".ccache");
+            }
             // Do not try system ktab if ccache fails
             pc.env("KRB5_KTNAME", "none");
         }
@@ -300,7 +303,7 @@ public class BasicProc {
                 .perm(new javax.security.auth.AuthPermission("doAs"));
         if (lib != null) {
             p.env("KRB5_CONFIG", CONF)
-                    .env("KRB5_TRACE", "/dev/stderr")
+                    .env("KRB5_TRACE", Platform.isWindows() ? "CON" : "/dev/stderr")
                     .prop("sun.security.jgss.native", "true")
                     .prop("sun.security.jgss.lib", lib)
                     .prop("javax.security.auth.useSubjectCredsOnly", "false")
