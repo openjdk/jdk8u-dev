@@ -1,12 +1,10 @@
 /*
- * Copyright (c) 2022, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2014, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 only, as
- * published by the Free Software Foundation.  Oracle designates this
- * particular file as subject to the "Classpath" exception as provided
- * by Oracle in the LICENSE file that accompanied this code.
+ * published by the Free Software Foundation.
  *
  * This code is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
@@ -22,10 +20,24 @@
  * or visit www.oracle.com if you need additional information or have any
  * questions.
  */
-package jdk.internal.platform;
 
-public class SystemMetrics {
-    public static Metrics instance() {
-        return null;
-    }
+import java.awt.color.*;
+
+/*
+ * @test
+ * @bug 8058969
+ * @summary test standard profiles loads with SecurityManager installed.
+ * @run main/othervm LoadProfileWithSM
+ */
+
+public class LoadProfileWithSM {
+
+    public static void main(String[] args) {
+        System.setSecurityManager(new SecurityManager());
+        ICC_Profile profile =
+            ((ICC_ColorSpace)(ColorSpace.getInstance(
+                ColorSpace.CS_GRAY))).getProfile();
+        /* request profile data in order to force profile loading */
+        profile.getData();
+   }
 }
