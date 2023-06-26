@@ -27,6 +27,7 @@ package sun.nio.cs.ext;
 
 import sun.nio.cs.AbstractCharsetProvider;
 import java.security.AccessController;
+
 import sun.security.action.GetPropertyAction;
 
 
@@ -112,9 +113,11 @@ public class ExtendedCharsets
                     "CP936"
                 });
 
+        // The definition of this charset may be overridden by the init method
+        // below, if the jdk.charset.GB18030 property is set
         charset("GB18030", "GB18030",
                 new String[] {
-                    GB18030.IS_2000 ? "gb18030-2000" : "gb18030-2022"
+                    "gb18030-2022"
                 });
 
         charset("GB2312", "EUC_CN",
@@ -1133,6 +1136,7 @@ public class ExtendedCharsets
     }
 
     private boolean initialized = false;
+    private boolean isGB18032_2000 = false;
 
     // If the sun.nio.cs.map property is defined on the command line we won't
     // see it in the system-properties table until after the charset subsystem
@@ -1181,6 +1185,8 @@ public class ExtendedCharsets
 
         String map = AccessController.doPrivileged(
             new GetPropertyAction("sun.nio.cs.map"));
+        boolean isGB18030_2000 = "2000".equals(AccessController.doPrivileged(
+                new GetPropertyAction("jdk.charset.GB18030")));
         boolean sjisIsMS932 = false;
         boolean iso2022jpIsMS50221 = false;
         boolean iso2022jpIsMS50220 = false;
@@ -1198,6 +1204,16 @@ public class ExtendedCharsets
                     iso2022jpIsMSISO2022JP = true;
                 }
             }
+        }
+        if (isGB18030_2000) {
+            deleteCharset("GB18030",
+                new String[] {
+                    "gb18030-2022"
+                });
+            charset("GB18030", "GB18030",
+                new String[] {
+                    "gb18030-2000"
+                });
         }
         if (sjisIsMS932) {
             deleteCharset("Shift_JIS",
@@ -1311,6 +1327,7 @@ public class ExtendedCharsets
                         "x-compound-text"
                     });
         }
+        this.isGB18032_2000 = isGB18030_2000;
         initialized = true;
     }
 
@@ -1318,5 +1335,15 @@ public class ExtendedCharsets
         if (instance == null)
             return null;
         return instance.aliases(charsetName);
+    }
+
+    static boolean isGB18030_2000() {
+        if (instance == null) {
+            return false;
+        }
+        if (!instance.initialized) {
+            instance.init();
+        }
+        return instance.isGB18032_2000;
     }
 }
