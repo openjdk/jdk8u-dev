@@ -26,7 +26,7 @@
  * @bug 8009977 8186884 8201627
  * @summary A test to launch multiple Java processes using either Java GSS
  *          or native GSS
- * @library ../../../../java/security/testlibrary /lib/testlibrary /lib
+ * @library ../../../../java/security/testlibrary /lib/testlibrary
  * @compile -XDignore.symbol.file BasicProc.java
  * @run main/othervm -Dsun.net.spi.nameservice.provider.1=ns,mock BasicProc launcher
  */
@@ -40,8 +40,8 @@ import java.util.HashSet;
 import java.util.PropertyPermission;
 import java.util.Set;
 
-import jdk.test.lib.Platform;
 import jdk.testlibrary.Asserts;
+import jdk.testlibrary.Platform;
 import org.ietf.jgss.Oid;
 import sun.security.krb5.Config;
 
@@ -236,8 +236,8 @@ public class BasicProc {
                 perms.add(PosixFilePermission.OWNER_WRITE);
                 Files.setPosixFilePermissions(Paths.get(label + ".ccache"),
                                           Collections.unmodifiableSet(perms));
-                pc.env("KRB5CCNAME", label + ".ccache");
             }
+            pc.env("KRB5CCNAME", label + ".ccache");
             // Do not try system ktab if ccache fails
             pc.env("KRB5_KTNAME", "none");
         }
