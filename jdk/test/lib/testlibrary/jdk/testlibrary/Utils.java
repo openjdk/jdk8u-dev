@@ -498,7 +498,7 @@ public final class Utils {
      * @throws NullPointerException if the element is {@code null}
      */
     public static <E> List<E> listOf(E e1) {
-        if (e1 == null) { throw new NullPointerException("e1"); }
+        Objects.requireNonNull(e1, "e1");
         return Collections.singletonList(e1);
     }
 
@@ -512,8 +512,8 @@ public final class Utils {
      * @throws NullPointerException if an element is {@code null}
      */
     public static <E> List<E> listOf(E e1, E e2) {
-        if (e1 == null) { throw new NullPointerException("e1"); }
-        if (e2 == null) { throw new NullPointerException("e2"); }
+        Objects.requireNonNull(e1, "e1");
+        Objects.requireNonNull(e2, "e2");
         List<E> l = new ArrayList<>(2);
         l.add(e1);
         l.add(e2);
@@ -531,9 +531,9 @@ public final class Utils {
      * @throws NullPointerException if an element is {@code null}
      */
     public static <E> List<E> listOf(E e1, E e2, E e3) {
-        if (e1 == null) { throw new NullPointerException("e1"); }
-        if (e2 == null) { throw new NullPointerException("e2"); }
-        if (e3 == null) { throw new NullPointerException("e3"); }
+        Objects.requireNonNull(e1, "e1");
+        Objects.requireNonNull(e2, "e2");
+        Objects.requireNonNull(e3, "e3");
         List<E> l = new ArrayList<>(3);
         l.add(e1);
         l.add(e2);
@@ -553,10 +553,10 @@ public final class Utils {
      * @throws NullPointerException if an element is {@code null}
      */
     public static <E> List<E> listOf(E e1, E e2, E e3, E e4) {
-        if (e1 == null) { throw new NullPointerException("e1"); }
-        if (e2 == null) { throw new NullPointerException("e2"); }
-        if (e3 == null) { throw new NullPointerException("e3"); }
-        if (e4 == null) { throw new NullPointerException("e4"); }
+        Objects.requireNonNull(e1, "e1");
+        Objects.requireNonNull(e2, "e2");
+        Objects.requireNonNull(e3, "e3");
+        Objects.requireNonNull(e4, "e4");
         List<E> l = new ArrayList<>(4);
         l.add(e1);
         l.add(e2);
@@ -578,11 +578,11 @@ public final class Utils {
      * @throws NullPointerException if an element is {@code null}
      */
     public static <E> List<E> listOf(E e1, E e2, E e3, E e4, E e5) {
-        if (e1 == null) { throw new NullPointerException("e1"); }
-        if (e2 == null) { throw new NullPointerException("e2"); }
-        if (e3 == null) { throw new NullPointerException("e3"); }
-        if (e4 == null) { throw new NullPointerException("e4"); }
-        if (e5 == null) { throw new NullPointerException("e5"); }
+        Objects.requireNonNull(e1, "e1");
+        Objects.requireNonNull(e2, "e2");
+        Objects.requireNonNull(e3, "e3");
+        Objects.requireNonNull(e4, "e4");
+        Objects.requireNonNull(e5, "e5");
         List<E> l = new ArrayList<>(5);
         l.add(e1);
         l.add(e2);
@@ -606,12 +606,12 @@ public final class Utils {
      * @throws NullPointerException if an element is {@code null}
      */
     public static <E> List<E> listOf(E e1, E e2, E e3, E e4, E e5, E e6) {
-        if (e1 == null) { throw new NullPointerException("e1"); }
-        if (e2 == null) { throw new NullPointerException("e2"); }
-        if (e3 == null) { throw new NullPointerException("e3"); }
-        if (e4 == null) { throw new NullPointerException("e4"); }
-        if (e5 == null) { throw new NullPointerException("e5"); }
-        if (e6 == null) { throw new NullPointerException("e6"); }
+        Objects.requireNonNull(e1, "e1");
+        Objects.requireNonNull(e2, "e2");
+        Objects.requireNonNull(e3, "e3");
+        Objects.requireNonNull(e4, "e4");
+        Objects.requireNonNull(e5, "e5");
+        Objects.requireNonNull(e6, "e6");
         List<E> l = new ArrayList<>(6);
         l.add(e1);
         l.add(e2);
@@ -637,13 +637,13 @@ public final class Utils {
      * @throws NullPointerException if an element is {@code null}
      */
     public static <E> List<E> listOf(E e1, E e2, E e3, E e4, E e5, E e6, E e7) {
-        if (e1 == null) { throw new NullPointerException("e1"); }
-        if (e2 == null) { throw new NullPointerException("e2"); }
-        if (e3 == null) { throw new NullPointerException("e3"); }
-        if (e4 == null) { throw new NullPointerException("e4"); }
-        if (e5 == null) { throw new NullPointerException("e5"); }
-        if (e6 == null) { throw new NullPointerException("e6"); }
-        if (e7 == null) { throw new NullPointerException("e7"); }
+        Objects.requireNonNull(e1, "e1");
+        Objects.requireNonNull(e2, "e2");
+        Objects.requireNonNull(e3, "e3");
+        Objects.requireNonNull(e4, "e4");
+        Objects.requireNonNull(e5, "e5");
+        Objects.requireNonNull(e6, "e6");
+        Objects.requireNonNull(e7, "e7");
         List<E> l = new ArrayList<>(7);
         l.add(e1);
         l.add(e2);
@@ -671,14 +671,14 @@ public final class Utils {
      * @throws NullPointerException if an element is {@code null}
      */
     public static <E> List<E> listOf(E e1, E e2, E e3, E e4, E e5, E e6, E e7, E e8) {
-        if (e1 == null) { throw new NullPointerException("e1"); }
-        if (e2 == null) { throw new NullPointerException("e2"); }
-        if (e3 == null) { throw new NullPointerException("e3"); }
-        if (e4 == null) { throw new NullPointerException("e4"); }
-        if (e5 == null) { throw new NullPointerException("e5"); }
-        if (e6 == null) { throw new NullPointerException("e6"); }
-        if (e7 == null) { throw new NullPointerException("e7"); }
-        if (e8 == null) { throw new NullPointerException("e8"); }
+        Objects.requireNonNull(e1, "e1");
+        Objects.requireNonNull(e2, "e2");
+        Objects.requireNonNull(e3, "e3");
+        Objects.requireNonNull(e4, "e4");
+        Objects.requireNonNull(e5, "e5");
+        Objects.requireNonNull(e6, "e6");
+        Objects.requireNonNull(e7, "e7");
+        Objects.requireNonNull(e8, "e8");
         List<E> l = new ArrayList<>(8);
         l.add(e1);
         l.add(e2);
@@ -708,15 +708,15 @@ public final class Utils {
      * @throws NullPointerException if an element is {@code null}
      */
     public static <E> List<E> listOf(E e1, E e2, E e3, E e4, E e5, E e6, E e7, E e8, E e9) {
-        if (e1 == null) { throw new NullPointerException("e1"); }
-        if (e2 == null) { throw new NullPointerException("e2"); }
-        if (e3 == null) { throw new NullPointerException("e3"); }
-        if (e4 == null) { throw new NullPointerException("e4"); }
-        if (e5 == null) { throw new NullPointerException("e5"); }
-        if (e6 == null) { throw new NullPointerException("e6"); }
-        if (e7 == null) { throw new NullPointerException("e7"); }
-        if (e8 == null) { throw new NullPointerException("e8"); }
-        if (e9 == null) { throw new NullPointerException("e9"); }
+        Objects.requireNonNull(e1, "e1");
+        Objects.requireNonNull(e2, "e2");
+        Objects.requireNonNull(e3, "e3");
+        Objects.requireNonNull(e4, "e4");
+        Objects.requireNonNull(e5, "e5");
+        Objects.requireNonNull(e6, "e6");
+        Objects.requireNonNull(e7, "e7");
+        Objects.requireNonNull(e8, "e8");
+        Objects.requireNonNull(e9, "e9");
         List<E> l = new ArrayList<>(9);
         l.add(e1);
         l.add(e2);
@@ -748,16 +748,16 @@ public final class Utils {
      * @throws NullPointerException if an element is {@code null}
      */
     public static <E> List<E> listOf(E e1, E e2, E e3, E e4, E e5, E e6, E e7, E e8, E e9, E e10) {
-        if (e1 == null) { throw new NullPointerException("e1"); }
-        if (e2 == null) { throw new NullPointerException("e2"); }
-        if (e3 == null) { throw new NullPointerException("e3"); }
-        if (e4 == null) { throw new NullPointerException("e4"); }
-        if (e5 == null) { throw new NullPointerException("e5"); }
-        if (e6 == null) { throw new NullPointerException("e6"); }
-        if (e7 == null) { throw new NullPointerException("e7"); }
-        if (e8 == null) { throw new NullPointerException("e8"); }
-        if (e9 == null) { throw new NullPointerException("e9"); }
-        if (e10 == null) { throw new NullPointerException("e10"); }
+        Objects.requireNonNull(e1, "e1");
+        Objects.requireNonNull(e2, "e2");
+        Objects.requireNonNull(e3, "e3");
+        Objects.requireNonNull(e4, "e4");
+        Objects.requireNonNull(e5, "e5");
+        Objects.requireNonNull(e6, "e6");
+        Objects.requireNonNull(e7, "e7");
+        Objects.requireNonNull(e8, "e8");
+        Objects.requireNonNull(e9, "e9");
+        Objects.requireNonNull(e10, "e10");
         List<E> l = new ArrayList<>(10);
         l.add(e1);
         l.add(e2);
@@ -842,11 +842,10 @@ public final class Utils {
      * @throws NullPointerException if the element is {@code null}
      */
     public static <E> Set<E> setOf(E e1) {
-        if (e1 == null) { throw new NullPointerException("e1"); }
+        Objects.requireNonNull(e1, "e1");
 
         Set<E> s = new HashSet<>(1);
-        boolean added = s.add(e1);
-        if (!added) { throw new IllegalArgumentException("duplicate 1"); }
+        if (!s.add(e1)) { throw new IllegalArgumentException("duplicate 1"); }
 
         return Collections.unmodifiableSet(s);
     }
@@ -862,14 +861,12 @@ public final class Utils {
      * @throws NullPointerException if an element is {@code null}
      */
     public static <E> Set<E> setOf(E e1, E e2) {
-        if (e1 == null) { throw new NullPointerException("e1"); }
-        if (e2 == null) { throw new NullPointerException("e2"); }
+        Objects.requireNonNull(e1, "e1");
+        Objects.requireNonNull(e2, "e2");
 
         Set<E> s = new HashSet<>(2);
-        boolean added = s.add(e1);
-        if (!added) { throw new IllegalArgumentException("duplicate 1"); }
-        added = s.add(e2);
-        if (!added) { throw new IllegalArgumentException("duplicate 2"); }
+        if (!s.add(e1)) { throw new IllegalArgumentException("duplicate 1"); }
+        if (!s.add(e2)) { throw new IllegalArgumentException("duplicate 2"); }
 
         return Collections.unmodifiableSet(s);
     }
@@ -886,17 +883,14 @@ public final class Utils {
      * @throws NullPointerException if an element is {@code null}
      */
     public static <E> Set<E> setOf(E e1, E e2, E e3) {
-        if (e1 == null) { throw new NullPointerException("e1"); }
-        if (e2 == null) { throw new NullPointerException("e2"); }
-        if (e3 == null) { throw new NullPointerException("e3"); }
+        Objects.requireNonNull(e1, "e1");
+        Objects.requireNonNull(e2, "e2");
+        Objects.requireNonNull(e3, "e3");
 
         Set<E> s = new HashSet<>(10);
-        boolean added = s.add(e1);
-        if (!added) { throw new IllegalArgumentException("duplicate 1"); }
-        added = s.add(e2);
-        if (!added) { throw new IllegalArgumentException("duplicate 2"); }
-        added = s.add(e3);
-        if (!added) { throw new IllegalArgumentException("duplicate 3"); }
+        if (!s.add(e1)) { throw new IllegalArgumentException("duplicate 1"); }
+        if (!s.add(e2)) { throw new IllegalArgumentException("duplicate 2"); }
+        if (!s.add(e3)) { throw new IllegalArgumentException("duplicate 3"); }
 
         return Collections.unmodifiableSet(s);
     }
@@ -914,20 +908,16 @@ public final class Utils {
      * @throws NullPointerException if an element is {@code null}
      */
     public static <E> Set<E> setOf(E e1, E e2, E e3, E e4) {
-        if (e1 == null) { throw new NullPointerException("e1"); }
-        if (e2 == null) { throw new NullPointerException("e2"); }
-        if (e3 == null) { throw new NullPointerException("e3"); }
-        if (e4 == null) { throw new NullPointerException("e4"); }
+        Objects.requireNonNull(e1, "e1");
+        Objects.requireNonNull(e2, "e2");
+        Objects.requireNonNull(e3, "e3");
+        Objects.requireNonNull(e4, "e4");
 
         Set<E> s = new HashSet<>(10);
-        boolean added = s.add(e1);
-        if (!added) { throw new IllegalArgumentException("duplicate 1"); }
-        added = s.add(e2);
-        if (!added) { throw new IllegalArgumentException("duplicate 2"); }
-        added = s.add(e3);
-        if (!added) { throw new IllegalArgumentException("duplicate 3"); }
-        added = s.add(e4);
-        if (!added) { throw new IllegalArgumentException("duplicate 4"); }
+        if (!s.add(e1)) { throw new IllegalArgumentException("duplicate 1"); }
+        if (!s.add(e2)) { throw new IllegalArgumentException("duplicate 2"); }
+        if (!s.add(e3)) { throw new IllegalArgumentException("duplicate 3"); }
+        if (!s.add(e4)) { throw new IllegalArgumentException("duplicate 4"); }
 
         return Collections.unmodifiableSet(s);
     }
@@ -946,23 +936,18 @@ public final class Utils {
      * @throws NullPointerException if an element is {@code null}
      */
     public static <E> Set<E> setOf(E e1, E e2, E e3, E e4, E e5) {
-        if (e1 == null) { throw new NullPointerException("e1"); }
-        if (e2 == null) { throw new NullPointerException("e2"); }
-        if (e3 == null) { throw new NullPointerException("e3"); }
-        if (e4 == null) { throw new NullPointerException("e4"); }
-        if (e5 == null) { throw new NullPointerException("e5"); }
+        Objects.requireNonNull(e1, "e1");
+        Objects.requireNonNull(e2, "e2");
+        Objects.requireNonNull(e3, "e3");
+        Objects.requireNonNull(e4, "e4");
+        Objects.requireNonNull(e5, "e5");
 
         Set<E> s = new HashSet<>(10);
-        boolean added = s.add(e1);
-        if (!added) { throw new IllegalArgumentException("duplicate 1"); }
-        added = s.add(e2);
-        if (!added) { throw new IllegalArgumentException("duplicate 2"); }
-        added = s.add(e3);
-        if (!added) { throw new IllegalArgumentException("duplicate 3"); }
-        added = s.add(e4);
-        if (!added) { throw new IllegalArgumentException("duplicate 4"); }
-        added = s.add(e5);
-        if (!added) { throw new IllegalArgumentException("duplicate 5"); }
+        if (!s.add(e1)) { throw new IllegalArgumentException("duplicate 1"); }
+        if (!s.add(e2)) { throw new IllegalArgumentException("duplicate 2"); }
+        if (!s.add(e3)) { throw new IllegalArgumentException("duplicate 3"); }
+        if (!s.add(e4)) { throw new IllegalArgumentException("duplicate 4"); }
+        if (!s.add(e5)) { throw new IllegalArgumentException("duplicate 5"); }
 
         return Collections.unmodifiableSet(s);
     }
@@ -982,26 +967,20 @@ public final class Utils {
      * @throws NullPointerException if an element is {@code null}
      */
     public static <E> Set<E> setOf(E e1, E e2, E e3, E e4, E e5, E e6) {
-        if (e1 == null) { throw new NullPointerException("e1"); }
-        if (e2 == null) { throw new NullPointerException("e2"); }
-        if (e3 == null) { throw new NullPointerException("e3"); }
-        if (e4 == null) { throw new NullPointerException("e4"); }
-        if (e5 == null) { throw new NullPointerException("e5"); }
-        if (e6 == null) { throw new NullPointerException("e6"); }
+        Objects.requireNonNull(e1, "e1");
+        Objects.requireNonNull(e2, "e2");
+        Objects.requireNonNull(e3, "e3");
+        Objects.requireNonNull(e4, "e4");
+        Objects.requireNonNull(e5, "e5");
+        Objects.requireNonNull(e6, "e6");
 
         Set<E> s = new HashSet<>(10);
-        boolean added = s.add(e1);
-        if (!added) { throw new IllegalArgumentException("duplicate 1"); }
-        added = s.add(e2);
-        if (!added) { throw new IllegalArgumentException("duplicate 2"); }
-        added = s.add(e3);
-        if (!added) { throw new IllegalArgumentException("duplicate 3"); }
-        added = s.add(e4);
-        if (!added) { throw new IllegalArgumentException("duplicate 4"); }
-        added = s.add(e5);
-        if (!added) { throw new IllegalArgumentException("duplicate 5"); }
-        added = s.add(e6);
-        if (!added) { throw new IllegalArgumentException("duplicate 6"); }
+        if (!s.add(e1)) { throw new IllegalArgumentException("duplicate 1"); }
+        if (!s.add(e2)) { throw new IllegalArgumentException("duplicate 2"); }
+        if (!s.add(e3)) { throw new IllegalArgumentException("duplicate 3"); }
+        if (!s.add(e4)) { throw new IllegalArgumentException("duplicate 4"); }
+        if (!s.add(e5)) { throw new IllegalArgumentException("duplicate 5"); }
+        if (!s.add(e6)) { throw new IllegalArgumentException("duplicate 6"); }
 
         return Collections.unmodifiableSet(s);
     }
@@ -1022,29 +1001,22 @@ public final class Utils {
      * @throws NullPointerException if an element is {@code null}
      */
     public static <E> Set<E> setOf(E e1, E e2, E e3, E e4, E e5, E e6, E e7) {
-        if (e1 == null) { throw new NullPointerException("e1"); }
-        if (e2 == null) { throw new NullPointerException("e2"); }
-        if (e3 == null) { throw new NullPointerException("e3"); }
-        if (e4 == null) { throw new NullPointerException("e4"); }
-        if (e5 == null) { throw new NullPointerException("e5"); }
-        if (e6 == null) { throw new NullPointerException("e6"); }
-        if (e7 == null) { throw new NullPointerException("e7"); }
+        Objects.requireNonNull(e1, "e1");
+        Objects.requireNonNull(e2, "e2");
+        Objects.requireNonNull(e3, "e3");
+        Objects.requireNonNull(e4, "e4");
+        Objects.requireNonNull(e5, "e5");
+        Objects.requireNonNull(e6, "e6");
+        Objects.requireNonNull(e7, "e7");
 
         Set<E> s = new HashSet<>(10);
-        boolean added = s.add(e1);
-        if (!added) { throw new IllegalArgumentException("duplicate 1"); }
-        added = s.add(e2);
-        if (!added) { throw new IllegalArgumentException("duplicate 2"); }
-        added = s.add(e3);
-        if (!added) { throw new IllegalArgumentException("duplicate 3"); }
-        added = s.add(e4);
-        if (!added) { throw new IllegalArgumentException("duplicate 4"); }
-        added = s.add(e5);
-        if (!added) { throw new IllegalArgumentException("duplicate 5"); }
-        added = s.add(e6);
-        if (!added) { throw new IllegalArgumentException("duplicate 6"); }
-        added = s.add(e7);
-        if (!added) { throw new IllegalArgumentException("duplicate 7"); }
+        if (!s.add(e1)) { throw new IllegalArgumentException("duplicate 1"); }
+        if (!s.add(e2)) { throw new IllegalArgumentException("duplicate 2"); }
+        if (!s.add(e3)) { throw new IllegalArgumentException("duplicate 3"); }
+        if (!s.add(e4)) { throw new IllegalArgumentException("duplicate 4"); }
+        if (!s.add(e5)) { throw new IllegalArgumentException("duplicate 5"); }
+        if (!s.add(e6)) { throw new IllegalArgumentException("duplicate 6"); }
+        if (!s.add(e7)) { throw new IllegalArgumentException("duplicate 7"); }
 
         return Collections.unmodifiableSet(s);
     }
@@ -1066,32 +1038,24 @@ public final class Utils {
      * @throws NullPointerException if an element is {@code null}
      */
     public static <E> Set<E> setOf(E e1, E e2, E e3, E e4, E e5, E e6, E e7, E e8) {
-        if (e1 == null) { throw new NullPointerException("e1"); }
-        if (e2 == null) { throw new NullPointerException("e2"); }
-        if (e3 == null) { throw new NullPointerException("e3"); }
-        if (e4 == null) { throw new NullPointerException("e4"); }
-        if (e5 == null) { throw new NullPointerException("e5"); }
-        if (e6 == null) { throw new NullPointerException("e6"); }
-        if (e7 == null) { throw new NullPointerException("e7"); }
-        if (e8 == null) { throw new NullPointerException("e8"); }
+        Objects.requireNonNull(e1, "e1");
+        Objects.requireNonNull(e2, "e2");
+        Objects.requireNonNull(e3, "e3");
+        Objects.requireNonNull(e4, "e4");
+        Objects.requireNonNull(e5, "e5");
+        Objects.requireNonNull(e6, "e6");
+        Objects.requireNonNull(e7, "e7");
+        Objects.requireNonNull(e8, "e8");
 
         Set<E> s = new HashSet<>(10);
-        boolean added = s.add(e1);
-        if (!added) { throw new IllegalArgumentException("duplicate 1"); }
-        added = s.add(e2);
-        if (!added) { throw new IllegalArgumentException("duplicate 2"); }
-        added = s.add(e3);
-        if (!added) { throw new IllegalArgumentException("duplicate 3"); }
-        added = s.add(e4);
-        if (!added) { throw new IllegalArgumentException("duplicate 4"); }
-        added = s.add(e5);
-        if (!added) { throw new IllegalArgumentException("duplicate 5"); }
-        added = s.add(e6);
-        if (!added) { throw new IllegalArgumentException("duplicate 6"); }
-        added = s.add(e7);
-        if (!added) { throw new IllegalArgumentException("duplicate 7"); }
-        added = s.add(e8);
-        if (!added) { throw new IllegalArgumentException("duplicate 8"); }
+        if (!s.add(e1)) { throw new IllegalArgumentException("duplicate 1"); }
+        if (!s.add(e2)) { throw new IllegalArgumentException("duplicate 2"); }
+        if (!s.add(e3)) { throw new IllegalArgumentException("duplicate 3"); }
+        if (!s.add(e4)) { throw new IllegalArgumentException("duplicate 4"); }
+        if (!s.add(e5)) { throw new IllegalArgumentException("duplicate 5"); }
+        if (!s.add(e6)) { throw new IllegalArgumentException("duplicate 6"); }
+        if (!s.add(e7)) { throw new IllegalArgumentException("duplicate 7"); }
+        if (!s.add(e8)) { throw new IllegalArgumentException("duplicate 8"); }
 
         return Collections.unmodifiableSet(s);
     }
@@ -1114,35 +1078,26 @@ public final class Utils {
      * @throws NullPointerException if an element is {@code null}
      */
     public static <E> Set<E> setOf(E e1, E e2, E e3, E e4, E e5, E e6, E e7, E e8, E e9) {
-        if (e1 == null) { throw new NullPointerException("e1"); }
-        if (e2 == null) { throw new NullPointerException("e2"); }
-        if (e3 == null) { throw new NullPointerException("e3"); }
-        if (e4 == null) { throw new NullPointerException("e4"); }
-        if (e5 == null) { throw new NullPointerException("e5"); }
-        if (e6 == null) { throw new NullPointerException("e6"); }
-        if (e7 == null) { throw new NullPointerException("e7"); }
-        if (e8 == null) { throw new NullPointerException("e8"); }
-        if (e9 == null) { throw new NullPointerException("e9"); }
+        Objects.requireNonNull(e1, "e1");
+        Objects.requireNonNull(e2, "e2");
+        Objects.requireNonNull(e3, "e3");
+        Objects.requireNonNull(e4, "e4");
+        Objects.requireNonNull(e5, "e5");
+        Objects.requireNonNull(e6, "e6");
+        Objects.requireNonNull(e7, "e7");
+        Objects.requireNonNull(e8, "e8");
+        Objects.requireNonNull(e9, "e9");
 
         Set<E> s = new HashSet<>(10);
-        boolean added = s.add(e1);
-        if (!added) { throw new IllegalArgumentException("duplicate 1"); }
-        added = s.add(e2);
-        if (!added) { throw new IllegalArgumentException("duplicate 2"); }
-        added = s.add(e3);
-        if (!added) { throw new IllegalArgumentException("duplicate 3"); }
-        added = s.add(e4);
-        if (!added) { throw new IllegalArgumentException("duplicate 4"); }
-        added = s.add(e5);
-        if (!added) { throw new IllegalArgumentException("duplicate 5"); }
-        added = s.add(e6);
-        if (!added) { throw new IllegalArgumentException("duplicate 6"); }
-        added = s.add(e7);
-        if (!added) { throw new IllegalArgumentException("duplicate 7"); }
-        added = s.add(e8);
-        if (!added) { throw new IllegalArgumentException("duplicate 8"); }
-        added = s.add(e9);
-        if (!added) { throw new IllegalArgumentException("duplicate 9"); }
+        if (!s.add(e1)) { throw new IllegalArgumentException("duplicate 1"); }
+        if (!s.add(e2)) { throw new IllegalArgumentException("duplicate 2"); }
+        if (!s.add(e3)) { throw new IllegalArgumentException("duplicate 3"); }
+        if (!s.add(e4)) { throw new IllegalArgumentException("duplicate 4"); }
+        if (!s.add(e5)) { throw new IllegalArgumentException("duplicate 5"); }
+        if (!s.add(e6)) { throw new IllegalArgumentException("duplicate 6"); }
+        if (!s.add(e7)) { throw new IllegalArgumentException("duplicate 7"); }
+        if (!s.add(e8)) { throw new IllegalArgumentException("duplicate 8"); }
+        if (!s.add(e9)) { throw new IllegalArgumentException("duplicate 9"); }
 
         return Collections.unmodifiableSet(s);
     }
@@ -1166,38 +1121,28 @@ public final class Utils {
      * @throws NullPointerException if an element is {@code null}
      */
     public static <E> Set<E> setOf(E e1, E e2, E e3, E e4, E e5, E e6, E e7, E e8, E e9, E e10) {
-        if (e1 == null) { throw new NullPointerException("e1"); }
-        if (e2 == null) { throw new NullPointerException("e2"); }
-        if (e3 == null) { throw new NullPointerException("e3"); }
-        if (e4 == null) { throw new NullPointerException("e4"); }
-        if (e5 == null) { throw new NullPointerException("e5"); }
-        if (e6 == null) { throw new NullPointerException("e6"); }
-        if (e7 == null) { throw new NullPointerException("e7"); }
-        if (e8 == null) { throw new NullPointerException("e8"); }
-        if (e9 == null) { throw new NullPointerException("e9"); }
-        if (e10 == null) { throw new NullPointerException("e10"); }
+        Objects.requireNonNull(e1, "e1");
+        Objects.requireNonNull(e2, "e2");
+        Objects.requireNonNull(e3, "e3");
+        Objects.requireNonNull(e4, "e4");
+        Objects.requireNonNull(e5, "e5");
+        Objects.requireNonNull(e6, "e6");
+        Objects.requireNonNull(e7, "e7");
+        Objects.requireNonNull(e8, "e8");
+        Objects.requireNonNull(e9, "e9");
+        Objects.requireNonNull(e10, "e10");
 
         Set<E> s = new HashSet<>(10);
-        boolean added = s.add(e1);
-        if (!added) { throw new IllegalArgumentException("duplicate 1"); }
-        added = s.add(e2);
-        if (!added) { throw new IllegalArgumentException("duplicate 2"); }
-        added = s.add(e3);
-        if (!added) { throw new IllegalArgumentException("duplicate 3"); }
-        added = s.add(e4);
-        if (!added) { throw new IllegalArgumentException("duplicate 4"); }
-        added = s.add(e5);
-        if (!added) { throw new IllegalArgumentException("duplicate 5"); }
-        added = s.add(e6);
-        if (!added) { throw new IllegalArgumentException("duplicate 6"); }
-        added = s.add(e7);
-        if (!added) { throw new IllegalArgumentException("duplicate 7"); }
-        added = s.add(e8);
-        if (!added) { throw new IllegalArgumentException("duplicate 8"); }
-        added = s.add(e9);
-        if (!added) { throw new IllegalArgumentException("duplicate 9"); }
-        added = s.add(e10);
-        if (!added) { throw new IllegalArgumentException("duplicate 10"); }
+        if (!s.add(e1)) { throw new IllegalArgumentException("duplicate 1"); }
+        if (!s.add(e2)) { throw new IllegalArgumentException("duplicate 2"); }
+        if (!s.add(e3)) { throw new IllegalArgumentException("duplicate 3"); }
+        if (!s.add(e4)) { throw new IllegalArgumentException("duplicate 4"); }
+        if (!s.add(e5)) { throw new IllegalArgumentException("duplicate 5"); }
+        if (!s.add(e6)) { throw new IllegalArgumentException("duplicate 6"); }
+        if (!s.add(e7)) { throw new IllegalArgumentException("duplicate 7"); }
+        if (!s.add(e8)) { throw new IllegalArgumentException("duplicate 8"); }
+        if (!s.add(e9)) { throw new IllegalArgumentException("duplicate 9"); }
+        if (!s.add(e10)) { throw new IllegalArgumentException("duplicate 10"); }
 
         return Collections.unmodifiableSet(s);
     }
@@ -1238,9 +1183,10 @@ public final class Utils {
             default:
                 Set<E> s = new HashSet<>(elements.length);
                 for (int a = 0; a < elements.length; ++a) {
-                    if (elements[a] == null) { throw new NullPointerException("e" + a); }
-                    boolean added = s.add(elements[a]);
-                    if (!added) { throw new IllegalArgumentException("duplicate " + a); }
+                    Objects.requireNonNull(elements[a], "e" + a);
+                    if (!s.add(elements[a])) {
+                        throw new IllegalArgumentException("duplicate " + a);
+                    }
                 }
                 return Collections.unmodifiableSet(s);
         }
