@@ -806,7 +806,7 @@ public final class Utils {
                 return listOf(elements[0], elements[1]);
             default:
                 for (int a = 0; a < elements.length; ++a) {
-                    if (elements[a] == null) { throw new NullPointerException("e" + a); }
+                    Objects.requireNonNull(elements[a], "e" + a);
                 }
                 return Collections.unmodifiableList(Arrays.asList(elements));
         }
