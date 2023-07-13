@@ -1136,15 +1136,15 @@ public class ExtendedCharsets
     }
 
     private boolean initialized = false;
-    private boolean isGB18032_2000 = false;
+    private boolean isGB18030_2000 = false;
 
-    // If the sun.nio.cs.map property is defined on the command line we won't
-    // see it in the system-properties table until after the charset subsystem
-    // has been initialized.  We therefore delay the effect of this property
-    // until after the JRE has completely booted.
+    // If the sun.nio.cs.map and/or jdk.charset.GB18030 properties are defined
+    // on the command line we won't see them in the system-properties table until
+    // after the charset subsystem has been initialized.  We therefore delay
+    // the effect of these property until after the JRE has completely booted.
     //
-    // At the moment following values for this property are supported, property
-    // value string is case insensitive.
+    // At the moment the following values for the sun.nio.cs.map property are
+    // supported and the property value string is case insensitive.
     //
     // (1)"Windows-31J/Shift_JIS"
     // In 1.4.1 we added a correct implementation of the Shift_JIS charset
@@ -1176,6 +1176,10 @@ public class ExtendedCharsets
     //
     // where each charset named to the left of a slash is intended to replace
     // (most) uses of the charset named to the right of the slash.
+    //
+    // The jdk.charset.GB18030 property is simpler and accepts only the value
+    // "2000".  If this value is given, the older GB18030-2000 variant of the
+    // character set replaces the default GB18030-2022 variant.
     //
     protected void init() {
         if (initialized)
@@ -1327,7 +1331,7 @@ public class ExtendedCharsets
                         "x-compound-text"
                     });
         }
-        this.isGB18032_2000 = isGB18030_2000;
+        this.isGB18030_2000 = isGB18030_2000;
         initialized = true;
     }
 
@@ -1337,13 +1341,13 @@ public class ExtendedCharsets
         return instance.aliases(charsetName);
     }
 
-    static boolean isGB18030_2000() {
+    static boolean IS_2000() {
         if (instance == null) {
             return false;
         }
         if (!instance.initialized) {
             instance.init();
         }
-        return instance.isGB18032_2000;
+        return instance.isGB18030_2000;
     }
 }
