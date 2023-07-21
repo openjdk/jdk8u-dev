@@ -24,22 +24,29 @@
 package jdk.test.lib.compiler;
 
 import javax.tools.JavaCompiler;
-import javax.tools.StandardJavaFileManager;
-import javax.tools.StandardLocation;
 import javax.tools.ToolProvider;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import jdk.test.lib.process.OutputAnalyzer;
+import jdk.test.lib.process.ProcessTools;
 
 /**
  * This class consists exclusively of static utility methods for invoking the
  * java compiler.
  */
 public final class CompilerUtils {
+    private static final String TEST_JAVA_HOME = System.getProperty("test.jdk");
+    private static final String FS = File.separator;
+    private static final String JAVAC = TEST_JAVA_HOME + FS + "bin" + FS + "javac";
+
     private CompilerUtils() { }
 
     /**
@@ -102,7 +109,6 @@ public final class CompilerUtils {
             throw new UnsupportedOperationException("Unable to get system java compiler. "
                     + "Perhaps, jdk.compiler module is not available.");
         }
-        StandardJavaFileManager jfm = compiler.getStandardFileManager(null, null, null);
 
         List<Path> sources
             = Files.find(source, (recurse ? Integer.MAX_VALUE : 1),
@@ -110,15 +116,27 @@ public final class CompilerUtils {
                 .collect(Collectors.toList());
 
         Files.createDirectories(destination);
-        jfm.setLocation(StandardLocation.CLASS_PATH, Collections.emptyList());
-        jfm.setLocationFromPaths(StandardLocation.CLASS_OUTPUT,
-                Collections.singletonList(destination));
-
         List<String> opts = Arrays.asList(options);
-        JavaCompiler.CompilationTask task
-            = compiler.getTask(null, jfm, null, opts, null,
-                jfm.getJavaFileObjectsFromPaths(sources));
+        List<String> compileargs = new ArrayList<String> ();
+        compileargs.add(JAVAC);
+        compileargs.add("-d");
+        compileargs.add(destination.toString());
+        for(String opt: opts) {
+            compileargs.add(opt);
+        }
+        for(Path p: sources) {
+            compileargs.add(p.toString());
+        }
 
-        return task.call();
+        OutputAnalyzer output = null;
+        try {
+            String[] sarr = compileargs.toArray(new String[0]);
+            output = ProcessTools.executeCommand(sarr);
+            output.shouldHaveExitValue(0);
+        } catch (Throwable t) {
+            throw new RuntimeException("Javac failed", t);
+        }
+
+        return true;
     }
 }
