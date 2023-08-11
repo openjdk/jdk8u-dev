@@ -51,7 +51,7 @@ import jdk.testlibrary.FileUtils;
 
 /*
  * @test
- * @bug 8293540 8287107 8287073
+ * @bug 8287107 8287073 8293540
  * @requires os.family == "linux"
  * @modules java.base/jdk.internal.platform
  * @library /lib/testlibrary
