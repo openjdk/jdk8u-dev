@@ -69,6 +69,11 @@ CXXFLAGS += -DASSERT
 CFLAGS_WARN = $(WARNINGS_ARE_ERRORS)
 CFLAGS += $(CFLAGS_WARN)
 
+# Extra flags from gnumake's invocation or environment
+CFLAGS += $(EXTRA_CFLAGS)
+LFLAGS += $(EXTRA_CFLAGS) $(EXTRA_LDFLAGS)
+ASFLAGS += $(EXTRA_ASFLAGS)
+
 OBJECTNAMES = \
 	adlparse.o \
 	archDesc.o \
