@@ -29,7 +29,8 @@ jdk_tier1 = \
     :jdk_lang \
     :jdk_util \
     :jdk_math \
-    :jdk_jdi
+    :jdk_jdi \
+    :jdk_cacerts
 
 jdk_tier2 = \
     :jdk_io \
@@ -58,6 +59,10 @@ jdk_lang = \
     sun/reflect \
     jdk/lambda \
     vm
+
+jdk_cacerts = \
+    security/infra/java/security/cert/CertPathValidator \
+    sun/security/lib/cacerts
 
 #JFR tests
 jdk_jfr = \
