@@ -30,7 +30,7 @@ jdk_tier1 = \
     :jdk_util \
     :jdk_math \
     :jdk_jdi \
-    :jdk_cacerts
+    :jdk_security_infra
 
 jdk_tier2 = \
     :jdk_io \
@@ -59,10 +59,6 @@ jdk_lang = \
     sun/reflect \
     jdk/lambda \
     vm
-
-jdk_cacerts = \
-    security/infra/java/security/cert/CertPathValidator \
-    sun/security/lib/cacerts
 
 #JFR tests
 jdk_jfr = \
@@ -167,6 +163,7 @@ jdk_security3 = \
     sun/security \
     -sun/security/krb5 \
     -sun/security/jgss \
+    -sun/security/lib/cacerts \
     javax/net \
     lib/security
 
@@ -183,7 +180,8 @@ jdk_security = \
     :jdk_security4
 
 jdk_security_infra = \
-    security/infra/java/security/cert/CertPathValidator/certification
+    security/infra/java/security/cert/CertPathValidator/certification \
+    sun/security/lib/cacerts
 
 jdk_text = \
     java/text \
