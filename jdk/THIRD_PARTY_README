@@ -1639,8 +1639,8 @@ Glenn Randers-Pehrson
 glennrp at users.sourceforge.net
 July 15, 2018
 
-### AUTHORS File Information
-```
+AUTHORS File Information:
+
 PNG REFERENCE LIBRARY AUTHORS
 =============================
 
@@ -1690,7 +1690,6 @@ other copyright owners, but are released under the libpng license.
 Some files in the "contrib" directory, and some tools-generated files
 that are distributed with libpng, have other copyright owners, and are
 released under other open source licenses.
-```
 
 --- end of LICENSE ---
 
