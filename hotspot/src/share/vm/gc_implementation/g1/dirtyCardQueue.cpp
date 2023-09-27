@@ -313,7 +313,7 @@ void DirtyCardQueueSet::concatenate_logs() {
   for (JavaThread* t = Threads::first(); t; t = t->next()) {
     DirtyCardQueue& dcq = t->dirty_card_queue();
     if (dcq.size() != 0) {
-      void **buf = dcq.get_buf();
+      void** buf = dcq.get_buf();
       // We must NULL out the unused entries, then enqueue.
       size_t limit = dcq.byte_index_to_index(dcq.get_index());
       for (size_t i = 0; i < limit; ++i) {
