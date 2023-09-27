@@ -76,7 +76,7 @@ protected:
 
   // Initialize this queue to contain a null buffer, and be part of the
   // given PtrQueueSet.
-  PtrQueue(PtrQueueSet* qset, bool permanent  = false, bool active = false);
+  PtrQueue(PtrQueueSet* qset, bool permanent = false, bool active = false);
 
   // Requires queue flushed or permanent.
   ~PtrQueue();
