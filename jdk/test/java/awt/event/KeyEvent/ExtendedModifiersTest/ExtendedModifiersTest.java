@@ -24,6 +24,7 @@
 
 /*
  * @test
+ * @key headful
  * @bug 8043126
  * @summary Check whether
  *          1. correct extended modifiers are returned
@@ -268,4 +269,7 @@ public class ExtendedModifiersTest implements KeyListener {
         test.doTest();
     }
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> e52b963d0c (8160974: [TESTBUG] Mark more headful tests with @key headful)
