@@ -230,8 +230,7 @@ public class ConfirmationCallback implements Callback, java.io.Serializable {
      * @param messageType the message type ({@code INFORMATION},
      *                  {@code WARNING} or {@code ERROR}). <p>
      *
-     * @param options the list of confirmation options. The array is cloned
-     *                  to protect against subsequent modification. <p>
+     * @param options the list of confirmation options. <p>
      *
      * @param defaultOption the default option, represented as an index
      *                  into the {@code options} array.
@@ -351,8 +350,7 @@ public class ConfirmationCallback implements Callback, java.io.Serializable {
      * @param messageType the message type ({@code INFORMATION},
      *                  {@code WARNING} or {@code ERROR}). <p>
      *
-     * @param options the list of confirmation options. The array is cloned
-     *                  to protect against subsequent modification. <p>
+     * @param options the list of confirmation options. <p>
      *
      * @param defaultOption the default option, represented as an index
      *                  into the {@code options} array.
@@ -441,7 +439,7 @@ public class ConfirmationCallback implements Callback, java.io.Serializable {
      *
      * <p>
      *
-     * @return a copy of the list of confirmation options, or null if this
+     * @return the list of confirmation options, or null if this
      *          {@code ConfirmationCallback} was instantiated with
      *          an {@code optionType} instead of {@code options}.
      */
