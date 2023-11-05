@@ -69,7 +69,7 @@ public:
                                       void** buf, size_t index, size_t sz,
                                       bool consume = true,
                                       uint worker_i = 0);
-  void** get_buf() { return _buf;}
+  void **get_buf() { return _buf;}
   size_t get_index() { return _index;}
   void reinitialize() { _buf = 0; _sz = 0; _index = 0;}
 };

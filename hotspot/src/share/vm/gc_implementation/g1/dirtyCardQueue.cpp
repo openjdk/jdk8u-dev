@@ -206,8 +206,8 @@ BufferNode* DirtyCardQueueSet::get_completed_buffer(int stop_at) {
 }
 
 bool DirtyCardQueueSet::apply_closure_to_completed_buffer_helper(CardTableEntryClosure* cl,
-                                         uint worker_i,
-                                         BufferNode* nd) {
+                                                                 uint worker_i,
+                                                                 BufferNode* nd) {
   if (nd != NULL) {
     void **buf = BufferNode::make_buffer_from_node(nd);
     size_t index = nd->index();
