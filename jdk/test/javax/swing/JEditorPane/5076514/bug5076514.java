@@ -22,13 +22,15 @@
  */
 
 /* @test
-   @bug 5076514 8025430
+   @bug 5076514 8025430 8198321
    @summary Tests if SecurityManager.checkPermission()
                   used for clipboard access with permission 'accessClipboard'
    @run main bug5076514
+   @run main/othervm -Djava.awt.headless=true bug5076514
 */
-
+import java.awt.GraphicsEnvironment;
 import java.security.Permission;
+
 import javax.swing.JEditorPane;
 
 public class bug5076514 {
@@ -37,9 +39,13 @@ public class bug5076514 {
 
     public static void main(String[] args) {
         System.setSecurityManager(new MySecurityManager());
+
+        // no system clipboard in the headless mode
+        boolean expected  = !GraphicsEnvironment.isHeadless();
+
         JEditorPane editor = new JEditorPane();
         editor.copy();
-        if (!isCheckPermissionCalled) {
+        if (isCheckPermissionCalled != expected) {
             throw new RuntimeException("JEditorPane's clipboard operations "
                     + "didn't call SecurityManager.checkPermission() with "
                     + "permission 'accessClipboard' when there is a security"
