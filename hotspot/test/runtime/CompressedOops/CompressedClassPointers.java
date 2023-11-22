@@ -25,6 +25,7 @@
  * @test
  * @bug 8024927
  * @summary Testing address of compressed class pointer space as best as possible.
+ * @requires vm.bits == 64
  * @library /testlibrary /test/lib
  * @run main CompressedClassPointers
  */
