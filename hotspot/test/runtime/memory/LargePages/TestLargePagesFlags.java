@@ -23,7 +23,7 @@
 
 /* @test TestLargePagesFlags
  * @summary Tests how large pages are choosen depending on the given large pages flag combinations.
- * @requires vm.family == "linux"
+ * @requires os.family == "linux"
  * @library /testlibrary
  * @run main TestLargePagesFlags
  */

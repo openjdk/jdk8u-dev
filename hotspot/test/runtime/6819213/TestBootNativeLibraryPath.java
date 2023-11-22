@@ -27,7 +27,7 @@
  * @summary verify sun.boot.native.library.path is expandable on 32 bit systems
  * @author ksrini
  * @library /test/lib
- * @requiers vm.bits == 32
+ * @requires vm.bits == 32
  * @compile -XDignore.symbol.file TestBootNativeLibraryPath.java
  * @run main TestBootNativeLibraryPath
  */

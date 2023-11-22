@@ -27,7 +27,7 @@
  * @key regression
  * @summary NPG: UseCompressedClassPointers asserts with ObjectAlignmentInBytes=32
  * @library /testlibrary
- * @requiers vm.bits == 64
+ * @requires vm.bits == 64
  * @run main CompressedKlassPointerAndOops
  */
 
