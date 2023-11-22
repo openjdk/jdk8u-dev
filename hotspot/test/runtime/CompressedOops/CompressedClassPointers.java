@@ -25,10 +25,12 @@
  * @test
  * @bug 8024927
  * @summary Testing address of compressed class pointer space as best as possible.
- * @library /testlibrary
+ * @library /testlibrary /test/lib
+ * @run main CompressedClassPointers
  */
 
 import com.oracle.java.testlibrary.*;
+import jtreg.SkippedException;
 
 public class CompressedClassPointers {
 
@@ -114,17 +116,10 @@ public class CompressedClassPointers {
     }
 
   public static void main(String[] args) throws Exception {
-      if (!Platform.is64bit()) {
-          // Can't test this on 32 bit, just pass
-          System.out.println("Skipping test on 32bit");
-          return;
-      }
-      // Solaris 10 can't mmap compressed oops space without a base
       if (Platform.isSolaris()) {
            String name = System.getProperty("os.version");
            if (name.equals("5.10")) {
-               System.out.println("Skipping test on Solaris 10");
-               return;
+                throw new SkippedException("Solaris 10 can't mmap compressed oops space without a base");
            }
       }
       smallHeapTest();

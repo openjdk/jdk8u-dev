@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2013, 2018, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -26,20 +26,18 @@
  * @bug 7051189 8023393
  * @summary Need to suppress info message if -Xcheck:jni is used with libjsig.so
  * @library /testlibrary
+ * @requires vm.family == "solaris" | vm.family == "linux" | vm.family == "mac"
  * @run main XCheckJSig
  */
 
 import java.util.*;
 import com.oracle.java.testlibrary.*;
+import jtreg.SkippedException;
 
 public class XCheckJSig {
     public static void main(String args[]) throws Throwable {
 
         System.out.println("Regression test for bugs 7051189 and 8023393");
-        if (!Platform.isSolaris() && !Platform.isLinux() && !Platform.isOSX()) {
-            System.out.println("Test only applicable on Solaris, Linux, and Mac OSX, skipping");
-            return;
-        }
 
         String jdk_path = System.getProperty("test.jdk");
         String os_arch = Platform.getOsArch();
