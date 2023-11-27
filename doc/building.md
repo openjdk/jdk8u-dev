@@ -32,14 +32,14 @@ Some Headlines:
 ## Contents
 
   * [Introduction](#introduction)
-  * [Use of Mercurial](#hg)
-      * [Getting the Source](#get_source)
-      * [Repositories](#repositories)
+  * [Source code](#source-code)
+      * [Getting the Source](#getting-the-source)
+      * [Directories](#directories)
   * [Building](#building)
-      * [System Setup](#setup)
+      * [System Setup](#system-setup)
           * [Linux](#linux)
           * [Solaris](#solaris)
-          * [Mac OS X](#macosx)
+          * [Mac OS X](#mac-os-x)
           * [Windows](#windows)
       * [Configure](#configure)
       * [Make](#make)
@@ -47,52 +47,27 @@ Some Headlines:
 
 -------------------------------------------------------------------------------
 
-  * [Appendix A: Hints and Tips](#hints)
+  * [Appendix A: Hints and Tips](#appendix-a-hints-and-tips)
     * [FAQ](#faq)
-    * [Build Performance Tips](#performance)
+    * [Build Performance Tips](#build-performance-tips)
     * [Troubleshooting](#troubleshooting)
-  * [Appendix B: GNU Make Information](#gmake)
-  * [Appendix C: Build Environments](#buildenvironments)
+  * [Appendix B: GNU Make Information](#appendix-b-gnu-make)
+  * [Appendix C: Build Environments](#appendix-c-build-environments)
 
 -------------------------------------------------------------------------------
 
-## Use of Mercurial
+## Source code
 
 The OpenJDK sources are maintained with the revision control system
-[Mercurial](http://mercurial.selenic.com/wiki/Mercurial). If you are new to
-Mercurial, please see the [Beginner
-Guides](http://mercurial.selenic.com/wiki/BeginnersGuides) or refer to the
-[Mercurial Book](http://hgbook.red-bean.com/). The first few chapters of the
-book provide an excellent overview of Mercurial, what it is and how it works.
-
-For using Mercurial with the OpenJDK refer to the [Developer Guide: Installing
-and Configuring
-Mercurial](http://openjdk.java.net/guide/repositories.html#installConfig)
-section for more information.
+[Git](https://git-scm.com/).
 
 ### Getting the Source
 
-To get the entire set of OpenJDK Mercurial repositories use the script
-`get_source.sh` located in the root repository:
+      git clone https://github.com/openjdk/jdk8u.git
 
-      hg clone http://hg.openjdk.java.net/jdk8/jdk8 YourOpenJDK
-      cd YourOpenJDK
-      bash ./get_source.sh
+### Directories
 
-Once you have all the repositories, keep in mind that each repository is its
-own independent repository. You can also re-run `./get_source.sh` anytime to
-pull over all the latest changesets in all the repositories. This set of nested
-repositories has been given the term "forest" and there are various ways to
-apply the same `hg` command to each of the repositories. For example, the
-script `make/scripts/hgforest.sh` can be used to repeat the same `hg` command
-on every repository, e.g.
-
-      cd YourOpenJDK
-      bash ./make/scripts/hgforest.sh status
-
-### Repositories
-
-The set of repositories and what they contain:
+The set of directories and what they contain:
 
  * **. (root)** contains common configure and makefile logic
  * **hotspot** contains source code and make files for building the OpenJDK
@@ -120,8 +95,8 @@ There are some very basic guidelines:
  * The default build process should be to build the product and nothing else,
    in one form, e.g. a product (optimized), debug (non-optimized, -g plus
    assert logic), or fastdebug (optimized, -g plus assert logic).
- * The `.hgignore` file in each repository must exist and should include
-   `^build/`, `^dist/` and optionally any `nbproject/private` directories. **It
+ * The `.gitignore` file must exist and should include
+   `/build/`, `/dist/` and optionally any `nbproject/private` directories. **It
    should NEVER** include anything in the `src/` or `test/` or any managed
    directory area of a repository.
  * Directory names and file names should never contain blanks or non-printing
@@ -144,8 +119,10 @@ Building the OpenJDK is now done with running a `configure` script which will
 try and find and verify you have everything you need, followed by running
 `make`, e.g.
 
->  **`bash ./configure`** \
->  **`make all`**
+```
+bash ./configure
+make all
+```
 
 Where possible the `configure` script will attempt to located the various
 components in the default locations or via component specific variable
@@ -196,18 +173,18 @@ And for specific systems:
 
    Install all the software development packages needed including
    [alsa](#alsa), [freetype](#freetype), [cups](#cups), and
-   [xrender](#xrender). See [specific system packages](#SDBE).
+   [xrender](#xrender). See [specific system packages](#specific-developer-build-environments).
 
  * **Solaris**
 
    Install all the software development packages needed including [Studio
-   Compilers](#studio), [freetype](#freetype), [cups](#cups), and
-   [xrender](#xrender). See [specific system packages](#SDBE).
+   Compilers](#studio-compilers), [freetype](#freetype), [cups](#cups), and
+   [xrender](#xrender). See [specific system packages](#specific-developer-build-environments).
 
  * **Windows**
 
-   * Install one of [CYGWIN](#cygwin) or [MinGW/MSYS](#msys)
-   * Install [Visual Studio 2010](#vs2010)
+   * Install one of [CYGWIN](#cygwin) or [MinGW/MSYS](#mingwmsys)
+   * Install [Visual Studio 2010](#visual-studio-2010-compilers)
 
  * **Mac OS X**
 
@@ -278,7 +255,8 @@ yet.
 Building on Windows requires a Unix-like environment, notably a Unix-like
 shell. There are several such environments available of which
 [Cygwin](http://www.cygwin.com/) and
-[MinGW/MSYS](http://www.mingw.org/wiki/MSYS) are currently supported for the
+[MinGW/MSYS](https://web.archive.org/web/20201127230203/http://www.mingw.org/wiki/MSYS)
+are currently supported for the
 OpenJDK build. One of the differences of these systems from standard Windows
 tools is the way they handle Windows path names, particularly path names which
 contain spaces, backslashes as path separators and possibly drive letters.
@@ -301,7 +279,7 @@ backslash character into the `C:/` style of pathname (called 'mixed'), e.g.
 `cygpath -s -m "<path>"`.
 
 Note that the use of CYGWIN creates a unique problem with regards to setting
-[`PATH`](#path). Normally on Windows the `PATH` variable contains directories
+`PATH`. Normally on Windows the `PATH` variable contains directories
 separated with the ";" character (Solaris and Linux use ":"). With CYGWIN, it
 uses ":", but that means that paths like "C:/path" cannot be placed in the
 CYGWIN version of `PATH` and instead CYGWIN uses something like
@@ -315,23 +293,23 @@ By default CYGWIN doesn't install all the tools required for building the
 OpenJDK. Along with the default installation, you need to install the following
 tools.
 
-  Binary Name   Category       Package    Description
-  ------------- -------------- ---------- ------------------------------------------------------------
-  ar.exe        Devel          binutils   The GNU assembler, linker and binary utilities
-  make.exe      Devel          make       The GNU version of the 'make' utility built for CYGWIN
-  m4.exe        Interpreters   m4         GNU implementation of the traditional Unix macro processor
-  cpio.exe      Utils          cpio       A program to manage archives of files
-  gawk.exe      Utils          awk        Pattern-directed scanning and processing language
-  file.exe      Utils          file       Determines file type using 'magic' numbers
-  zip.exe       Archive        zip        Package and compress (archive) files
-  unzip.exe     Archive        unzip      Extract compressed files in a ZIP archive
-  free.exe      System         procps     Display amount of free and used memory in the system
+| Binary Name | Category     | Package  | Description                                                |
+| ----------- | ------------ | -------- | ---------------------------------------------------------- |
+| ar.exe      | Devel        | binutils | The GNU assembler, linker and binary utilities             |
+| make.exe    | Devel        | make     | The GNU version of the 'make' utility built for CYGWIN     |
+| m4.exe      | Interpreters | m4       | GNU implementation of the traditional Unix macro processor |
+| cpio.exe    | Utils        | cpio     | A program to manage archives of files                      |
+| gawk.exe    | Utils        | awk      | Pattern-directed scanning and processing language          |
+| file.exe    | Utils        | file     | Determines file type using 'magic' numbers                 |
+| zip.exe     | Archive      | zip      | Package and compress (archive) files                       |
+| unzip.exe   | Archive      | unzip    | Extract compressed files in a ZIP archive                  |
+| free.exe    | System       | procps   | Display amount of free and used memory in the system       |
 
 Note that the CYGWIN software can conflict with other non-CYGWIN software on
 your Windows system. CYGWIN provides a
 [FAQ](http://cygwin.com/faq/faq.using.html) for known issues and problems,
 of particular interest is the section on [BLODA (applications that interfere
-with CYGWIN)](http://cygwin.com/faq/faq.using.html#faq.using.bloda).
+with CYGWIN)](https://cygwin.com/faq.html#faq.using.bloda).
 
 ###### MinGW/MSYS
 
@@ -341,7 +319,8 @@ produce native Windows programs that do not rely on any 3rd-party C runtime
 DLLs. MSYS is a supplement to MinGW which allows building applications and
 programs which rely on traditional UNIX tools to be present. Among others this
 includes tools like `bash` and `make`. See
-[MinGW/MSYS](http://www.mingw.org/wiki/MSYS) for more information.
+[MinGW/MSYS](https://web.archive.org/web/20201127230203/http://www.mingw.org/wiki/MSYS)
+for more information.
 
 Like Cygwin, MinGW/MSYS can handle different types of path formats. They are
 internally converted to paths with forward slashes and drive letters `<drive>:`
@@ -353,7 +332,7 @@ Windows style path names with drive letters and backslashes as path separators.
 This may cause problems for Windows applications which use forward slashes as
 parameter separator (e.g. `cl /nologo /I`) because MSYS may wrongly [replace
 such parameters by drive
-letters](http://mingw.org/wiki/Posix_path_conversion).
+letters](https://web.archive.org/web/20201112005258/http://www.mingw.org/wiki/Posix_path_conversion).
 
 In addition to the tools which will be installed by default, you have to
 manually install the `msys-zip` and `msys-unzip` packages. This can be easily
@@ -390,63 +369,73 @@ Make sure you get the right XCode version.
 
 The basic invocation of the `configure` script looks like:
 
->  **`bash ./configure [options]`**
+```
+bash ./configure [options]
+```
 
 This will create an output directory containing the "configuration" and setup
 an area for the build result. This directory typically looks like:
 
->  **`build/linux-x64-normal-server-release`**
+```
+build/linux-x64-normal-server-release
+```
 
 `configure` will try to figure out what system you are running on and where all
 necessary build components are. If you have all prerequisites for building
 installed, it should find everything. If it fails to detect any component
 automatically, it will exit and inform you about the problem. When this
-happens, read more below in [the `configure` options](#configureoptions).
+happens, read more below in [the `configure` options](#configure-options).
 
 Some examples:
 
->  **Windows 32bit build with freetype specified:** \
->  `bash ./configure --with-freetype=/cygdrive/c/freetype-i586 --with-target-bits=32`
+* Windows 32bit build with freetype specified:
+  ```
+  bash ./configure --with-freetype=/cygdrive/c/freetype-i586 --with-target-bits=32
+  ```
 
->  **Debug 64bit Build:** \
->  `bash ./configure --enable-debug --with-target-bits=64`
+* Debug 64bit Build:
+  ```
+  bash ./configure --enable-debug --with-target-bits=64
+  ```
 
 #### Configure Options
 
 Complete details on all the OpenJDK `configure` options can be seen with:
 
->  **`bash ./configure --help=short`**
+```
+bash ./configure --help=short
+```
 
 Use `-help` to see all the `configure` options available. You can generate any
 number of different configurations, e.g. debug, release, 32, 64, etc.
 
 Some of the more commonly used `configure` options are:
 
->  **`--enable-debug`** \
->  set the debug level to fastdebug (this is a shorthand for 
->  `--with-debug-level=fastdebug`)
+ * **`--enable-debug`** \
+   set the debug level to fastdebug (this is a shorthand for
+   `--with-debug-level=fastdebug`)
 
 <a name="alsa"></a>
 
->  **`--with-alsa=`**_path_ \
->  select the location of the Advanced Linux Sound Architecture (ALSA)
+ * **`--with-alsa=<path>`** \
+   select the location of the Advanced Linux Sound Architecture (ALSA)
 
->  Version 0.9.1 or newer of the ALSA files are required for building the
+   Version 0.9.1 or newer of the ALSA files are required for building the
    OpenJDK on Linux. These Linux files are usually available from an "alsa" of
    "libasound" development package, and it's highly recommended that you try
    and use the package provided by the particular version of Linux that you are
    using.
 
->  **`--with-boot-jdk=`**_path_ \
->  select the [Bootstrap JDK](#bootjdk)
+ * **`--with-boot-jdk=<path>`** \
+   select the [Bootstrap JDK](#bootjdk)
 
->  **`--with-boot-jdk-jvmargs=`**"_args_" \
->  provide the JVM options to be used to run the [Bootstrap JDK](#bootjdk)
+ * **`--with-boot-jdk-jvmargs=<args>`** \
+   provide the JVM options to be used to run the [Bootstrap JDK](#bootjdk)
 
->  **`--with-cacerts=`**_path_ \
->  select the path to the cacerts file.
+ * **`--with-cacerts=<path>`** \
+   select the path to the cacerts file.
 
->  See [Certificate Authority on
+   See [Certificate Authority on
    Wikipedia](http://en.wikipedia.org/wiki/Certificate_Authority) for a
    better understanding of the Certificate Authority (CA). A certificates file
    named "cacerts" represents a system-wide keystore with CA certificates. In
@@ -461,80 +450,79 @@ Some of the more commonly used `configure` options are:
 
 <a name="cups"></a>
 
->  **`--with-cups=`**_path_ \
->  select the CUPS install location
+ * **`--with-cups=<path>`** \
+   select the CUPS install location
 
->  The Common UNIX Printing System (CUPS) Headers are required for building the
+   The Common UNIX Printing System (CUPS) Headers are required for building the
    OpenJDK on Solaris and Linux. The Solaris header files can be obtained by
    installing the package **SFWcups** from the Solaris Software Companion
    CD/DVD, these often will be installed into the directory `/opt/sfw/cups`.
-
->  The CUPS header files can always be downloaded from
+   The CUPS header files can always be downloaded from
    [www.cups.org](http://www.cups.org).
 
->  **`--with-cups-include=`**_path_ \
->  select the CUPS include directory location
+ * **`--with-cups-include=<path>`** \
+   select the CUPS include directory location
 
->  **`--with-debug-level=`**_level_ \
->  select the debug information level of release, fastdebug, or slowdebug
+ * **`--with-debug-level=<level>`** \
+   select the debug information level of release, fastdebug, or slowdebug
 
->  **`--with-dev-kit=`**_path_ \
->  select location of the compiler install or developer install location
+ * **`--with-dev-kit=<path>`** \
+   select location of the compiler install or developer install location
 
 <a name="freetype"></a>
 
->  **`--with-freetype=`**_path_ \
->  select the freetype files to use.
+ * **`--with-freetype=<path>`** \
+   select the freetype files to use.
 
->  Expecting the freetype libraries under `lib/` and the headers under
+   Expecting the freetype libraries under `lib/` and the headers under
    `include/`.
 
->  Version 2.3 or newer of FreeType is required. On Unix systems required files
+   Version 2.3 or newer of FreeType is required. On Unix systems required files
    can be available as part of your distribution (while you still may need to
    upgrade them). Note that you need development version of package that
    includes both the FreeType library and header files.
 
->  You can always download latest FreeType version from the [FreeType
+   You can always download latest FreeType version from the [FreeType
    website](http://www.freetype.org). Building the freetype 2 libraries from
    scratch is also possible, however on Windows refer to the [Windows FreeType
    DLL build instructions](http://freetype.freedesktop.org/wiki/FreeType_DLL).
 
->  Note that by default FreeType is built with byte code hinting support
+   Note that by default FreeType is built with byte code hinting support
    disabled due to licensing restrictions. In this case, text appearance and
    metrics are expected to differ from Sun's official JDK build. See the
    [SourceForge FreeType2 Home Page](http://freetype.sourceforge.net/freetype2)
    for more information.
 
->  **`--with-import-hotspot=`**_path_ \
->  select the location to find hotspot binaries from a previous build to avoid
+ * **`--with-import-hotspot=<path>`** \
+   select the location to find hotspot binaries from a previous build to avoid
    building hotspot
 
->  **`--with-target-bits=`**_arg_ \
->  select 32 or 64 bit build
+ * **`--with-target-bits=<bits>`** \
+   select 32 or 64 bit build
 
->  **`--with-jvm-variants=`**_variants_ \
->  select the JVM variants to build from, comma separated list that can
+ * **`--with-jvm-variants=<variants>`** \
+   select the JVM variants to build from, comma separated list that can
    include: server, client, kernel, zero and zeroshark
 
->  **`--with-memory-size=`**_size_ \
->  select the RAM size that GNU make will think this system has
+ * **`--with-memory-size=<size>`** \
+   select the RAM size that GNU make will think this system has
 
->  **`--with-msvcr-dll=`**_path_ \
->  select the `msvcr100.dll` file to include in the Windows builds (C/C++
+ * **`--with-msvcr-dll=<path>`** \
+   select the `msvcr100.dll` file to include in the Windows builds (C/C++
    runtime library for Visual Studio).
 
->  This is usually picked up automatically from the redist directories of
+   This is usually picked up automatically from the redist directories of
    Visual Studio 2010.
 
->  **`--with-num-cores=`**_cores_ \
->  select the number of cores to use (processor count or CPU count)
+ * **`--with-num-cores=<cores>`** \
+   select the number of cores to use (processor count or CPU count)
 
 <a name="xrender"></a>
 
->  **`--with-x=`**_path_ \
->  select the location of the X11 and xrender files.
+ * **`--with-x=<path>`** \
+   select the location of the X11 and xrender files.
 
->  The XRender Extension Headers are required for building the OpenJDK on
+   The XRender Extension Headers are required for building the OpenJDK on
    Solaris and Linux. The Linux header files are usually available from a
    "Xrender" development package, it's recommended that you try and use the
    package provided by the particular distribution of Linux that you are using.
@@ -549,7 +537,9 @@ Some of the more commonly used `configure` options are:
 
 The basic invocation of the `make` utility looks like:
 
->  **`make all`**
+```
+make all
+```
 
 This will start the build to the output directory containing the
 "configuration" that was created by the `configure` script. Run `make help` for
@@ -557,30 +547,30 @@ more information on the available targets.
 
 There are some of the make targets that are of general interest:
 
->  _empty_ \
->  build everything but no images
+ * _empty_ \
+   build everything but no images
 
->  **`all`** \
->  build everything including images
+ * **`all`** \
+   build everything including images
 
->  **`all-conf`** \
->  build all configurations
+ * **`all-conf`** \
+   build all configurations
 
->  **`images`** \
->  create complete j2sdk and j2re images
+ * **`images`** \
+   create complete j2sdk and j2re images
 
->  **`install`** \
->  install the generated images locally, typically in `/usr/local`
+ * **`install`** \
+   install the generated images locally, typically in `/usr/local`
 
->  **`clean`** \
->  remove all files generated by make, but not those generated by `configure`
+ * **`clean`** \
+   remove all files generated by make, but not those generated by `configure`
 
->  **`dist-clean`** \
->  remove all files generated by both and `configure` (basically killing the
+ * **`dist-clean`** \
+   remove all files generated by both and `configure` (basically killing the
    configuration)
 
->  **`help`** \
->  give some help on using `make`, including some interesting make targets
+ * **`help`** \
+   give some help on using `make`, including some interesting make targets
 
 -------------------------------------------------------------------------------
 
@@ -594,7 +584,9 @@ testing tool `jtreg` will be needed and can be found at: [the jtreg
 site](http://openjdk.java.net/jtreg/). The provided regression tests in the
 repositories can be run with the command:
 
->  **``cd test && make PRODUCT_HOME=`pwd`/../build/*/images/j2sdk-image all``**
+```
+cd test && make PRODUCT_HOME=`pwd`/../build/*/images/j2sdk-image all
+```
 
 -------------------------------------------------------------------------------
 
@@ -625,7 +617,7 @@ changes in `generated-configure.sh`.
 the input files? \
 **A:** Regnerating `generated-configure.sh` should always be done using the
 script `common/autoconf/autogen.sh` to ensure that the correct files get
-updated. This script should also be run after mercurial tries to merge
+updated. This script should also be run after git tries to merge
 `generated-configure.sh` as a merge of the generated file is not guaranteed to
 be correct.
 
@@ -843,8 +835,8 @@ suggestions for remedies.
  * **File time issues:** \
    If you see warnings that refer to file time stamps, e.g.
 
-   > _Warning message:_ ` File 'xxx' has modification time in the future.` \
-   > _Warning message:_ ` Clock skew detected. Your build may be incomplete.`
+   * _Warning message:_ ` File 'xxx' has modification time in the future.`
+   * _Warning message:_ ` Clock skew detected. Your build may be incomplete.`
 
    These warnings can occur when the clock on the build machine is out of sync
    with the timestamps on the source files. Other errors, apparently unrelated
@@ -860,7 +852,9 @@ suggestions for remedies.
    Increase the amount of swap space on your build machine. This could be
    caused by overloading the system and it may be necessary to use:
 
-   > `make JOBS=1`
+   ```
+   make JOBS=1
+   ```
 
    to reduce the load on the system.
 
@@ -902,7 +896,7 @@ suggestions for remedies.
 
    The CYGWIN software can conflict with other non-CYGWIN software. See the
    CYGWIN FAQ section on [BLODA (applications that interfere with
-   CYGWIN)](http://cygwin.com/faq/faq.using.html#faq.using.bloda).
+   CYGWIN)](https://cygwin.com/faq.html#faq.using.bloda).
 
  * **Windows Error Message: `spawn failed`** \
    Try rebooting the system, or there could be some kind of issue with the disk
@@ -918,7 +912,7 @@ the utility command `make` (usually called `gmake` on Solaris). A few notes
 about using GNU make:
 
  * You need GNU make version 3.81 or newer. If the GNU make utility on your
-   systems is not 3.81 or newer, see "[Building GNU make](#buildgmake)".
+   systems is not 3.81 or newer, see "[Building GNU make](#building-gnu-make)".
  * Place the location of the GNU make binary in the `PATH`.
  * **Solaris:** Do NOT use `/usr/bin/make` on Solaris. If your Solaris system
    has the software from the Solaris Developer Companion CD installed, you
@@ -992,14 +986,14 @@ so that they can be dealt with accordingly.
 
 Bootstrap JDK: JDK 7u7
 
-  Base OS and Architecture                      OS                                             C/C++ Compiler                                          Processors   RAM Minimum   DISK Needs
-  --------------------------------------------- ---------------------------------------------- ------------------------------------------------------- ------------ ------------- ------------
-  Linux X86 (32-bit) and X64 (64-bit)           Fedora 9                                       gcc 4.3                                                 2 or more    1 GB          6 GB
-  Solaris SPARC (32-bit) and SPARCV9 (64-bit)   Solaris 10 Update 6                            Studio 12 Update 1 + patches                            4 or more    4 GB          8 GB
-  Solaris X86 (32-bit) and X64 (64-bit)         Solaris 10 Update 6                            Studio 12 Update 1 + patches                            4 or more    4 GB          8 GB
-  Windows X86 (32-bit)                          Windows XP                                     Microsoft Visual Studio C++ 2010 Professional Edition   2 or more    2 GB          6 GB
-  Windows X64 (64-bit)                          Windows Server 2003 - Enterprise x64 Edition   Microsoft Visual Studio C++ 2010 Professional Edition   2 or more    2 GB          6 GB
-  Mac OS X X64 (64-bit)                         Mac OS X 10.7 "Lion"                           XCode 4.5.2 or newer                                    2 or more    4 GB          6 GB
+| Base OS and Architecture                    | OS                                           | C/C++ Compiler                                        | Processors | RAM Minimum | DISK Needs |
+| ------------------------------------------- | -------------------------------------------- | ----------------------------------------------------- | ---------- | ----------- | ---------- |
+| Linux X86 (32-bit) and X64 (64-bit)         | Fedora 9                                     | gcc 4.3                                               | 2 or more  | 1 GB        | 6 GB       |
+| Solaris SPARC (32-bit) and SPARCV9 (64-bit) | Solaris 10 Update 6                          | Studio 12 Update 1 + patches                          | 4 or more  | 4 GB        | 8 GB       |
+| Solaris X86 (32-bit) and X64 (64-bit)       | Solaris 10 Update 6                          | Studio 12 Update 1 + patches                          | 4 or more  | 4 GB        | 8 GB       |
+| Windows X86 (32-bit)                        | Windows XP                                   | Microsoft Visual Studio C++ 2010 Professional Edition | 2 or more  | 2 GB        | 6 GB       |
+| Windows X64 (64-bit)                        | Windows Server 2003 - Enterprise x64 Edition | Microsoft Visual Studio C++ 2010 Professional Edition | 2 or more  | 2 GB        | 6 GB       |
+| Mac OS X X64 (64-bit)                       | Mac OS X 10.7 "Lion"                         | XCode 4.5.2 or newer                                  | 2 or more  | 4 GB        | 6 GB       |
 
 -------------------------------------------------------------------------------
 
@@ -1068,7 +1062,7 @@ In addition, it's necessary to set a few environment variables for the build:
 
 #### Ubuntu 12.04
 
-After installing [Ubuntu](http://ubuntu.org) 12.04 you need to install several
+After installing [Ubuntu](http://ubuntu.com) 12.04 you need to install several
 build dependencies. The simplest way to do it is to execute the following
 commands:
 
@@ -1100,7 +1094,8 @@ Finally, you need to unset the `JAVA_HOME` environment variable:
 
 #### Mandriva Linux One 2009 Spring
 
-After installing [Mandriva](http://mandriva.org) Linux One 2009 Spring you need
+After installing [Mandriva](https://web.archive.org/web/20130121125402/http://www.mandriva.com/en/)
+Linux One 2009 Spring you need
 to install several build dependencies. The simplest way to install the build
 dependencies is to execute the following commands as user `root`:
 
@@ -1115,7 +1110,8 @@ In addition, it is necessary to set a few environment variables for the build:
 
 #### OpenSolaris 2009.06
 
-After installing [OpenSolaris](http://opensolaris.org) 2009.06 you need to
+After installing [OpenSolaris](https://web.archive.org/web/20110731221003/http://hub.opensolaris.org/bin/view/Main/)
+2009.06 you need to
 install several build dependencies. The simplest way to install the build
 dependencies is to execute the following commands:
 
