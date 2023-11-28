@@ -50,6 +50,8 @@ public class ValidatePathWithURL {
      */
     public ValidatePathWithURL(String caAlias) throws Exception {
         System.setProperty("com.sun.net.ssl.checkRevocation", "true");
+        // Stapling needs to be explicitly enabled as it defaults to false in 8u
+        System.setProperty("jdk.tls.client.enableStatusRequestExtension", "true");
         Security.setProperty("ssl.TrustManagerFactory.algorithm", "SunPKIX");
 
         // some test sites don't have correct hostname specified in test certificate
