@@ -46,8 +46,8 @@ check() {
   # Strip carriage returns from output when comparing with n2a test output
   # on win32 systems
   if [ ${OS} = Windows ]; then
-     sed -e 's@\\r@@g' $out >$out.1
-     sed -e 's@\\r@@g' $expected >$out.expected
+     sed -e 's@\r@@g' $out >$out.1
+     sed -e 's@\r@@g' $expected >$out.expected
   else
      cp $out $out.1
      cp $expected $out.expected
