@@ -427,6 +427,15 @@ final class HttpsClient extends HttpClient
     }
 
     @Override
+    public void closeServer() {
+        try {
+            // SSLSocket.close may block up to timeout. Make sure it's short.
+            serverSocket.setSoTimeout(1);
+        } catch (Exception e) {}
+        super.closeServer();
+    }
+
+    @Override
     public void afterConnect() throws IOException, UnknownHostException {
         if (!isCachedConnection()) {
             SSLSocket s = null;
