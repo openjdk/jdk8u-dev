@@ -267,12 +267,17 @@ public final class RSAPadding {
      */
     public byte[] unpad(byte[] padded) {
         if (padded.length == paddedSize) {
-            return switch(type) {
-                case PAD_NONE -> padded;
-                case PAD_BLOCKTYPE_1, PAD_BLOCKTYPE_2 -> unpadV15(padded);
-                case PAD_OAEP_MGF1 -> unpadOAEP(padded);
-                default -> throw new AssertionError();
-            };
+            switch (type) {
+            case PAD_NONE:
+                return padded;
+            case PAD_BLOCKTYPE_1:
+            case PAD_BLOCKTYPE_2:
+                return unpadV15(padded);
+            case PAD_OAEP_MGF1:
+                return unpadOAEP(padded);
+            default:
+                throw new AssertionError();
+            }
         } else {
             return null;
         }
