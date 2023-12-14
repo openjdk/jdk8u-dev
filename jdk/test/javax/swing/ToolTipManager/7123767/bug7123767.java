@@ -54,8 +54,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
 
-
 import jdk.testlibrary.RandomFactory;
+
 
 public class bug7123767 extends JFrame {
 
