@@ -213,9 +213,9 @@ public abstract class RSASignature extends SignatureSpi {
                     RSACore.getByteLength(publicKey));
         }
 
-        // https://www.rfc-editor.org/rfc/rfc8017.html#section-8.2.2
-        // Step 4 suggests comparing the encoded message
         try {
+            // https://www.rfc-editor.org/rfc/rfc8017.html#section-8.2.2
+            // Step 4 suggests comparing the encoded message
             byte[] decrypted = RSACore.rsa(sigBytes, publicKey);
 
             byte[] digest = getDigestValue();
