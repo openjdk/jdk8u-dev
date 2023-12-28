@@ -112,6 +112,11 @@ public class HostIdentifier {
             return new URI(uriString);
         }
 
+	if (Character.isDigit(uriString.charAt(0))) {
+            // may be hostname or hostname:port since it starts with digits
+            uriString = "//" + uriString;
+        }
+
         URI u = new URI(uriString);
 
         if (u.isAbsolute()) {
