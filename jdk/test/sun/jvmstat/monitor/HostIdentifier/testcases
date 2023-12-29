@@ -199,7 +199,7 @@ protocol, dotted hostname, port, and specificed server name, with query and frag
 
 <testcase id="28" HostIdentifierInput="file://localhost">
 <description>
-file URI
+file URI 
 </description>
 <HostIdentifier> file://localhost </HostIdentifier>
 </testcase>
