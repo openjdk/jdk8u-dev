@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003, 2013, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2003, 2019, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -255,6 +255,8 @@ public class HeapSummary extends Tool {
       if (f != null) {
          if (f.isBool()) {
             return f.getBool()? 1L : 0L;
+         } else if (f.isUIntx() || f.isUint64t()) {
+            return parseUnsignedLong(f.getValue(), 10);
          } else {
             return Long.parseLong(f.getValue());
          }
@@ -298,5 +300,62 @@ public class HeapSummary extends Tool {
       StringTable strTable = VM.getVM().getStringTable();
       strTable.stringsDo(stat);
       stat.print();
+   }
+
+   /** This is an alternative to Long.parseUnsignedLong(String s, int radix)
+       Required to build with the boot JDK7.
+       Backporting JDK-8217850 requires this method. */
+   private long parseUnsignedLong(String s, int radix)
+         throws NumberFormatException {
+      if (s == null)  {
+         throw new NumberFormatException("null");
+      }
+
+      int len = s.length();
+      if (len > 0) {
+         char firstChar = s.charAt(0);
+         if (firstChar == '-') {
+            throw new
+               NumberFormatException(String.format("Illegal leading minus sign " +
+                                                   "on unsigned string %s.", s));
+         } else {
+            if (len <= 12 || // Long.MAX_VALUE in Character.MAX_RADIX is 13 digits
+               (radix == 10 && len <= 18) ) { // Long.MAX_VALUE in base 10 is 19 digits
+               return Long.parseLong(s, radix);
+            }
+
+            // No need for range checks on len due to testing above.
+            long first = Long.parseLong(s.substring(0, len - 1), radix);
+            int second = Character.digit(s.charAt(len - 1), radix);
+            if (second < 0) {
+               throw new NumberFormatException("Bad digit at end of " + s);
+            }
+            long result = first * radix + second;
+            /* Replace compareUnsigned(long x, long y) with its implementation */
+            if (Long.compare(result + Long.MIN_VALUE, first + Long.MIN_VALUE) < 0) {
+               /*
+               * The maximum unsigned value, (2^64)-1, takes at
+               * most one more digit to represent than the
+               * maximum signed value, (2^63)-1.  Therefore,
+               * parsing (len - 1) digits will be appropriately
+               * in-range of the signed parsing.  In other
+               * words, if parsing (len -1) digits overflows
+               * signed parsing, parsing len digits will
+               * certainly overflow unsigned parsing.
+               *
+               * The compareUnsigned check above catches
+               * situations where an unsigned overflow occurs
+               * incorporating the contribution of the final
+               * digit.
+               */
+               throw new NumberFormatException(String.format("String value %s exceeds " +
+                                                             "range of unsigned long.", s));
+            }
+            return result;
+         }
+      } else {
+         /* Replace NumberFormatException.forInputString(s) with its implementation */
+         throw new NumberFormatException("For input string: \"" + s + "\"");
+      }
    }
 }
