@@ -861,11 +861,29 @@ public class JavaCompiler {
             delegateCompiler.close();
             elapsed_msec = delegateCompiler.elapsed_msec;
         } catch (Abort ex) {
+            correctDelegateCompilerIfNeed();
             if (devVerbose)
                 ex.printStackTrace(System.err);
         } finally {
             if (procEnvImpl != null)
                 procEnvImpl.close();
+        }
+    }
+
+    /**
+     * If processAnnotations abort in a certain round,
+     * delegateCompiler is likely to be null,
+     * resulting in a compilation failure,
+     * but Javac considers it successful,
+     * so it may be necessary to find the final delegateCompiler compiler used here
+     */
+    private void correctDelegateCompilerIfNeed() {
+        if(delegateCompiler != null){
+            return;
+        }
+        Context procContext = procEnvImpl.getContext();
+        if(procContext != context){
+            delegateCompiler = JavaCompiler.instance(procContext);
         }
     }
 
