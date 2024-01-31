@@ -92,56 +92,56 @@ public class KeepAliveCache
         // after cacheLock is released.
         HttpClient oldClient = null;
         synchronized (this) {
-        boolean startThread = (keepAliveTimer == null);
-        if (!startThread) {
-            if (!keepAliveTimer.isAlive()) {
-                startThread = true;
+            boolean startThread = (keepAliveTimer == null);
+            if (!startThread) {
+                if (!keepAliveTimer.isAlive()) {
+                    startThread = true;
+                }
+            }
+            if (startThread) {
+                clear();
+                /* Unfortunately, we can't always believe the keep-alive timeout we got
+                 * back from the server.  If I'm connected through a Netscape proxy
+                 * to a server that sent me a keep-alive
+                 * time of 15 sec, the proxy unilaterally terminates my connection
+                 * The robustness to get around this is in HttpClient.parseHTTP()
+                 */
+                final KeepAliveCache cache = this;
+                AccessController.doPrivileged(new PrivilegedAction<Void>() {
+                    public Void run() {
+                        // We want to create the Keep-Alive-Timer in the
+                        // system threadgroup
+                        ThreadGroup grp = Thread.currentThread().getThreadGroup();
+                        ThreadGroup parent = null;
+                        while ((parent = grp.getParent()) != null) {
+                            grp = parent;
+                        }
+
+                        keepAliveTimer = new Thread(grp, cache, "Keep-Alive-Timer");
+                        keepAliveTimer.setDaemon(true);
+                        keepAliveTimer.setPriority(Thread.MAX_PRIORITY - 2);
+                        // Set the context class loader to null in order to avoid
+                        // keeping a strong reference to an application classloader.
+                        keepAliveTimer.setContextClassLoader(null);
+                        keepAliveTimer.start();
+                        return null;
+                    }
+                });
+            }
+
+            KeepAliveKey key = new KeepAliveKey(url, obj);
+            ClientVector v = super.get(key);
+
+            if (v == null) {
+                int keepAliveTimeout = http.getKeepAliveTimeout();
+                v = new ClientVector(keepAliveTimeout > 0 ?
+                                     keepAliveTimeout * 1000 : LIFETIME);
+                v.put(http);
+                super.put(key, v);
+            } else {
+                oldClient = v.put(http);
             }
         }
-        if (startThread) {
-            clear();
-            /* Unfortunately, we can't always believe the keep-alive timeout we got
-             * back from the server.  If I'm connected through a Netscape proxy
-             * to a server that sent me a keep-alive
-             * time of 15 sec, the proxy unilaterally terminates my connection
-             * The robustness to get around this is in HttpClient.parseHTTP()
-             */
-            final KeepAliveCache cache = this;
-            AccessController.doPrivileged(new PrivilegedAction<Void>() {
-                public Void run() {
-                   // We want to create the Keep-Alive-Timer in the
-                    // system threadgroup
-                    ThreadGroup grp = Thread.currentThread().getThreadGroup();
-                    ThreadGroup parent = null;
-                    while ((parent = grp.getParent()) != null) {
-                        grp = parent;
-                    }
-
-                    keepAliveTimer = new Thread(grp, cache, "Keep-Alive-Timer");
-                    keepAliveTimer.setDaemon(true);
-                    keepAliveTimer.setPriority(Thread.MAX_PRIORITY - 2);
-                    // Set the context class loader to null in order to avoid
-                    // keeping a strong reference to an application classloader.
-                    keepAliveTimer.setContextClassLoader(null);
-                    keepAliveTimer.start();
-                    return null;
-                }
-            });
-        }
-
-        KeepAliveKey key = new KeepAliveKey(url, obj);
-        ClientVector v = super.get(key);
-
-        if (v == null) {
-            int keepAliveTimeout = http.getKeepAliveTimeout();
-            v = new ClientVector(keepAliveTimeout > 0 ?
-                                 keepAliveTimeout * 1000 : LIFETIME);
-            v.put(http);
-            super.put(key, v);
-        } else {
-                oldClient = v.put(http);
-        }
-    }
         // close after releasing locks
         if (oldClient != null) {
             oldClient.closeServer();
@@ -225,10 +225,10 @@ public class KeepAliveCache
             }
             // close connections outside cacheLock
             if (closeList != null) {
-                 for (HttpClient hc : closeList) {
-                     hc.closeServer();
-               }
-          }
+                for (HttpClient hc : closeList) {
+                    hc.closeServer();
+                }
+            }
         } while (!isEmpty());
     }
 
@@ -267,7 +267,7 @@ class ClientVector extends ArrayDeque<KeepAliveEntry> {
         }
 
         long currentTime = System.currentTimeMillis();
-            if ((currentTime - e.idleStartTime) > nap) {
+        if ((currentTime - e.idleStartTime) > nap) {
             return null; // all connections stale - will be cleaned up later
         } else {
             pollFirst();
@@ -288,7 +288,7 @@ class ClientVector extends ArrayDeque<KeepAliveEntry> {
         return staleClient;
     }
 
-/* remove an HttpClient */
+    /* remove an HttpClient */
     synchronized boolean remove(HttpClient h) {
         for (KeepAliveEntry curr : this) {
             if (curr.hc == h) {
