@@ -169,8 +169,8 @@ public class ReadZip {
         try {
             URI uri = URI.create("jar:" + path.toUri());
             Map<String, Object> env = new HashMap<>();
-	    env.put("create", "true");
-	    env.put("forceZIP64End", "true");
+            env.put("create", "true");
+            env.put("forceZIP64End", "true");
             try (FileSystem fs = FileSystems.newFileSystem(uri, env)) {
                 Files.write(fs.getPath("hello"), "hello".getBytes());
             }
