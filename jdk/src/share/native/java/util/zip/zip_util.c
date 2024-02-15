@@ -386,7 +386,7 @@ findEND64(jzfile *zip, void *end64buf, jlong endpos)
     char loc64[ZIP64_LOCHDR];
     jlong end64pos;
     if (endpos < ZIP64_LOCHDR) {
-	return -1;
+        return -1;
     }
     if (readFullyAt(zip->zfd, loc64, ZIP64_LOCHDR, endpos - ZIP64_LOCHDR) == -1) {
         return -1;    // end64 locator not found
@@ -600,15 +600,15 @@ readCEN(jzfile *zip, jint knownTotal)
     total  = ENDTOT(endbuf);
     unsigned char end64buf[ZIP64_ENDHDR];
     if ((end64pos = findEND64(zip, end64buf, endpos)) != -1) {
-	// end64 candidate found,
-	cenlen64 = ZIP64_ENDSIZ(end64buf);
-	cenoff64 = ZIP64_ENDOFF(end64buf);
-	centot64 = ZIP64_ENDTOT(end64buf);
-	// double-check
-	if ((cenlen64 == cenlen || cenlen == ZIP64_MAGICVAL) &&
-	    (cenoff64 == cenoff || cenoff == ZIP64_MAGICVAL) &&
-	    (centot64 == total || total == ZIP64_MAGICCOUNT)) {
-	    // to use the end64 values
+        // end64 candidate found,
+        cenlen64 = ZIP64_ENDSIZ(end64buf);
+        cenoff64 = ZIP64_ENDOFF(end64buf);
+        centot64 = ZIP64_ENDTOT(end64buf);
+        // double-check
+        if ((cenlen64 == cenlen || cenlen == ZIP64_MAGICVAL) &&
+            (cenoff64 == cenoff || cenoff == ZIP64_MAGICVAL) &&
+            (centot64 == total || total == ZIP64_MAGICCOUNT)) {
+            // to use the end64 values
             cenlen = cenlen64;
             cenoff = cenoff64;
             total = (jint)centot64;
