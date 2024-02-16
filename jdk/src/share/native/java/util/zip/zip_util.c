@@ -571,6 +571,7 @@ readCEN(jzfile *zip, jint knownTotal)
     /* Following are unsigned 32-bit */
     jlong endpos, end64pos, cenpos, cenlen, cenoff;
     jlong cenlen64, cenoff64, centot64;
+    unsigned char end64buf[ZIP64_ENDHDR];
     /* Following are unsigned 16-bit */
     jint total, tablelen, i, j;
     unsigned char *cenbuf = NULL;
@@ -598,7 +599,6 @@ readCEN(jzfile *zip, jint knownTotal)
     cenlen = ENDSIZ(endbuf);
     cenoff = ENDOFF(endbuf);
     total  = ENDTOT(endbuf);
-    unsigned char end64buf[ZIP64_ENDHDR];
     if ((end64pos = findEND64(zip, end64buf, endpos)) != -1) {
         // end64 candidate found,
         cenlen64 = ZIP64_ENDSIZ(end64buf);
