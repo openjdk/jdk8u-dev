@@ -176,9 +176,9 @@ jobs:
 
       - name: Build
         run: |
-	  cat spec.gmk
-	  cat hotspot-spec.gmk
-	  make CONF_NAME=linux-x64 LOG_LEVEL=debug images
+          cat spec.gmk
+          cat hotspot-spec.gmk
+          make CONF_NAME=linux-x64 LOG_LEVEL=debug images
         working-directory: jdk
 
       - name: Pack artifacts
