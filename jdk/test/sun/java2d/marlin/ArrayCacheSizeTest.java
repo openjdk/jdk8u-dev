@@ -27,7 +27,7 @@ import sun.java2d.marlin.ArrayCache;
  * @test
  * @bug 8144445
  * @summary Check the ArrayCache getNewLargeSize() method
- * @run main ArrayCacheSizeTest
+ * @run main/othervm -Dsun.java2d.renderer=sun.java2d.marlin.MarlinRenderingEngine ArrayCacheSizeTest
  */
 public class ArrayCacheSizeTest {
 
