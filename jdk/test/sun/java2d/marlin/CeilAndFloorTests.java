@@ -26,7 +26,7 @@ import sun.java2d.marlin.FloatMath;
 /*
  * @test
  * @summary Check for correct implementation of FloatMath.ceil/floor
- * @run main/othervm -Dsun.java2d.renderer=sun.java2d.marlin.MarlinRenderingEngine CeilAndFloorTests
+ * @run main CeilAndFloorTests
  */
 public class CeilAndFloorTests {
 
