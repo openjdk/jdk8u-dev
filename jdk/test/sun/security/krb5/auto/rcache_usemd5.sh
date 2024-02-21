@@ -1,11 +1,10 @@
 #
+# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
 # DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
 #
 # This code is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License version 2 only, as
-# published by the Free Software Foundation.  Oracle designates this
-# particular file as subject to the "Classpath" exception as provided
-# by Oracle in the LICENSE file that accompanied this code.
+# published by the Free Software Foundation.
 #
 # This code is distributed in the hope that it will be useful, but WITHOUT
 # ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
@@ -21,4 +20,11 @@
 # or visit www.oracle.com if you need additional information or have any
 # questions.
 #
-tzdata2023d
+
+# @test
+# @bug 8168518
+# @library ../../../../java/security/testlibrary/ /test/lib
+# @run main/othervm/timeout=300 -Dsun.net.spi.nameservice.provider.1=ns,mock -Djdk.krb5.rcache.useMD5=true ReplayCacheTestProc
+# @summary  testing jdk.krb5.rcache.useMD5. This action is put in a separate
+#           test so that ReplayCacheTestProc.java can be launched with special
+#           test.* system properties easily.
