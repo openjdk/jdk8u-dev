@@ -4383,7 +4383,7 @@ public final class Formatter implements Closeable, Flushable {
             if (width > len && f.contains(Flags.ZERO_PAD)) {
                 char[] zeros = new char[width - len];
                 Arrays.fill(zeros, zero);
-                sb.insert(begin, new String(zeros));
+                sb.insert(begin, zeros);
             }
 
             return sb;

@@ -31,9 +31,9 @@
 public class Padding {
 
     private static class Argument {
-        String expected;
-        String format;
-        Object value;
+        final String expected;
+        final String format;
+        final Object value;
 
         Argument(String expected, String format, Object value) {
             this.expected = expected;
@@ -306,8 +306,8 @@ public class Padding {
     };
 
     public static void main(String [] args) {
-        for(Argument arg : arguments) {
-            if(!arg.expected.equals(String.format(arg.format, arg.value))) {
+        for (Argument arg : arguments) {
+            if (!arg.expected.equals(String.format(arg.format, arg.value))) {
                 throw new RuntimeException("Expected value " + arg.expected +
                 " not returned from String.format(" + arg.format + ", " + arg.value + ")");
             }
