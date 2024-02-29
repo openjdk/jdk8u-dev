@@ -23,6 +23,7 @@
 
 /* @test
    @bug 7123767
+   @key headful randomness
    @summary Wrong tooltip location in Multi-Monitor configurations
    @author Vladislav Karnaukhov
    @run main bug7123767
