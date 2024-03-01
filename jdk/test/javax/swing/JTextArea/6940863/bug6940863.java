@@ -21,7 +21,7 @@
  * questions.
  */
 
-/* *
+/**
  * @test
  * @key headful
  * @bug 6940863
