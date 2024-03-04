@@ -215,7 +215,7 @@ import java.util.logging.Logger;
 import sun.net.www.http.HttpClient;
 import sun.net.www.http.KeepAliveCache;
 import sun.net.www.protocol.http.HttpURLConnection;
-import jdk.test.lib.net.URIBuilder;
+import jdk.testlibrary.net.URIBuilder;
 
 public class KeepAliveTest {
     private static final Logger logger = Logger.getLogger("sun.net.www.protocol.http.HttpURLConnection");
