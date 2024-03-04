@@ -23,7 +23,7 @@
 
 /*
  * @test
- * @library /test/lib
+ * @library /lib/testlibrary
  * @bug 8291226 8291638
  * @modules java.base/sun.net:+open
  *          java.base/sun.net.www.http:+open
