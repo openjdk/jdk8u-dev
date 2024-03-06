@@ -130,6 +130,9 @@ hotspot_wbapitest = \
 hotspot_compiler = \
   sanity/ExecuteInternalVMTests.java
 
+hotspot_containers = \
+  containers
+
 hotspot_gc = \
   sanity/ExecuteInternalVMTests.java \
   -gc/g1/TestGreyReclaimedHumongousObjects.java
@@ -259,6 +262,7 @@ compact1_minimal = \
   testlibrary/ \
   sanity/ \
   runtime/ \
+  containers/ \
   gc/ \
  -:needs_full_vm_compact1 \
  -:needs_full_vm_compact2 \
