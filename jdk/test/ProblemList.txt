@@ -394,3 +394,4 @@ security/infra/java/security/cert/CertPathValidator/certification/CAInterop.java
 security/infra/java/security/cert/CertPathValidator/certification/CAInterop.java#gtsrootcar2            8324583 generic-all
 security/infra/java/security/cert/CertPathValidator/certification/CAInterop.java#gtsrootecccar3         8324583 generic-all
 security/infra/java/security/cert/CertPathValidator/certification/CAInterop.java#gtsrootecccar4         8324583 generic-all
+security/infra/java/security/cert/CertPathValidator/certification/LuxTrustCA.java                       8314509 generic-all
