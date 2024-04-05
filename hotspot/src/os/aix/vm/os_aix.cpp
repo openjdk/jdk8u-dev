@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1999, 2019, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1999, 2024, Oracle and/or its affiliates. All rights reserved.
  * Copyright 2012, 2014 SAP AG. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
@@ -1452,7 +1452,7 @@ bool os::dll_address_to_library_name(address addr, char* buf,
 
 // Loads .dll/.so and in case of error it checks if .dll/.so was built
 // for the same architecture as Hotspot is running on.
-static void* dll_load(const char *filename, char *ebuf, int ebuflen) {
+static void* dll_load_library(const char *filename, char *ebuf, int ebuflen) {
 
   if (ebuf && ebuflen > 0) {
     ebuf[0] = '\0';
