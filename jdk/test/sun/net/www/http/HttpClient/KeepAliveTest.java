@@ -23,7 +23,8 @@
 
 /*
  * @test
- * @library /test/lib
+ * @library /lib/testlibrary
+ * @bug 8291226 8291638
  * @modules java.base/sun.net:+open
  *          java.base/sun.net.www.http:+open
  *          java.base/sun.net.www:+open
@@ -214,7 +215,7 @@ import java.util.logging.Logger;
 import sun.net.www.http.HttpClient;
 import sun.net.www.http.KeepAliveCache;
 import sun.net.www.protocol.http.HttpURLConnection;
-import jdk.test.lib.net.URIBuilder;
+import jdk.testlibrary.net.URIBuilder;
 
 public class KeepAliveTest {
     private static final Logger logger = Logger.getLogger("sun.net.www.protocol.http.HttpURLConnection");
@@ -1015,12 +1016,6 @@ public class KeepAliveTest {
     }
 
     private void startScenario(int scenarioNumber) throws Exception {
-        //test scenarios are skipped because of JDK-8291638
-        if((scenarioNumber >= 112 && scenarioNumber <= 127) || (scenarioNumber >= 144 && scenarioNumber <= 159)) {
-            System.out.println("Scenario Skipped:"+scenarioNumber);
-            this.countDownLatch.countDown();
-            return;
-        }
         System.out.println("serverScenarios[" + scenarioNumber + "]=" + getServerScenario(scenarioNumber));
         System.out.println("clientScenarios[" + scenarioNumber + "]=" + clientScenarios[getClientScenarioNumber(scenarioNumber)]);
         if(expectedValues[scenarioNumber] == 0) {
