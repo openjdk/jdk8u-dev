@@ -129,11 +129,11 @@ public class KeepAliveCache
             if (startThread) {
                 clear();
                 /* Unfortunately, we can't always believe the keep-alive timeout we got
-                 * back from the server.  If I'm connected through a Netscape proxy
-                 * to a server that sent me a keep-alive
-                 * time of 15 sec, the proxy unilaterally terminates my connection
-                 * The robustness to get around this is in HttpClient.parseHTTP()
-                 */
+                * back from the server.  If I'm connected through a Netscape proxy
+                * to a server that sent me a keep-alive
+                * time of 15 sec, the proxy unilaterally terminates my connection
+                * The robustness to get around this is in HttpClient.parseHTTP()
+                */
                 final KeepAliveCache cache = this;
                 AccessController.doPrivileged(new PrivilegedAction<Void>() {
                     public Void run() {
@@ -154,14 +154,14 @@ public class KeepAliveCache
                         keepAliveTimer.start();
                         return null;
                     }
-                });
+                 });
             }
 
             KeepAliveKey key = new KeepAliveKey(url, obj);
             ClientVector v = super.get(key);
 
-        if (v == null) {
-            int keepAliveTimeout = http.getKeepAliveTimeout();
+            if (v == null) {
+                int keepAliveTimeout = http.getKeepAliveTimeout();
                 if (keepAliveTimeout == 0) {
                     keepAliveTimeout = getUserKeepAlive(http.getUsingProxy());
                     if (keepAliveTimeout == -1) {
@@ -187,10 +187,10 @@ public class KeepAliveCache
                     v.put(http);
                     super.put(key, v);
                 }
-        } else {
+            } else {
                 oldClient = v.put(http);
+            }
         }
-    }
         // close after releasing locks
         if (oldClient != null) {
             oldClient.closeServer();
@@ -225,7 +225,6 @@ public class KeepAliveCache
      * Check to see if this URL has a cached HttpClient
      */
     public synchronized HttpClient get(URL url, Object obj) {
-
         KeepAliveKey key = new KeepAliveKey(url, obj);
         ClientVector v = super.get(key);
         if (v == null) { // nothing in cache yet
@@ -280,10 +279,10 @@ public class KeepAliveCache
             }
             // close connections outside cacheLock
             if (closeList != null) {
-                for (HttpClient hc : closeList) {
-                    hc.closeServer();
-                }
-            }
+                 for (HttpClient hc : closeList) {
+                     hc.closeServer();
+               }
+          }
         } while (!isEmpty());
     }
 
@@ -328,7 +327,7 @@ class ClientVector extends ArrayDeque<KeepAliveEntry> {
             pollFirst();
             if (KeepAliveCache.logger.isLoggable(PlatformLogger.Level.FINEST)) {
                 String msg = "cached HttpClient was idle for "
-                    + Long.toString(currentTime - e.idleStartTime);
+                        + Long.toString(currentTime - e.idleStartTime);
                 KeepAliveCache.logger.finest(msg);
             }
             return e.hc;
@@ -340,8 +339,8 @@ class ClientVector extends ArrayDeque<KeepAliveEntry> {
         HttpClient staleClient = null;
         assert KeepAliveCache.getMaxConnections() > 0;
         if (size() >= KeepAliveCache.getMaxConnections()) {
-            // remove oldest connection
-            staleClient = removeLast().hc;
+           // remove oldest connection
+           staleClient = removeLast().hc;
         }
         addFirst(new KeepAliveEntry(h, System.currentTimeMillis()));
         // close after releasing the locks
