@@ -2935,13 +2935,20 @@ void ConcurrentMark::print_reachable(const char* str,
     return;
   }
 
-  char file_name[JVM_MAXPATHLEN];
+  // fix gcc 12 build jdk8 fastdebug compiler error:
+  // directive writing up to 4096 bytes into a region of size between 0 and 4096 [-Werror=format-overflow=]
+  char *file_name = (char *) NEW_C_HEAP_ARRAY(char, strlen(G1PrintReachableBaseFile) + 2 + strlen(str), mtGC);
+  if (NULL == file_name) {
+    gclog_or_tty->print_cr("  #### error: NEW_C_HEAP_ARRAY failed.");
+    return;
+  }
   sprintf(file_name, "%s.%s", G1PrintReachableBaseFile, str);
   gclog_or_tty->print_cr("  dumping to file %s", file_name);
 
   fileStream fout(file_name);
   if (!fout.is_open()) {
     gclog_or_tty->print_cr("  #### error: could not open file");
+    FREE_C_HEAP_ARRAY(char, file_name, mtGC);
     return;
   }
 
@@ -2957,6 +2964,7 @@ void ConcurrentMark::print_reachable(const char* str,
 
   gclog_or_tty->print_cr("  done");
   gclog_or_tty->flush();
+  FREE_C_HEAP_ARRAY(char, file_name, mtGC);
 }
 
 #endif // PRODUCT
