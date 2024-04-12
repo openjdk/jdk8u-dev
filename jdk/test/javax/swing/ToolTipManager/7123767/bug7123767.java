@@ -226,6 +226,7 @@ public class bug7123767 extends JFrame {
         robot.waitForIdle();
 
         for (GraphicsConfiguration config: CONFIGS) {
+
             Rectangle rect = config.getBounds();
             Insets insets = Toolkit.getDefaultToolkit().getScreenInsets(config);
             adjustInsets(rect, insets);
@@ -250,7 +251,6 @@ public class bug7123767 extends JFrame {
                     rect.x + rect.width - MARGIN, rect.y + rect.height - MARGIN);
 
             robot.waitForIdle();
-            }
         }
     }
 
