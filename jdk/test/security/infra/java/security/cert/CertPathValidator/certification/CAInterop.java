@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2023, 2024, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -382,6 +382,46 @@
  */
 
 /*
+ * @test id=affirmtrustcommercialca
+ * @bug 8040012
+ * @summary Interoperability tests with AffirmTrust Commercial CA
+ * @library /test/lib
+ * @build jtreg.SkippedException ValidatePathWithURL CAInterop
+ * @run main/othervm -Djava.security.debug=certpath,ocsp CAInterop affirmtrustcommercialca OCSP
+ * @run main/othervm -Djava.security.debug=certpath CAInterop affirmtrustcommercialca CRL
+ */
+
+/*
+ * @test id=affirmtrustnetworkingca
+ * @bug 8040012
+ * @summary Interoperability tests with AffirmTrust Networking CA
+ * @library /test/lib
+ * @build jtreg.SkippedException ValidatePathWithURL CAInterop
+ * @run main/othervm -Djava.security.debug=certpath,ocsp CAInterop affirmtrustnetworkingca OCSP
+ * @run main/othervm -Djava.security.debug=certpath CAInterop affirmtrustnetworkingca CRL
+ */
+
+/*
+ * @test id=affirmtrustpremiumca
+ * @bug 8040012
+ * @summary Interoperability tests with AffirmTrust Premium CA
+ * @library /test/lib
+ * @build jtreg.SkippedException ValidatePathWithURL CAInterop
+ * @run main/othervm -Djava.security.debug=certpath,ocsp CAInterop affirmtrustpremiumca OCSP
+ * @run main/othervm -Djava.security.debug=certpath CAInterop affirmtrustpremiumca CRL
+ */
+
+/*
+ * @test id=affirmtrustpremiumeccca
+ * @bug 8040012
+ * @summary Interoperability tests with AffirmTrust Premium ECC CA
+ * @library /test/lib
+ * @build jtreg.SkippedException ValidatePathWithURL CAInterop
+ * @run main/othervm -Djava.security.debug=certpath,ocsp CAInterop affirmtrustpremiumeccca OCSP
+ * @run main/othervm -Djava.security.debug=certpath CAInterop affirmtrustpremiumeccca CRL
+ */
+
+/*
  * @test id=teliarootcav2
  * @bug 8317373
  * @summary Interoperability tests with Telia Root CA V2
@@ -409,6 +449,24 @@
  * @build jtreg.SkippedException ValidatePathWithURL CAInterop
  * @run main/othervm -Djava.security.debug=certpath,ocsp CAInterop emsigneccrootcag3 OCSP
  * @run main/othervm -Djava.security.debug=certpath CAInterop emsigneccrootcag3 CRL
+ */
+
+/*
+ * @test id=certainlyrootr1
+ * @bug 8321408
+ * @summary Interoperability tests with Certainly Root R1
+ * @library /test/lib
+ * @build jtreg.SkippedException ValidatePathWithURL CAInterop
+ * @run main/othervm -Djava.security.debug=certpath,ocsp CAInterop certainlyrootr1 DEFAULT
+ */
+
+/*
+ * @test id=certainlyroote1
+ * @bug 8321408
+ * @summary Interoperability tests with Certainly Root E1
+ * @library /test/lib
+ * @build jtreg.SkippedException ValidatePathWithURL CAInterop
+ * @run main/othervm -Djava.security.debug=certpath,ocsp CAInterop certainlyroote1 DEFAULT
  */
 
 /**
@@ -552,12 +610,33 @@ public class CAInterop {
                     return new CATestURLs("https://juolukka.cover.telia.fi:10600",
                             "https://juolukka.cover.telia.fi:10601");
 
+            // These are listed at https://www.affirmtrust.com/resources/
+            case "affirmtrustcommercialca":
+                    return new CATestURLs("https://validcommercial.affirmtrust.com",
+                            "https://revokedcommercial.affirmtrust.com");
+            case "affirmtrustnetworkingca":
+                    return new CATestURLs("https://validnetworking.affirmtrust.com",
+                            "https://revokednetworking.affirmtrust.com");
+            case "affirmtrustpremiumca":
+                    return new CATestURLs("https://validpremium.affirmtrust.com",
+                            "https://revokedpremium.affirmtrust.com");
+            case "affirmtrustpremiumeccca":
+                    return new CATestURLs("https://validpremiumecc.affirmtrust.com",
+                            "https://revokedpremiumecc.affirmtrust.com");
+
             case "emsignrootcag1":
                     return new CATestURLs("https://testovg1.emsign.com/RootOVG1.html",
                             "https://testovg1r.emsign.com/RootOVG1MR.html");
             case "emsigneccrootcag3":
                     return new CATestURLs("https://testovg3.emsign.com/RootOVG3.html",
                             "https://testovg3r.emsign.com/RootOVG3MR.html");
+
+            case "certainlyrootr1":
+                    return new CATestURLs("https://valid.root-r1.certainly.com",
+                            "https://revoked.root-r1.certainly.com");
+            case "certainlyroote1":
+                    return new CATestURLs("https://valid.root-e1.certainly.com",
+                            "https://revoked.root-e1.certainly.com");
 
             default: throw new RuntimeException("No test setup found for: " + alias);
         }
