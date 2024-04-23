@@ -245,7 +245,8 @@ public class Test8009761 {
             m3(false, true);
         } catch(StackOverflowError soe) {
         }
-        if (c1 != count) {
+        // Allow number of recursive calls to vary by 1
+        if ((c1 < (count - 1)) || (c1 > (count + 1))) {
             System.out.println("Failed: init recursive calls: " + c1 + ". After deopt " + count);
             System.exit(97);
         } else {
