@@ -23,7 +23,6 @@
 
 /* @test
    @bug 6371437 6371422 6371416 6371619 5058184 6371431 6639450 6569191 6577466 8235834
-   @summary Check if the problems reported in above bugs have been fixed
  */
 
 import java.io.*;
