@@ -31,7 +31,7 @@
  *
  *  @run build JDIScaffold VMConnection
  *  @run compile -g ModificationWatchpoints.java
- *  @run main/othervm ModificationWatchpoints
+ *  @run driver ModificationWatchpoints
  */
 import com.sun.jdi.*;
 import com.sun.jdi.event.*;
