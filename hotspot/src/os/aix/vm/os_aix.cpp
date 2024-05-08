@@ -1452,7 +1452,7 @@ bool os::dll_address_to_library_name(address addr, char* buf,
 
 // Loads .dll/.so and in case of error it checks if .dll/.so was built
 // for the same architecture as Hotspot is running on.
-static void* dll_load_library(const char *filename, char *ebuf, int ebuflen) {
+static void*  dll_load_library(const char *filename, char *ebuf, int ebuflen) {
 
   if (ebuf && ebuflen > 0) {
     ebuf[0] = '\0';
@@ -1480,10 +1480,11 @@ static void* dll_load_library(const char *filename, char *ebuf, int ebuflen) {
   }
   return NULL;
 }
+
 // Load library named <filename>
 // If filename matches <name>.so, and loading fails, repeat with <name>.a.
 void *os::dll_load(const char *filename, char *ebuf, int ebuflen) {
-  void* result = nullptr;
+  void* result = NULL;
   char* const file_path = strdup(filename);
   char* const pointer_to_dot = strrchr(file_path, '.');
   const char old_extension[] = ".so";
@@ -1493,7 +1494,7 @@ void *os::dll_load(const char *filename, char *ebuf, int ebuflen) {
   result = dll_load_library(filename, ebuf, ebuflen);
   // If the load fails,we try to reload by changing the extension to .a for .so files only.
   // Shared object in .so format dont have braces, hence they get removed for archives with members.
-  if (result == nullptr && pointer_to_dot != nullptr && strcmp(pointer_to_dot, old_extension) == 0) {
+  if (result == NULL && pointer_to_dot != NULL && strcmp(pointer_to_dot, old_extension) == 0) {
     snprintf(pointer_to_dot, sizeof(old_extension), "%s", new_extension);
     result = dll_load_library(file_path, ebuf, ebuflen);
   }
