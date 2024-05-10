@@ -23,9 +23,14 @@
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import jdk.testlibrary.JDKToolFinder;
+import jdk.testlibrary.OutputAnalyzer;
 import jdk.testlibrary.ProcessTools;
 
 import com.sun.jdi.Bootstrap;
@@ -60,7 +65,7 @@ public class ProcessAttachTest {
 
     public static final String TESTCLASSES = System.getProperty("test.classes");
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws Throwable {
 
         System.out.println("Test 1: Debuggee start with suspend=n");
         runTest("-agentlib:jdwp=transport=dt_socket,server=y,suspend=n");
@@ -70,21 +75,52 @@ public class ProcessAttachTest {
 
     }
 
-    private static void runTest(String jdwpArg) throws Exception {
+    private static void runTest(String jdwpArg) throws Throwable {
         ProcessBuilder pb = ProcessTools.createJavaProcessBuilder(
                 jdwpArg,
                 "-classpath", TESTCLASSES,
                 "ProcessAttachTestTarg");
         Process p = null;
         try {
+            // Get pid
+            String jps = JDKToolFinder.getJDKTool("jps");
+            OutputAnalyzer output = ProcessTools.executeProcess(jps);
+            Pattern ptn1 = Pattern.compile("(\\d+) ProcessAttachTestTarg");
+            Pattern ptn2 = Pattern.compile("(\\d+) -- main class information unavailable");
+            Matcher m1 = ptn1.matcher(output.getOutput());
+            Matcher m2 = ptn2.matcher(output.getOutput());
+            List<String> pids1 = new ArrayList<>();
+            while (m1.find()) {
+                pids1.add(m1.group(1));
+            }
+            while (m2.find()) {
+                pids1.add(m2.group(1));
+            }
+
             p = pb.start();
 
             // Wait for the process to start
             InputStream is = p.getInputStream();
             is.read();
 
+            // Get pid
+            output = ProcessTools.executeProcess(jps);
+            m1 = ptn1.matcher(output.getOutput());
+            m2 = ptn2.matcher(output.getOutput());
+            List<String> pids2 = new ArrayList<>();
+            while (m1.find()) {
+                pids2.add(m1.group(1));
+            }
+            while (m2.find()) {
+                pids2.add(m2.group(1));
+            }
+            pids2.removeAll(pids1);
+            if (pids2.size() != 1) {
+                throw new RuntimeException("Did not find pid");
+            }
+
             // Attach a debugger
-            tryDebug(p.getPid());
+            tryDebug(Long.parseLong(pids2.get(0)));
         } finally {
             p.destroyForcibly();
         }
