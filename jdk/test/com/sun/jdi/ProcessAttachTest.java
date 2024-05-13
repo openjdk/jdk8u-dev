@@ -86,7 +86,7 @@ public class ProcessAttachTest {
             String jps = JDKToolFinder.getJDKTool("jps");
             OutputAnalyzer output = ProcessTools.executeProcess(jps);
             Pattern ptn1 = Pattern.compile("(\\d+) ProcessAttachTestTarg");
-            Pattern ptn2 = Pattern.compile("(\\d+) -- main class information unavailable");
+            Pattern ptn2 = Pattern.compile("(\\d+) -- main class information unavailable"); // The target process is displayed as such in Test 2.
             Matcher m1 = ptn1.matcher(output.getOutput());
             Matcher m2 = ptn2.matcher(output.getOutput());
             List<String> pids1 = new ArrayList<>();
