@@ -28,6 +28,7 @@
 import java.io.*;
 import java.nio.*;
 import java.nio.charset.*;
+import java.util.Arrays;
 
 public class TestIBMBugs {
 
