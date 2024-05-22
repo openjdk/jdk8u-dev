@@ -70,9 +70,9 @@ CFLAGS_WARN = -w
 CFLAGS += $(CFLAGS_WARN)
 
 # Extra flags from gnumake's invocation or environment
-CFLAGS += $(EXTRA_CFLAGS)
-LFLAGS += $(EXTRA_CFLAGS) $(EXTRA_LDFLAGS)
-ASFLAGS += $(EXTRA_ASFLAGS)
+CFLAGS += $(HOST_CFLAGS)
+LFLAGS += $(HOST_CFLAGS) $(HOST_LDFLAGS)
+ASFLAGS += $(HOST_ASFLAGS)
 
 OBJECTNAMES = \
 	adlparse.o \

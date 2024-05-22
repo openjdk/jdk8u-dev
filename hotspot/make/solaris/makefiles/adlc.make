@@ -84,8 +84,8 @@ endif
 CFLAGS += $(CFLAGS_WARN)
 
 # Extra flags from gnumake's invocation or environment
-CFLAGS += $(EXTRA_CFLAGS)
-ASFLAGS += $(EXTRA_ASFLAGS)
+CFLAGS += $(HOST_CFLAGS)
+ASFLAGS += $(HOST_ASFLAGS)
 
 ifeq ("${Platform_compiler}", "sparcWorks")
 # Enable the following CFLAGS addition if you need to compare the
