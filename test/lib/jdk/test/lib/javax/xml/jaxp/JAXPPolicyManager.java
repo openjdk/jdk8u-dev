@@ -25,7 +25,7 @@ package jdk.test.lib.javax.xml.jaxp;
 
 import java.net.URI;
 import java.net.URL;
-import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.CodeSource;
 import java.security.Permission;
 import java.security.PermissionCollection;
@@ -33,8 +33,10 @@ import java.security.Permissions;
 import java.security.Policy;
 import java.security.ProtectionDomain;
 import java.security.SecurityPermission;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.PropertyPermission;
 import java.util.Set;
@@ -164,11 +166,7 @@ public class JAXPPolicyManager {
  */
 @SuppressWarnings("removal")
 class TestPolicy extends Policy {
-    private final static Set<String> TEST_JARS = new HashSet<>();
-    TEST_JARS.add("jtreg.*jar");
-    TEST_JARS.add("javatest.*jar");
-    TEST_JARS.add("testng.*jar");
-    TEST_JARS.add("jcommander.*jar");
+    private final static Set<String> TEST_JARS = new HashSet(Arrays.asList("jtreg.*jar", "javatest.*jar", "testng.*jar", "jcommander.*jar"));
     private final PermissionCollection permissions = new Permissions();
 
     private ThreadLocal<Map<Integer, Permission>> transientPermissions = new ThreadLocal<>();
@@ -221,7 +219,7 @@ class TestPolicy extends Policy {
         CodeSource cs = (domain == null) ? null : domain.getCodeSource();
         URL loc = (cs == null) ? null : cs.getLocation();
         URI uri = (loc == null) ? null : URI.create(loc.toString());
-        String name = (uri == null) ? null : Path.of(uri).getFileName().toString();
+        String name = (uri == null) ? null : Paths.get(uri).getFileName().toString();
         return name != null && TEST_JARS.stream()
                                 .filter(name::matches)
                                 .findAny()
