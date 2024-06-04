@@ -98,6 +98,12 @@ public class SurrogateTest {
         }
     }
 
+    public static void main(String[] args) throws Exception {
+        SurrogateTest test = new SurrogateTest();
+        test.toHTMLTest();
+        test.handlerTest();
+    }
+
     /**
      * Compare contents of golden file with test output file line by line.
      * return true if they're identical.
@@ -152,11 +158,5 @@ public class SurrogateTest {
         return Files.readAllLines(Paths.get(goldfile)).stream().collect(
                 Collectors.joining(System.getProperty("line.separator")))
                 .equals(string);
-    }
-
-    public static void main(String[] args) throws Exception {
-        SurrogateTest test = new SurrogateTest();
-        test.toHTMLTest();
-        test.handlerTest();
     }
 }
