@@ -45,7 +45,7 @@ import org.xml.sax.SAXException;
  * because it is used from another package.
  *
  * @xsl.usage internal
- * @LastModified: June 2021
+ * @LastModified: July 2021
  */
 public final class ToHTMLStream extends ToStream
 {

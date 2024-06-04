@@ -21,13 +21,14 @@
  * questions.
  */
 
-package transform;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -42,8 +43,6 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import static jdk.test.lib.javax.xml.jaxp.JAXPTestUtilities.compareWithGold;
-import static jdk.test.lib.javax.xml.jaxp.JAXPTestUtilities.compareStringWithGold;
 import org.testng.Assert;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
@@ -52,15 +51,13 @@ import org.testng.annotations.Test;
  * @test
  * @bug 8268457
  * @library /test/lib
- * @run testng transform.SurrogateTest
+ * @run main/othervm transform.SurrogateTest
  * @summary XML Transformer outputs Unicode supplementary character incorrectly to HTML
  */
-@Listeners({jdk.test.lib.javax.xml.jaxp.FilePolicy.class})
 public class SurrogateTest {
 
     final static String TEST_SRC = System.getProperty("test.src", ".");
 
-    @Test
     public void toHTMLTest() throws Exception {
         String out = "SurrogateTest1out.html";
         String expected = TEST_SRC + File.separator + "SurrogateTest1.html";
@@ -82,7 +79,6 @@ public class SurrogateTest {
         compareWithGold(expected, out);
     }
 
-    @Test
     public void handlerTest() throws Exception {
         File xmlFile = new File(TEST_SRC, "SurrogateTest2.xml");
         SAXParserFactory spf = SAXParserFactory.newInstance();
@@ -100,5 +96,67 @@ public class SurrogateTest {
         public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
             sb.append( localName + "@attr:" + attributes.getValue("attr") + '\n');
         }
+    }
+
+    /**
+     * Compare contents of golden file with test output file line by line.
+     * return true if they're identical.
+     * @param goldfile Golden output file name
+     * @param outputfile Test output file name
+     * @return true if two files are identical.
+     *         false if two files are not identical.
+     * @throws IOException if an I/O error occurs reading from the file or a
+     *         malformed or unmappable byte sequence is read.
+     */
+    public static boolean compareWithGold(String goldfile, String outputfile)
+            throws IOException {
+        return compareWithGold(goldfile, outputfile, StandardCharsets.UTF_8);
+    }
+
+    /**
+     * Compare contents of golden file with test output file line by line.
+     * return true if they're identical.
+     * @param goldfile Golden output file name.
+     * @param outputfile Test output file name.
+     * @param cs the charset to use for decoding.
+     * @return true if two files are identical.
+     *         false if two files are not identical.
+     * @throws IOException if an I/O error occurs reading from the file or a
+     *         malformed or unmappable byte sequence is read.
+     */
+    public static boolean compareWithGold(String goldfile, String outputfile,
+             Charset cs) throws IOException {
+        boolean isSame = Files.readAllLines(Paths.get(goldfile)).
+                equals(Files.readAllLines(Paths.get(outputfile), cs));
+        if (!isSame) {
+            System.err.println("Golden file " + goldfile + " :");
+            Files.readAllLines(Paths.get(goldfile)).forEach(System.err::println);
+            System.err.println("Output file " + outputfile + " :");
+            Files.readAllLines(Paths.get(outputfile), cs).forEach(System.err::println);
+        }
+        return isSame;
+    }
+
+    /**
+     * Compare contents of golden file with a test output string.
+     * return true if they're identical.
+     * @param goldfile Golden output file name.
+     * @param string test string.
+     * @return true if file's content is identical to given string.
+     *         false if file's content is not identical to given string.
+     * @throws IOException if an I/O error occurs reading from the file or a
+     *         malformed or unmappable byte sequence is read
+     */
+    public static boolean compareStringWithGold(String goldfile, String string)
+            throws IOException {
+        return Files.readAllLines(Paths.get(goldfile)).stream().collect(
+                Collectors.joining(System.getProperty("line.separator")))
+                .equals(string);
+    }
+
+    public static void main(String[] args) throws Exception {
+        SurrogateTest test = new SurrogateTest();
+        test.toHTMLTest();
+        test.handlerTest();
     }
 }
