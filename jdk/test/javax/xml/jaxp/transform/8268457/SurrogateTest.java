@@ -48,7 +48,6 @@ import org.xml.sax.helpers.DefaultHandler;
 /*
  * @test
  * @bug 8268457
- * @library /test/lib
  * @run main/othervm SurrogateTest
  * @summary XML Transformer outputs Unicode supplementary character incorrectly to HTML
  */
