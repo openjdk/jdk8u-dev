@@ -131,5 +131,5 @@ public class SurrogateTest {
     public static boolean compareLinesWithGold(String goldfile, List<String> lines)
             throws IOException {
         return Files.readAllLines(Paths.get(goldfile)).equals(lines);
-     }
+    }
 }
