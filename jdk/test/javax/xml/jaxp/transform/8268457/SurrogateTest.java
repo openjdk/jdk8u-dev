@@ -31,6 +31,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.stream.Collectors;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -101,32 +102,13 @@ public class SurrogateTest {
         test.handlerTest();
     }
 
-    /**
-     * Compare contents of golden file with test output file line by line.
-     * return true if they're identical.
-     * @param goldfile Golden output file name
-     * @param outputfile Test output file name
-     * @return true if two files are identical.
-     *         false if two files are not identical.
-     * @throws IOException if an I/O error occurs reading from the file or a
-     *         malformed or unmappable byte sequence is read.
-     */
+    // Compare contents of golden file with test output file line by line.
     public static boolean compareWithGold(String goldfile, String outputfile)
             throws IOException {
         return compareWithGold(goldfile, outputfile, StandardCharsets.UTF_8);
     }
 
-    /**
-     * Compare contents of golden file with test output file line by line.
-     * return true if they're identical.
-     * @param goldfile Golden output file name.
-     * @param outputfile Test output file name.
-     * @param cs the charset to use for decoding.
-     * @return true if two files are identical.
-     *         false if two files are not identical.
-     * @throws IOException if an I/O error occurs reading from the file or a
-     *         malformed or unmappable byte sequence is read.
-     */
+    // Compare contents of golden file with test output file line by line.
     public static boolean compareWithGold(String goldfile, String outputfile,
              Charset cs) throws IOException {
         boolean isSame = Files.readAllLines(Paths.get(goldfile)).
@@ -140,16 +122,7 @@ public class SurrogateTest {
         return isSame;
     }
 
-    /**
-     * Compare contents of golden file with a test output string.
-     * return true if they're identical.
-     * @param goldfile Golden output file name.
-     * @param string test string.
-     * @return true if file's content is identical to given string.
-     *         false if file's content is not identical to given string.
-     * @throws IOException if an I/O error occurs reading from the file or a
-     *         malformed or unmappable byte sequence is read
-     */
+    // Compare contents of golden file with a test output string.
     public static boolean compareStringWithGold(String goldfile, String string)
             throws IOException {
         return Files.readAllLines(Paths.get(goldfile)).stream().collect(
