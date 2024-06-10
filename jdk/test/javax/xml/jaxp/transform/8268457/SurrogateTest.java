@@ -32,7 +32,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -129,12 +128,6 @@ public class SurrogateTest {
     }
 
     // Compare contents of golden file with test output list line by line.
-    public static boolean compareStringWithGold(String goldfile, String string)
-            throws IOException {
-        return Files.readAllLines(Paths.get(goldfile)).stream().collect(
-                Collectors.joining(System.getProperty("line.separator")))
-                .equals(string);
-    }
     public static boolean compareLinesWithGold(String goldfile, List<String> lines)
             throws IOException {
         return Files.readAllLines(Paths.get(goldfile)).equals(lines);
