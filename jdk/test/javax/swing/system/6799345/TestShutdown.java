@@ -28,7 +28,6 @@
  * @summary Tests that no exceptions are thrown from TimerQueue and
  * SwingWorker on AppContext shutdown
  * @author art
- * @modules java.desktop/sun.awt
  * @run main TestShutdown
  */
 
