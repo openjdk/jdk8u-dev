@@ -28,9 +28,6 @@
  * @summary   Tests that EmbeddedFrame can be focused.
  * @author    anton.tarasov: area=awt-focus
  * @requires (os.family == "windows")
- * @modules   java.desktop/java.awt.peer
- *            java.desktop/sun.awt
- *            java.desktop/sun.awt.windows
  * @library /java/awt/patchlib    ../../regtesthelpers
  * @build java.desktop/java.awt.Helper
  * @build     Util UtilInternal

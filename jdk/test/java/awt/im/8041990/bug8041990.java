@@ -28,7 +28,6 @@
  * @bug 8041990
  * @summary Language specific keys does not work in applets when opened outside the browser
  * @author Petr Pchelko
- * @modules java.desktop/sun.awt
  */
 
 

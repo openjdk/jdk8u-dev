@@ -27,7 +27,6 @@
  * @bug 6713352
  * @summary Deadlock in JFileChooser with synchronized custom FileSystemView
  * @author Pavel Porvatov
- * @modules java.desktop/sun.awt.shell
  * @run main bug6713352
  */
 

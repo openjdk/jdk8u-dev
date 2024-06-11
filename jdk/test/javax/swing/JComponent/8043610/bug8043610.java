@@ -29,7 +29,6 @@
  * @summary Tests that JComponent invalidate, revalidate and repaint methods could
  *          be called from any thread
  * @author Petr Pchelko
- * @modules java.desktop/sun.awt
  */
 
 
