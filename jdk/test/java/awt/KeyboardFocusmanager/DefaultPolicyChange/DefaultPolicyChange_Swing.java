@@ -26,6 +26,7 @@
  * @key headful
  * @bug 6741526 8004693
  * @summary KeyboardFocusManager.setDefaultFocusTraversalPolicy(FocusTraversalPolicy) affects created components
+ * @library ../../regtesthelpers
  * @author Andrei Dmitriev : area=awt-focus
  * @run main DefaultPolicyChange_Swing
  */
