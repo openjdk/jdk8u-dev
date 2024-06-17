@@ -25,6 +25,7 @@
  * @test
  * @bug 8238274
  * @summary Potential leak file descriptor for SCTP
+ * @library /lib/testlibrary
  * @requires (os.family == "linux")
  * @run main/othervm/timeout=250 CloseDescriptors
  */
@@ -40,12 +41,12 @@ import java.nio.channels.Selector;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import com.sun.nio.sctp.SctpChannel;
 import com.sun.nio.sctp.SctpServerChannel;
+
+import jdk.testlibrary.Utils;
 
 public class CloseDescriptors {
     private static Selector selector;
@@ -61,7 +62,7 @@ public class CloseDescriptors {
             return;
         }
 
-        List<String> lsofDirs = Arrays.asList("/usr/bin", "/usr/sbin");
+        List<String> lsofDirs = Utils.listOf("/usr/bin", "/usr/sbin");
 
         Optional<Path> lsof = lsofDirs.stream()
                             .map(s -> Paths.get(s, "lsof"))
