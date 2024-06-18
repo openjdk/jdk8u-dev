@@ -28,8 +28,6 @@
  * @summary Any swing frame resizes ugly.
  * @author Oleg Pekhovskiy
  * @requires (os.family == "windows")
- * @library ../../../../lib/testlibrary
- * @build jdk.testlibrary.OSInfo
  * @run main bug8016356
  */
 

@@ -28,10 +28,8 @@
  * @summary WIN: Provide a way to format HTML on drop
  * @author Denis Fokin: area=datatransfer
  * @requires (os.family == "windows")
- * @library ../../../../lib/testlibrary
  * @build HtmlTransferable PutAllHtmlFlavorsOnClipboard
  * @build PutOnlyAllHtmlFlavorOnClipboard PutSelectionAndFragmentHtmlFlavorsOnClipboard
- * @build jdk.testlibrary.OSInfo
  * @run main HTMLDataFlavorTest
  */
 
