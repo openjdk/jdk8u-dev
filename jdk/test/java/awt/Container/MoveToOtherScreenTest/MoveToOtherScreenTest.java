@@ -35,11 +35,11 @@ import java.lang.reflect.InvocationTargetException;
 
 
 /* @test
+   @key headful
    @bug 8160696
    @summary IllegalArgumentException: adding a component to a container on a different GraphicsDevice
    @author Mikhail Cherkasov
    @run main MoveToOtherScreenTest
-   @key headful
 */
 public class MoveToOtherScreenTest {
 
