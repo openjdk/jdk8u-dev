@@ -107,7 +107,7 @@ jobs:
         if: steps.check_submit.outputs.should_run != 'false' && steps.jtreg.outputs.cache-hit != 'true'
 
       - name: Store jtreg for use by later steps
-        uses:  actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4
         with:
           name: transient_jtreg_${{ steps.check_bundle_id.outputs.bundle_id }}
           path: ~/jtreg/
@@ -183,7 +183,7 @@ jobs:
           tar -czf jdk-${{ env.JDK_VERSION }}-internal+0_linux-x64_bin${{ matrix.artifact }}.tar.gz -C jdk/build/linux-x64/images j2sdk-image
 
       - name: Persist test bundles
-        uses:  actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4
         with:
           name: transient_jdk-linux-x64${{ matrix.artifact }}_${{ needs.prerequisites.outputs.bundle_id }}
           path: |
@@ -297,7 +297,7 @@ jobs:
 
       - name: Persist test results
         if: always()
-        uses:  actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4
         with:
           path: ~/linux-x64${{ matrix.artifact }}_testresults_${{ env.logsuffix }}.zip
         continue-on-error: true
@@ -535,7 +535,7 @@ jobs:
           tar -czf jdk-${{ env.JDK_VERSION }}-internal+0_linux-x86_bin${{ matrix.artifact }}.tar.gz -C jdk/build/linux-x86/images j2sdk-image
 
       - name: Persist test bundles
-        uses:  actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4
         with:
           name: transient_jdk-linux-x86${{ matrix.artifact }}_${{ needs.prerequisites.outputs.bundle_id }}
           path: |
@@ -658,7 +658,7 @@ jobs:
 
       - name: Persist test results
         if: always()
-        uses:  actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4
         with:
           path: ~/linux-x86${{ matrix.artifact }}_testresults_${{ env.logsuffix }}.zip
         continue-on-error: true
@@ -835,7 +835,7 @@ jobs:
         working-directory: jdk/build/windows-x64/images
 
       - name: Persist test bundles
-        uses:  actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4
         with:
           name: transient_jdk-windows-x64${{ matrix.artifact }}_${{ needs.prerequisites.outputs.bundle_id }}
           path: |
@@ -1009,7 +1009,7 @@ jobs:
         working-directory: jdk/build/windows-x86/images
 
       - name: Persist test bundles
-        uses:  actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4
         with:
           name: transient_jdk-windows-x86${{ matrix.artifact }}_${{ needs.prerequisites.outputs.bundle_id }}
           path: |
@@ -1167,7 +1167,7 @@ jobs:
 
       - name: Persist test results
         if: always()
-        uses:  actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4
         with:
           path: ~/windows-x64${{ matrix.artifact }}_testresults_${{ env.logsuffix }}.zip
         continue-on-error: true
@@ -1324,7 +1324,7 @@ jobs:
 
       - name: Persist test results
         if: always()
-        uses:  actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4
         with:
           path: ~/windows-x86${{ matrix.artifact }}_testresults_${{ env.logsuffix }}.zip
         continue-on-error: true
@@ -1421,7 +1421,7 @@ jobs:
           tar -czf jdk-${{ env.JDK_VERSION }}-internal+0_osx-x64_bin${{ matrix.artifact }}.tar.gz -C jdk/build/macos-x64/images j2sdk-image
 
       - name: Persist test bundles
-        uses:  actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4
         with:
           name: transient_jdk-macos-x64${{ matrix.artifact }}_${{ needs.prerequisites.outputs.bundle_id }}
           path: |
@@ -1554,7 +1554,7 @@ jobs:
 
       - name: Persist test results
         if: always()
-        uses:  actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4
         with:
           path: ~/macos-x64${{ matrix.artifact }}_testresults_${{ env.logsuffix }}.zip
         continue-on-error: true
