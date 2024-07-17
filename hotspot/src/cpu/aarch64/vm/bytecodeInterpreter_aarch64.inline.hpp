@@ -27,7 +27,7 @@
 #ifndef CPU_AARCH64_VM_BYTECODEINTERPRETER_AARCH64_INLINE_HPP
 #define CPU_AARCH64_VM_BYTECODEINTERPRETER_AARCH64_INLINE_HPP
 
-// Inline interpreter functions for IA32
+// Inline interpreter functions for aarch64
 
 inline jfloat BytecodeInterpreter::VMfloatAdd(jfloat op1, jfloat op2) { return op1 + op2; }
 inline jfloat BytecodeInterpreter::VMfloatSub(jfloat op1, jfloat op2) { return op1 - op2; }
@@ -46,11 +46,11 @@ inline int32_t BytecodeInterpreter::VMfloatCompare(jfloat op1, jfloat op2, int32
 }
 
 inline void BytecodeInterpreter::VMmemCopy64(uint32_t to[2], const uint32_t from[2]) {
-  // x86 can do unaligned copies but not 64bits at a time
+  // aarch64 can do unaligned copies but not 64bits at a time?
   to[0] = from[0]; to[1] = from[1];
 }
 
-// The long operations depend on compiler support for "long long" on x86
+// The long operations depend on compiler support for "long long" on aarch64?
 
 inline jlong BytecodeInterpreter::VMlongAdd(jlong op1, jlong op2) {
   return op1 + op2;
