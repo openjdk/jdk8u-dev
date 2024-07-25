@@ -32,12 +32,22 @@
  */
 
 import java.lang.reflect.Field;
-import jdk.internal.misc.Unsafe;
+import sun.misc.Unsafe;
 import jdk.test.lib.Asserts;
 
 public class TestMisalignedUnsafeAccess {
 
-    private static final Unsafe UNSAFE = Unsafe.getUnsafe();;
+    private static final Unsafe UNSAFE;
+    static {
+        Field f = null;
+        try {
+            f = Unsafe.class.getDeclaredField("theUnsafe");
+            f.setAccessible(true);
+            UNSAFE = (Unsafe) f.get(null);
+        } catch (ReflectiveOperationException e) {
+            throw new Error(e);
+        }
+    }
 
     private static short onHeapStaticMemory; // For static field testing
     private static final Object onHeapStaticMemoryBase;
