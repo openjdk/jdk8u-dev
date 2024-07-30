@@ -1621,7 +1621,7 @@ jobs:
           done
 
       - name: Upload a combined test results artifact
-        uses:  actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4
         with:
           name: test-results_${{ needs.prerequisites.outputs.bundle_id }}
           path: test-results
