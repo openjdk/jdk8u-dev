@@ -299,6 +299,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
+          name: linux-x64${{ matrix.artifact }}_testresults_${{ env.logsuffix }}
           path: ~/linux-x64${{ matrix.artifact }}_testresults_${{ env.logsuffix }}.zip
         continue-on-error: true
 
@@ -660,6 +661,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
+          name: linux-x86${{ matrix.artifact }}_testresults_${{ env.logsuffix }}
           path: ~/linux-x86${{ matrix.artifact }}_testresults_${{ env.logsuffix }}.zip
         continue-on-error: true
 
@@ -1169,6 +1171,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
+          name: windows-x64${{ matrix.artifact }}_testresults_${{ env.logsuffix }}
           path: ~/windows-x64${{ matrix.artifact }}_testresults_${{ env.logsuffix }}.zip
         continue-on-error: true
 
@@ -1326,6 +1329,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
+          name: windows-x86${{ matrix.artifact }}_testresults_${{ env.logsuffix }}
           path: ~/windows-x86${{ matrix.artifact }}_testresults_${{ env.logsuffix }}.zip
         continue-on-error: true
 
@@ -1556,6 +1560,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
+          name: macos-x64${{ matrix.artifact }}_testresults_${{ env.logsuffix }}
           path: ~/macos-x64${{ matrix.artifact }}_testresults_${{ env.logsuffix }}.zip
         continue-on-error: true
 
