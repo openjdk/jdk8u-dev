@@ -180,7 +180,7 @@ jobs:
 
       - name: Pack artifacts
         run: |
-          tar -cf jdk-${{ env.JDK_VERSION }}-internal+0_linux-x64_bin${{ matrix.artifact }}.tar.gz -C jdk/build/linux-x64/images j2sdk-image
+          tar -czf jdk-${{ env.JDK_VERSION }}-internal+0_linux-x64_bin${{ matrix.artifact }}.tar.gz -C jdk/build/linux-x64/images j2sdk-image
 
       - name: Persist test bundles
         uses: actions/upload-artifact@v3
@@ -257,7 +257,7 @@ jobs:
       - name: Unpack jdk
         run: |
           mkdir -p "${HOME}/jdk-linux-x64${{ matrix.artifact }}/jdk-${{ env.JDK_VERSION }}-internal+0_linux-x64_bin${{ matrix.artifact }}"
-          tar -xf "${HOME}/jdk-linux-x64${{ matrix.artifact }}/jdk-${{ env.JDK_VERSION }}-internal+0_linux-x64_bin${{ matrix.artifact }}.tar.gz" -C "${HOME}/jdk-linux-x64${{ matrix.artifact }}/jdk-${{ env.JDK_VERSION }}-internal+0_linux-x64_bin${{ matrix.artifact }}"
+          tar -xzf "${HOME}/jdk-linux-x64${{ matrix.artifact }}/jdk-${{ env.JDK_VERSION }}-internal+0_linux-x64_bin${{ matrix.artifact }}.tar.gz" -C "${HOME}/jdk-linux-x64${{ matrix.artifact }}/jdk-${{ env.JDK_VERSION }}-internal+0_linux-x64_bin${{ matrix.artifact }}"
 
       - name: Run tests
         run: >
@@ -277,7 +277,7 @@ jobs:
         run: >
           if cat test-results/testoutput/*/exitcode.txt | grep -q -v '^0$'
           || ! cat test-results/testoutput/*/Stats.txt | grep -q 'fail=0' ; then
-            cat test-results/testoutput/*/JTreport/text/newfailures.txt ;
+            cat test-results/testoutput/*/JTreport/text/{newfailures,other_errors}.txt ;
             exit 1 ;
           fi
 
@@ -401,7 +401,7 @@ jobs:
           --verbose
           --include=fakeroot,symlinks,build-essential,libx11-dev,libxext-dev,libxrender-dev,libxrandr-dev,libxtst-dev,libxt-dev,libcups2-dev,libfontconfig1-dev,libasound2-dev,libfreetype6-dev,libpng-dev,libffi-dev
           --resolve-deps
-          buster
+          bullseye
           ~/sysroot-${{ matrix.debian-arch }}
           http://httpredir.debian.org/debian/
         if: matrix.debian-arch != '' && steps.cache-sysroot.outputs.cache-hit != 'true'
@@ -532,7 +532,7 @@ jobs:
 
       - name: Pack artifacts
         run: |
-          tar -cf jdk-${{ env.JDK_VERSION }}-internal+0_linux-x86_bin${{ matrix.artifact }}.tar.gz -C jdk/build/linux-x86/images j2sdk-image
+          tar -czf jdk-${{ env.JDK_VERSION }}-internal+0_linux-x86_bin${{ matrix.artifact }}.tar.gz -C jdk/build/linux-x86/images j2sdk-image
 
       - name: Persist test bundles
         uses: actions/upload-artifact@v3
@@ -610,7 +610,7 @@ jobs:
       - name: Unpack jdk
         run: |
           mkdir -p "${HOME}/jdk-linux-x86${{ matrix.artifact }}/jdk-${{ env.JDK_VERSION }}-internal+0_linux-x86_bin${{ matrix.artifact }}"
-          tar -xf "${HOME}/jdk-linux-x86${{ matrix.artifact }}/jdk-${{ env.JDK_VERSION }}-internal+0_linux-x86_bin${{ matrix.artifact }}.tar.gz" -C "${HOME}/jdk-linux-x86${{ matrix.artifact }}/jdk-${{ env.JDK_VERSION }}-internal+0_linux-x86_bin${{ matrix.artifact }}"
+          tar -xzf "${HOME}/jdk-linux-x86${{ matrix.artifact }}/jdk-${{ env.JDK_VERSION }}-internal+0_linux-x86_bin${{ matrix.artifact }}.tar.gz" -C "${HOME}/jdk-linux-x86${{ matrix.artifact }}/jdk-${{ env.JDK_VERSION }}-internal+0_linux-x86_bin${{ matrix.artifact }}"
 
       - name: Build multilib docker image
         if: matrix.test == 'hotspot/tier1'
@@ -638,7 +638,7 @@ jobs:
         run: >
           if cat test-results/testoutput/*/exitcode.txt | grep -q -v '^0$'
           || ! cat test-results/testoutput/*/Stats.txt | grep -q 'fail=0' ; then
-            cat test-results/testoutput/*/JTreport/text/newfailures.txt ;
+            cat test-results/testoutput/*/JTreport/text/{newfailures,other_errors}.txt ;
             exit 1 ;
           fi
 
@@ -733,7 +733,7 @@ jobs:
           & curl -L "$env:BOOT_JDK_URL" -o "$HOME/bootjdk/$env:BOOT_JDK_FILENAME"
           $FileHash = Get-FileHash -Algorithm SHA256 "$HOME/bootjdk/$env:BOOT_JDK_FILENAME"
           $FileHash.Hash -eq $env:BOOT_JDK_SHA256
-          & tar -xf "$HOME/bootjdk/$env:BOOT_JDK_FILENAME" -C "$HOME/bootjdk/$env:BOOT_JDK_VERSION"
+          & unzip "$HOME/bootjdk/$env:BOOT_JDK_FILENAME" -d "$HOME/bootjdk/$env:BOOT_JDK_VERSION"
           Get-ChildItem "$HOME\bootjdk\$env:BOOT_JDK_VERSION\*\*" | Move-Item -Destination "$HOME\bootjdk\$env:BOOT_JDK_VERSION"
         if: steps.bootjdk.outputs.cache-hit != 'true'
 
@@ -852,6 +852,8 @@ jobs:
       VS2010_DIR: "${{ fromJson(needs.prerequisites.outputs.dependencies).VS2010_DIR }}"
       VS2010_FILENAME: "${{ fromJson(needs.prerequisites.outputs.dependencies).VS2010_FILENAME }}"
       VS2010_URL: "${{ fromJson(needs.prerequisites.outputs.dependencies).VS2010_URL }}"
+      VS2010_TORRENT_URL: "${{ fromJson(needs.prerequisites.outputs.dependencies).VS2010_TORRENT_URL }}"
+      VS2010_TORRENT_DIR: "${{ fromJson(needs.prerequisites.outputs.dependencies).VS2010_TORRENT_DIR }}"
       VS2010_SHA256: "${{ fromJson(needs.prerequisites.outputs.dependencies).VS2010_SHA256 }}"
 
     steps:
@@ -897,7 +899,7 @@ jobs:
           & curl -L "$env:BOOT_JDK_URL" -o "$HOME/bootjdk/$env:BOOT_JDK_FILENAME"
           $FileHash = Get-FileHash -Algorithm SHA256 "$HOME/bootjdk/$env:BOOT_JDK_FILENAME"
           $FileHash.Hash -eq $env:BOOT_JDK_SHA256
-          & tar -xf "$HOME/bootjdk/$env:BOOT_JDK_FILENAME" -C "$HOME/bootjdk/$env:BOOT_JDK_VERSION"
+          & unzip "$HOME/bootjdk/$env:BOOT_JDK_FILENAME" -d "$HOME/bootjdk/$env:BOOT_JDK_VERSION"
           Get-ChildItem "$HOME\bootjdk\$env:BOOT_JDK_VERSION\*\*" | Move-Item -Destination "$HOME\bootjdk\$env:BOOT_JDK_VERSION"
         if: steps.bootjdk.outputs.cache-hit != 'true'
 
@@ -911,10 +913,11 @@ jobs:
       - name: Download and unpack Visual Studio 2010
         run: |
           mkdir "$HOME\$env:VS2010_DIR"
-          & curl -L "$env:VS2010_URL" -o "$HOME/$env:VS2010_FILENAME"
-          $FileHash = Get-FileHash -Algorithm SHA256 "$HOME/$env:VS2010_FILENAME"
+          $ImagePath = "$HOME/$env:VS2010_TORRENT_DIR/$env:VS2010_FILENAME"
+          & aria2c -d "$HOME" --seed-time=0 --bt-stop-timeout=300 "$env:VS2010_TORRENT_URL" || & curl -L "$env:VS2010_URL" -o "$ImagePath" --create-dirs
+          $FileHash = Get-FileHash -Algorithm SHA256 "$ImagePath"
           $FileHash.Hash -eq $env:VS2010_SHA256
-          & 7z x -o"$HOME/$env:VS2010_DIR" "$HOME/$env:VS2010_FILENAME"
+          & 7z x -o"$HOME/$env:VS2010_DIR" "$ImagePath"
           & dir "$HOME/$env:VS2010_DIR"
         if: steps.vs2010.outputs.cache-hit != 'true'
 
@@ -1028,7 +1031,7 @@ jobs:
           & curl -L "$env:BOOT_JDK_URL" -o "$HOME/bootjdk/$env:BOOT_JDK_FILENAME"
           $FileHash = Get-FileHash -Algorithm SHA256 "$HOME/bootjdk/$env:BOOT_JDK_FILENAME"
           $FileHash.Hash -eq $env:BOOT_JDK_SHA256
-          & tar -xf "$HOME/bootjdk/$env:BOOT_JDK_FILENAME" -C "$HOME/bootjdk/$env:BOOT_JDK_VERSION"
+          & unzip "$HOME/bootjdk/$env:BOOT_JDK_FILENAME" -d "$HOME/bootjdk/$env:BOOT_JDK_VERSION"
           Get-ChildItem "$HOME\bootjdk\$env:BOOT_JDK_VERSION\*\*" | Move-Item -Destination "$HOME\bootjdk\$env:BOOT_JDK_VERSION"
         if: steps.bootjdk.outputs.cache-hit != 'true'
 
@@ -1089,7 +1092,7 @@ jobs:
       - name: Unpack jdk
         run: |
           mkdir -p "${HOME}/jdk-windows-x64${{ matrix.artifact }}/jdk-${{ env.JDK_VERSION }}-internal+0_windows-x64_bin${{ matrix.artifact }}"
-          tar -xf "${HOME}/jdk-windows-x64${{ matrix.artifact }}/jdk-${{ env.JDK_VERSION }}-internal+0_windows-x64_bin${{ matrix.artifact }}.zip" -C "${HOME}/jdk-windows-x64${{ matrix.artifact }}/jdk-${{ env.JDK_VERSION }}-internal+0_windows-x64_bin${{ matrix.artifact }}"
+          unzip "${HOME}/jdk-windows-x64${{ matrix.artifact }}/jdk-${{ env.JDK_VERSION }}-internal+0_windows-x64_bin${{ matrix.artifact }}.zip" -d "${HOME}/jdk-windows-x64${{ matrix.artifact }}/jdk-${{ env.JDK_VERSION }}-internal+0_windows-x64_bin${{ matrix.artifact }}"
 
       - name: Create results dir
         run: |
@@ -1113,6 +1116,7 @@ jobs:
         run: >
           if ((Get-ChildItem -Path test-results\testoutput\*\exitcode.txt -Recurse | Select-String -Pattern '^0$' -NotMatch ).Count -gt 0) {
             Get-Content -Path test-results\testoutput\*\JTreport\text\newfailures.txt ;
+            Get-Content -Path test-results\testoutput\*\JTreport\text\other_errors.txt ;
             exit 1
           }
 
@@ -1184,7 +1188,7 @@ jobs:
           & curl -L "$env:BOOT_JDK_URL" -o "$HOME/bootjdk/$env:BOOT_JDK_FILENAME"
           $FileHash = Get-FileHash -Algorithm SHA256 "$HOME/bootjdk/$env:BOOT_JDK_FILENAME"
           $FileHash.Hash -eq $env:BOOT_JDK_SHA256
-          & tar -xf "$HOME/bootjdk/$env:BOOT_JDK_FILENAME" -C "$HOME/bootjdk/$env:BOOT_JDK_VERSION"
+          & unzip "$HOME/bootjdk/$env:BOOT_JDK_FILENAME" -d "$HOME/bootjdk/$env:BOOT_JDK_VERSION"
           Get-ChildItem "$HOME\bootjdk\$env:BOOT_JDK_VERSION\*\*" | Move-Item -Destination "$HOME\bootjdk\$env:BOOT_JDK_VERSION"
         if: steps.bootjdk.outputs.cache-hit != 'true'
 
@@ -1245,7 +1249,7 @@ jobs:
       - name: Unpack jdk
         run: |
           mkdir -p "${HOME}/jdk-windows-x86${{ matrix.artifact }}/jdk-${{ env.JDK_VERSION }}-internal+0_windows-x86_bin${{ matrix.artifact }}"
-          tar -xf "${HOME}/jdk-windows-x86${{ matrix.artifact }}/jdk-${{ env.JDK_VERSION }}-internal+0_windows-x86_bin${{ matrix.artifact }}.zip" -C "${HOME}/jdk-windows-x86${{ matrix.artifact }}/jdk-${{ env.JDK_VERSION }}-internal+0_windows-x86_bin${{ matrix.artifact }}"
+          unzip "${HOME}/jdk-windows-x86${{ matrix.artifact }}/jdk-${{ env.JDK_VERSION }}-internal+0_windows-x86_bin${{ matrix.artifact }}.zip" -d "${HOME}/jdk-windows-x86${{ matrix.artifact }}/jdk-${{ env.JDK_VERSION }}-internal+0_windows-x86_bin${{ matrix.artifact }}"
 
       - name: Create results dir
         run: |
@@ -1269,6 +1273,7 @@ jobs:
         run: >
           if ((Get-ChildItem -Path test-results\testoutput\*\exitcode.txt -Recurse | Select-String -Pattern '^0$' -NotMatch ).Count -gt 0) {
             Get-Content -Path test-results\testoutput\*\JTreport\text\newfailures.txt ;
+            Get-Content -Path test-results\testoutput\*\JTreport\text\other_errors.txt ;
             exit 1
           }
 
@@ -1296,7 +1301,7 @@ jobs:
 
   macos_x64_build:
     name: macOS x64
-    runs-on: "macos-11"
+    runs-on: "macos-13"
     needs: prerequisites
     if: needs.prerequisites.outputs.should_run != 'false' && needs.prerequisites.outputs.platform_macos_x64 != 'false'
 
@@ -1337,7 +1342,7 @@ jobs:
           mkdir -p ${HOME}/bootjdk/${BOOT_JDK_VERSION} || true
           wget -O "${HOME}/bootjdk/${BOOT_JDK_FILENAME}" "${BOOT_JDK_URL}"
           echo "${BOOT_JDK_SHA256}  ${HOME}/bootjdk/${BOOT_JDK_FILENAME}" | shasum -a 256 -c >/dev/null -
-          tar -xf "${HOME}/bootjdk/${BOOT_JDK_FILENAME}" -C "${HOME}/bootjdk/${BOOT_JDK_VERSION}"
+          tar -xzf "${HOME}/bootjdk/${BOOT_JDK_FILENAME}" -C "${HOME}/bootjdk/${BOOT_JDK_VERSION}"
           mv "${HOME}/bootjdk/${BOOT_JDK_VERSION}/"*/* "${HOME}/bootjdk/${BOOT_JDK_VERSION}/"
         if: steps.bootjdk.outputs.cache-hit != 'true'
 
@@ -1360,10 +1365,10 @@ jobs:
         run: chmod -R a+rx ${HOME}/jtreg/
 
       - name: Install dependencies
-        run: brew install make
+        run: brew install make gawk
 
       - name: Select Xcode version
-        run: sudo xcode-select --switch /Applications/Xcode_11.7.app/Contents/Developer
+        run: sudo xcode-select --switch /Applications/Xcode_14.3.1.app/Contents/Developer
 
       - name: Configure
         run: >
@@ -1383,7 +1388,7 @@ jobs:
 
       - name: Pack artifacts
         run: |
-          tar -cf jdk-${{ env.JDK_VERSION }}-internal+0_osx-x64_bin${{ matrix.artifact }}.tar.gz -C jdk/build/macos-x64/images j2sdk-image
+          tar -czf jdk-${{ env.JDK_VERSION }}-internal+0_osx-x64_bin${{ matrix.artifact }}.tar.gz -C jdk/build/macos-x64/images j2sdk-image
 
       - name: Persist test bundles
         uses: actions/upload-artifact@v3
@@ -1394,7 +1399,7 @@ jobs:
 
   macos_x64_test:
     name: macOS x64
-    runs-on: "macos-11"
+    runs-on: "macos-13"
     needs:
       - prerequisites
       - macos_x64_build
@@ -1437,7 +1442,7 @@ jobs:
           mkdir -p ${HOME}/bootjdk/${BOOT_JDK_VERSION} || true
           wget -O "${HOME}/bootjdk/${BOOT_JDK_FILENAME}" "${BOOT_JDK_URL}"
           echo "${BOOT_JDK_SHA256}  ${HOME}/bootjdk/${BOOT_JDK_FILENAME}" | shasum -a 256 -c >/dev/null -
-          tar -xf "${HOME}/bootjdk/${BOOT_JDK_FILENAME}" -C "${HOME}/bootjdk/${BOOT_JDK_VERSION}"
+          tar -xzf "${HOME}/bootjdk/${BOOT_JDK_FILENAME}" -C "${HOME}/bootjdk/${BOOT_JDK_VERSION}"
           mv "${HOME}/bootjdk/${BOOT_JDK_VERSION}/"*/* "${HOME}/bootjdk/${BOOT_JDK_VERSION}/"
         if: steps.bootjdk.outputs.cache-hit != 'true'
 
@@ -1474,13 +1479,13 @@ jobs:
       - name: Unpack jdk
         run: |
           mkdir -p "${HOME}/jdk-macos-x64${{ matrix.artifact }}/jdk-${{ env.JDK_VERSION }}-internal+0_osx-x64_bin${{ matrix.artifact }}"
-          tar -xf "${HOME}/jdk-macos-x64${{ matrix.artifact }}/jdk-${{ env.JDK_VERSION }}-internal+0_osx-x64_bin${{ matrix.artifact }}.tar.gz" -C "${HOME}/jdk-macos-x64${{ matrix.artifact }}/jdk-${{ env.JDK_VERSION }}-internal+0_osx-x64_bin${{ matrix.artifact }}"
+          tar -xzf "${HOME}/jdk-macos-x64${{ matrix.artifact }}/jdk-${{ env.JDK_VERSION }}-internal+0_osx-x64_bin${{ matrix.artifact }}.tar.gz" -C "${HOME}/jdk-macos-x64${{ matrix.artifact }}/jdk-${{ env.JDK_VERSION }}-internal+0_osx-x64_bin${{ matrix.artifact }}"
 
       - name: Install dependencies
-        run: brew install make
+        run: brew install make gawk
 
       - name: Select Xcode version
-        run: sudo xcode-select --switch /Applications/Xcode_11.7.app/Contents/Developer
+        run: sudo xcode-select --switch /Applications/Xcode_14.3.1.app/Contents/Developer
 
       - name: Run tests
         run: >
@@ -1499,7 +1504,7 @@ jobs:
         run: >
           if cat test-results/testoutput/*/exitcode.txt | grep -q -v '^0$'
           || ! cat test-results/testoutput/*/Stats.txt | grep -q 'fail=0' ; then
-            cat test-results/testoutput/*/JTreport/text/newfailures.txt ;
+            cat test-results/testoutput/*/JTreport/text/{newfailures,other_errors}.txt ;
             exit 1 ;
           fi
 
