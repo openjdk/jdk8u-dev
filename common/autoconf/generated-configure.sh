@@ -4423,7 +4423,7 @@ VS_TOOLSET_SUPPORTED_2022=true
 #CUSTOM_AUTOCONF_INCLUDE
 
 # Do not change or remove the following line, it is needed for consistency checks:
-DATE_WHEN_GENERATED=1723798184
+DATE_WHEN_GENERATED=1723798372
 
 ###############################################################################
 #
@@ -26309,6 +26309,7 @@ $as_echo "$as_me: The following toolchain versions are valid on this platform:" 
     eval VCRUNTIME_1_NAME="\${VS_VCRUNTIME_1_${VS_VERSION}}"
     eval MSVCP_NAME="\${VS_MSVCP_${VS_VERSION}}"
     eval USE_UCRT="\${VS_USE_UCRT_${VS_VERSION}}"
+    eval PLATFORM_TOOLSET="\${VS_VS_PLATFORM_NAME_${VS_VERSION}}"
     VS_PATH="$TOOLCHAIN_PATH:$PATH"
 
     # Convert DEVKIT_VS_INCLUDE into windows style VS_INCLUDE so that it
@@ -26426,6 +26427,12 @@ $as_echo "$as_me: Found Visual Studio installation at $VS_BASE using $METHOD" >&
       if test "x$VS_ENV_CMD" = x; then
         { $as_echo "$as_me:${as_lineno-$LINENO}: Warning: None of $VCVARSFILES were found, Visual Studio installation not recognized. Ignoring" >&5
 $as_echo "$as_me: Warning: None of $VCVARSFILES were found, Visual Studio installation not recognized. Ignoring" >&6;}
+      else
+        # PLATFORM_TOOLSET is used during the compilation of the freetype sources
+        # (see 'LIB_BUILD_FREETYPE' in libraries.m4) and must be one of 'v100',
+        # 'v110' or 'v120' for VS 2010, 2012 or VS2013
+        eval PLATFORM_TOOLSET="\${VS_VS_PLATFORM_NAME_${VS_VERSION}}"
+
       fi
     fi
   fi
@@ -26477,6 +26484,12 @@ $as_echo "$as_me: Found Visual Studio installation at $VS_BASE using $METHOD" >&
       if test "x$VS_ENV_CMD" = x; then
         { $as_echo "$as_me:${as_lineno-$LINENO}: Warning: None of $VCVARSFILES were found, Visual Studio installation not recognized. Ignoring" >&5
 $as_echo "$as_me: Warning: None of $VCVARSFILES were found, Visual Studio installation not recognized. Ignoring" >&6;}
+      else
+        # PLATFORM_TOOLSET is used during the compilation of the freetype sources
+        # (see 'LIB_BUILD_FREETYPE' in libraries.m4) and must be one of 'v100',
+        # 'v110' or 'v120' for VS 2010, 2012 or VS2013
+        eval PLATFORM_TOOLSET="\${VS_VS_PLATFORM_NAME_${VS_VERSION}}"
+
       fi
     fi
   fi
@@ -26544,6 +26557,12 @@ $as_echo "$as_me: Found Visual Studio installation at $VS_BASE using $METHOD" >&
       if test "x$VS_ENV_CMD" = x; then
         { $as_echo "$as_me:${as_lineno-$LINENO}: Warning: None of $VCVARSFILES were found, Visual Studio installation not recognized. Ignoring" >&5
 $as_echo "$as_me: Warning: None of $VCVARSFILES were found, Visual Studio installation not recognized. Ignoring" >&6;}
+      else
+        # PLATFORM_TOOLSET is used during the compilation of the freetype sources
+        # (see 'LIB_BUILD_FREETYPE' in libraries.m4) and must be one of 'v100',
+        # 'v110' or 'v120' for VS 2010, 2012 or VS2013
+        eval PLATFORM_TOOLSET="\${VS_VS_PLATFORM_NAME_${VS_VERSION}}"
+
       fi
     fi
   fi
@@ -26597,6 +26616,12 @@ $as_echo "$as_me: Found Visual Studio installation at $VS_BASE using $METHOD" >&
       if test "x$VS_ENV_CMD" = x; then
         { $as_echo "$as_me:${as_lineno-$LINENO}: Warning: None of $VCVARSFILES were found, Visual Studio installation not recognized. Ignoring" >&5
 $as_echo "$as_me: Warning: None of $VCVARSFILES were found, Visual Studio installation not recognized. Ignoring" >&6;}
+      else
+        # PLATFORM_TOOLSET is used during the compilation of the freetype sources
+        # (see 'LIB_BUILD_FREETYPE' in libraries.m4) and must be one of 'v100',
+        # 'v110' or 'v120' for VS 2010, 2012 or VS2013
+        eval PLATFORM_TOOLSET="\${VS_VS_PLATFORM_NAME_${VS_VERSION}}"
+
       fi
     fi
   fi
@@ -26652,6 +26677,12 @@ $as_echo "$as_me: Found Visual Studio installation at $VS_BASE using $METHOD" >&
       if test "x$VS_ENV_CMD" = x; then
         { $as_echo "$as_me:${as_lineno-$LINENO}: Warning: None of $VCVARSFILES were found, Visual Studio installation not recognized. Ignoring" >&5
 $as_echo "$as_me: Warning: None of $VCVARSFILES were found, Visual Studio installation not recognized. Ignoring" >&6;}
+      else
+        # PLATFORM_TOOLSET is used during the compilation of the freetype sources
+        # (see 'LIB_BUILD_FREETYPE' in libraries.m4) and must be one of 'v100',
+        # 'v110' or 'v120' for VS 2010, 2012 or VS2013
+        eval PLATFORM_TOOLSET="\${VS_VS_PLATFORM_NAME_${VS_VERSION}}"
+
       fi
     fi
   fi
@@ -26704,6 +26735,12 @@ $as_echo "$as_me: Found Visual Studio installation at $VS_BASE using $METHOD" >&
       if test "x$VS_ENV_CMD" = x; then
         { $as_echo "$as_me:${as_lineno-$LINENO}: Warning: None of $VCVARSFILES were found, Visual Studio installation not recognized. Ignoring" >&5
 $as_echo "$as_me: Warning: None of $VCVARSFILES were found, Visual Studio installation not recognized. Ignoring" >&6;}
+      else
+        # PLATFORM_TOOLSET is used during the compilation of the freetype sources
+        # (see 'LIB_BUILD_FREETYPE' in libraries.m4) and must be one of 'v100',
+        # 'v110' or 'v120' for VS 2010, 2012 or VS2013
+        eval PLATFORM_TOOLSET="\${VS_VS_PLATFORM_NAME_${VS_VERSION}}"
+
       fi
     fi
   fi
@@ -26755,6 +26792,12 @@ $as_echo "$as_me: Found Visual Studio installation at $VS_BASE using $METHOD" >&
       if test "x$VS_ENV_CMD" = x; then
         { $as_echo "$as_me:${as_lineno-$LINENO}: Warning: None of $VCVARSFILES were found, Visual Studio installation not recognized. Ignoring" >&5
 $as_echo "$as_me: Warning: None of $VCVARSFILES were found, Visual Studio installation not recognized. Ignoring" >&6;}
+      else
+        # PLATFORM_TOOLSET is used during the compilation of the freetype sources
+        # (see 'LIB_BUILD_FREETYPE' in libraries.m4) and must be one of 'v100',
+        # 'v110' or 'v120' for VS 2010, 2012 or VS2013
+        eval PLATFORM_TOOLSET="\${VS_VS_PLATFORM_NAME_${VS_VERSION}}"
+
       fi
     fi
   fi
@@ -26794,6 +26837,10 @@ $as_echo "$as_me: Found Windows SDK installation at $WIN_SDK_BASE using $METHOD"
         else
           VS_ENV_ARGS="/x64"
         fi
+        # PLATFORM_TOOLSET is used during the compilation of the freetype sources (see
+        # 'LIB_BUILD_FREETYPE' in libraries.m4) and must be 'Windows7.1SDK' for Windows7.1SDK
+        # TODO: improve detection for other versions of SDK
+        eval PLATFORM_TOOLSET="\${VS_SDK_PLATFORM_NAME_${VS_VERSION}}"
       else
         { $as_echo "$as_me:${as_lineno-$LINENO}: Found Windows SDK installation at $WIN_SDK_BASE using $METHOD" >&5
 $as_echo "$as_me: Found Windows SDK installation at $WIN_SDK_BASE using $METHOD" >&6;}
@@ -26837,6 +26884,10 @@ $as_echo "$as_me: Found Windows SDK installation at $WIN_SDK_BASE using $METHOD"
         else
           VS_ENV_ARGS="/x64"
         fi
+        # PLATFORM_TOOLSET is used during the compilation of the freetype sources (see
+        # 'LIB_BUILD_FREETYPE' in libraries.m4) and must be 'Windows7.1SDK' for Windows7.1SDK
+        # TODO: improve detection for other versions of SDK
+        eval PLATFORM_TOOLSET="\${VS_SDK_PLATFORM_NAME_${VS_VERSION}}"
       else
         { $as_echo "$as_me:${as_lineno-$LINENO}: Found Windows SDK installation at $WIN_SDK_BASE using $METHOD" >&5
 $as_echo "$as_me: Found Windows SDK installation at $WIN_SDK_BASE using $METHOD" >&6;}
@@ -26880,6 +26931,10 @@ $as_echo "$as_me: Found Windows SDK installation at $WIN_SDK_BASE using $METHOD"
         else
           VS_ENV_ARGS="/x64"
         fi
+        # PLATFORM_TOOLSET is used during the compilation of the freetype sources (see
+        # 'LIB_BUILD_FREETYPE' in libraries.m4) and must be 'Windows7.1SDK' for Windows7.1SDK
+        # TODO: improve detection for other versions of SDK
+        eval PLATFORM_TOOLSET="\${VS_SDK_PLATFORM_NAME_${VS_VERSION}}"
       else
         { $as_echo "$as_me:${as_lineno-$LINENO}: Found Windows SDK installation at $WIN_SDK_BASE using $METHOD" >&5
 $as_echo "$as_me: Found Windows SDK installation at $WIN_SDK_BASE using $METHOD" >&6;}
@@ -26922,6 +26977,10 @@ $as_echo "$as_me: Found Windows SDK installation at $WIN_SDK_BASE using $METHOD"
         else
           VS_ENV_ARGS="/x64"
         fi
+        # PLATFORM_TOOLSET is used during the compilation of the freetype sources (see
+        # 'LIB_BUILD_FREETYPE' in libraries.m4) and must be 'Windows7.1SDK' for Windows7.1SDK
+        # TODO: improve detection for other versions of SDK
+        eval PLATFORM_TOOLSET="\${VS_SDK_PLATFORM_NAME_${VS_VERSION}}"
       else
         { $as_echo "$as_me:${as_lineno-$LINENO}: Found Windows SDK installation at $WIN_SDK_BASE using $METHOD" >&5
 $as_echo "$as_me: Found Windows SDK installation at $WIN_SDK_BASE using $METHOD" >&6;}
@@ -26963,6 +27022,10 @@ $as_echo "$as_me: Found Windows SDK installation at $WIN_SDK_BASE using $METHOD"
         else
           VS_ENV_ARGS="/x64"
         fi
+        # PLATFORM_TOOLSET is used during the compilation of the freetype sources (see
+        # 'LIB_BUILD_FREETYPE' in libraries.m4) and must be 'Windows7.1SDK' for Windows7.1SDK
+        # TODO: improve detection for other versions of SDK
+        eval PLATFORM_TOOLSET="\${VS_SDK_PLATFORM_NAME_${VS_VERSION}}"
       else
         { $as_echo "$as_me:${as_lineno-$LINENO}: Found Windows SDK installation at $WIN_SDK_BASE using $METHOD" >&5
 $as_echo "$as_me: Found Windows SDK installation at $WIN_SDK_BASE using $METHOD" >&6;}
