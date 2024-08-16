@@ -259,7 +259,7 @@ AC_DEFUN([LIB_CHECK_POTENTIAL_FREETYPE],
   POTENTIAL_FREETYPE_LIB_PATH="$2"
   METHOD="$3"
 
-  # Assume we've found freetype to begin
+  # Let's start with an optimistic view of the world :-)
   FOUND_FREETYPE=yes
 
   # First look for the canonical freetype main include file ft2build.h.

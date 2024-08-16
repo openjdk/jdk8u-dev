@@ -4423,7 +4423,7 @@ VS_TOOLSET_SUPPORTED_2022=true
 #CUSTOM_AUTOCONF_INCLUDE
 
 # Do not change or remove the following line, it is needed for consistency checks:
-DATE_WHEN_GENERATED=1723706303
+DATE_WHEN_GENERATED=1723798184
 
 ###############################################################################
 #
@@ -45176,7 +45176,7 @@ fi
   POTENTIAL_FREETYPE_LIB_PATH="$POTENTIAL_FREETYPE_LIB_PATH"
   METHOD="--with-freetype"
 
-  # Assume we've found freetype to begin
+  # Let's start with an optimistic view of the world :-)
   FOUND_FREETYPE=yes
 
   # First look for the canonical freetype main include file ft2build.h.
@@ -45315,7 +45315,7 @@ $as_echo "yes (using pkg-config)" >&6; }
   POTENTIAL_FREETYPE_LIB_PATH="$FREETYPE_BASE_DIR/lib/$OPENJDK_TARGET_CPU-linux-gnu"
   METHOD="well-known location"
 
-  # Assume we've found freetype to begin
+  # Let's start with an optimistic view of the world :-)
   FOUND_FREETYPE=yes
 
   # First look for the canonical freetype main include file ft2build.h.
@@ -45361,7 +45361,7 @@ $as_echo "$FREETYPE_LIB_PATH" >&6; }
   POTENTIAL_FREETYPE_LIB_PATH="$FREETYPE_BASE_DIR/lib64"
   METHOD="well-known location"
 
-  # Assume we've found freetype to begin
+  # Let's start with an optimistic view of the world :-)
   FOUND_FREETYPE=yes
 
   # First look for the canonical freetype main include file ft2build.h.
@@ -45408,7 +45408,7 @@ $as_echo "$FREETYPE_LIB_PATH" >&6; }
   POTENTIAL_FREETYPE_LIB_PATH="$FREETYPE_BASE_DIR/lib/i386-linux-gnu"
   METHOD="well-known location"
 
-  # Assume we've found freetype to begin
+  # Let's start with an optimistic view of the world :-)
   FOUND_FREETYPE=yes
 
   # First look for the canonical freetype main include file ft2build.h.
@@ -45454,7 +45454,7 @@ $as_echo "$FREETYPE_LIB_PATH" >&6; }
   POTENTIAL_FREETYPE_LIB_PATH="$FREETYPE_BASE_DIR/lib32"
   METHOD="well-known location"
 
-  # Assume we've found freetype to begin
+  # Let's start with an optimistic view of the world :-)
   FOUND_FREETYPE=yes
 
   # First look for the canonical freetype main include file ft2build.h.
@@ -45503,7 +45503,7 @@ $as_echo "$FREETYPE_LIB_PATH" >&6; }
   POTENTIAL_FREETYPE_LIB_PATH="$FREETYPE_BASE_DIR/lib"
   METHOD="well-known location"
 
-  # Assume we've found freetype to begin
+  # Let's start with an optimistic view of the world :-)
   FOUND_FREETYPE=yes
 
   # First look for the canonical freetype main include file ft2build.h.
@@ -45551,7 +45551,7 @@ $as_echo "$FREETYPE_LIB_PATH" >&6; }
   POTENTIAL_FREETYPE_LIB_PATH="$FREETYPE_BASE_DIR/lib/$OPENJDK_TARGET_CPU-$OPENJDK_TARGET_OS-$OPENJDK_TARGET_ABI"
   METHOD="well-known location"
 
-  # Assume we've found freetype to begin
+  # Let's start with an optimistic view of the world :-)
   FOUND_FREETYPE=yes
 
   # First look for the canonical freetype main include file ft2build.h.
@@ -45599,7 +45599,7 @@ $as_echo "$FREETYPE_LIB_PATH" >&6; }
   POTENTIAL_FREETYPE_LIB_PATH="$FREETYPE_BASE_DIR/lib/$OPENJDK_TARGET_CPU_AUTOCONF-$OPENJDK_TARGET_OS-$OPENJDK_TARGET_ABI"
   METHOD="well-known location"
 
-  # Assume we've found freetype to begin
+  # Let's start with an optimistic view of the world :-)
   FOUND_FREETYPE=yes
 
   # First look for the canonical freetype main include file ft2build.h.
@@ -45648,7 +45648,7 @@ $as_echo "$FREETYPE_LIB_PATH" >&6; }
   POTENTIAL_FREETYPE_LIB_PATH="$FREETYPE_BASE_DIR/lib"
   METHOD="well-known location"
 
-  # Assume we've found freetype to begin
+  # Let's start with an optimistic view of the world :-)
   FOUND_FREETYPE=yes
 
   # First look for the canonical freetype main include file ft2build.h.
@@ -45697,7 +45697,7 @@ $as_echo "$FREETYPE_LIB_PATH" >&6; }
   POTENTIAL_FREETYPE_LIB_PATH="$FREETYPE_BASE_DIR/lib"
   METHOD="well-known location"
 
-  # Assume we've found freetype to begin
+  # Let's start with an optimistic view of the world :-)
   FOUND_FREETYPE=yes
 
   # First look for the canonical freetype main include file ft2build.h.
