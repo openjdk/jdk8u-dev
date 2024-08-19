@@ -31,6 +31,8 @@ import jdk.test.lib.Platform;
 import jdk.test.lib.Utils;
 
 /**
+ * @comment This test does not work because the Serviceability/sa test framework is not backported.
+ *          This test addition should be integrated when the test framework is backported in the future.
  * @bug 8190198
  * @bug 8217612
  * @summary Test clhsdb flags command
