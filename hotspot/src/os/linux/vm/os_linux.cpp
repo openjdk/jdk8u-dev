@@ -1949,11 +1949,11 @@ void * os::dll_load(const char *filename, char *ebuf, int ebuflen)
   #ifndef EM_AARCH64
   #define EM_AARCH64    183               /* ARM AARCH64 */
   #endif
-  #ifndef EM_RISCV
-  #define EM_RISCV      243               /* RISC-V */
-  #endif
   #ifndef EM_LOONGARCH
   #define EM_LOONGARCH  258               /* LoongArch */
+  #endif
+  #ifndef EM_RISCV
+  #define EM_RISCV      243               /* RISC-V */
   #endif
 
   static const arch_t arch_array[]={
