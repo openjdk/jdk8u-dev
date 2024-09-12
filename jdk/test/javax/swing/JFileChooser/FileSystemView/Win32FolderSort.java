@@ -32,9 +32,8 @@ import java.util.List;
  * @test
  * @bug 8305072
  * @requires (os.family == "windows")
- * @modules java.desktop/sun.awt.shell
  * @summary Verifies consistency of Win32ShellFolder2.compareTo
- * @run main/othervm --add-opens java.desktop/sun.awt.shell=ALL-UNNAMED Win32FolderSort
+ * @run main/othervm Win32FolderSort
  */
 public class Win32FolderSort {
     public static void main(String[] args) throws Exception {
