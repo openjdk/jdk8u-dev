@@ -490,9 +490,9 @@
  * @summary Interoperability tests with SSL TLS 2022 root CAs
  * @library /test/lib
  * @build jtreg.SkippedException ValidatePathWithURL CAInterop
- * @run main/othervm/manual -Djava.security.debug=certpath,ocsp CAInterop ssltlsrootecc2022 DEFAULT
- * @run main/othervm/manual -Djava.security.debug=certpath,ocsp -Dcom.sun.security.ocsp.useget=false CAInterop ssltlsrootecc2022 DEFAULT
- * @run main/othervm/manual -Djava.security.debug=certpath CAInterop ssltlsrootecc2022 CRL
+ * @run main/othervm -Djava.security.debug=certpath,ocsp CAInterop ssltlsrootecc2022 DEFAULT
+ * @run main/othervm -Djava.security.debug=certpath,ocsp -Dcom.sun.security.ocsp.useget=false CAInterop ssltlsrootecc2022 DEFAULT
+ * @run main/othervm -Djava.security.debug=certpath CAInterop ssltlsrootecc2022 CRL
  */
 
 /*
@@ -501,9 +501,9 @@
  * @summary Interoperability tests with SSL TLS 2022 root CAs
  * @library /test/lib
  * @build jtreg.SkippedException ValidatePathWithURL CAInterop
- * @run main/othervm/manual -Djava.security.debug=certpath,ocsp CAInterop ssltlsrootrsa2022 DEFAULT
- * @run main/othervm/manual -Djava.security.debug=certpath,ocsp -Dcom.sun.security.ocsp.useget=false CAInterop ssltlsrootrsa2022 DEFAULT
- * @run main/othervm/manual -Djava.security.debug=certpath CAInterop ssltlsrootrsa2022 CRL
+ * @run main/othervm -Djava.security.debug=certpath,ocsp CAInterop ssltlsrootrsa2022 DEFAULT
+ * @run main/othervm -Djava.security.debug=certpath,ocsp -Dcom.sun.security.ocsp.useget=false CAInterop ssltlsrootrsa2022 DEFAULT
+ * @run main/othervm -Djava.security.debug=certpath CAInterop ssltlsrootrsa2022 CRL
  */
 
 /**
