@@ -3565,6 +3565,22 @@ public abstract class JComponent extends Container implements Serializable,
                     return true;
                 }
 
+                if (to instanceof JToggleButton) {
+                    JToggleButton tb = ((JToggleButton)to).getGroupSelection(cause);
+                    if (tb != to) {
+                        if (focusedWindowChangeAllowed) {
+                            SwingUtilities.invokeLater(() -> {
+                                tb.requestFocus();
+                            });
+                        } else {
+                            SwingUtilities.invokeLater(() -> {
+                                tb.requestFocusInWindow();
+                            });
+                        }
+                        return false;
+                    }
+                }
+
                 if ((from == null) || !(from instanceof JComponent)) {
                     return true;
                 }
