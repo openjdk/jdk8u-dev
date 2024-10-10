@@ -55,6 +55,7 @@ extern "C" {
 typedef int bool;
 #define false 0
 #define true 1
+#endif
 /** End JDK modifications to support building using old compilers**/
 
 #define GIF_STAMP "GIFVER" /* First chars in file - GIF stamp.  */
