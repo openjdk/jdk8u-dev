@@ -362,15 +362,15 @@ done with the MinGW command line installer:
       mingw-get.exe install msys-zip
       mingw-get.exe install msys-unzip
 
-##### Visual Studio 2010 Compilers
+##### Visual Studio 2019 Compilers
 
 The 32-bit and 64-bit OpenJDK Windows build requires Microsoft Visual Studio
-C++ 2010 (VS2010) Professional Edition or Express compiler. The compiler and
+C++ 2019 (VS2019) Professional Edition or Express compiler. The compiler and
 other tools are expected to reside in the location defined by the variable
 `VS100COMNTOOLS` which is set by the Microsoft Visual Studio installer.
 
-Only the C++ part of VS2010 is needed. Try to let the installation go to the
-default install directory. Always reboot your system after installing VS2010.
+Only the C++ part of VS2019 is needed. Try to let the installation go to the
+default install directory. Always reboot your system after installing VS2019.
 The system environment variable VS100COMNTOOLS should be set in your
 environment.
 
