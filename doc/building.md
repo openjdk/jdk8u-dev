@@ -405,9 +405,6 @@ happens, read more below in [the `configure` options](#configureoptions).
 
 Some examples:
 
->  **Windows 32bit build with freetype specified:** \
->  `bash ./configure --with-freetype=/cygdrive/c/freetype-i586 --with-target-bits=32`
-
 >  **Debug 64bit Build:** \
 >  `bash ./configure --enable-debug --with-target-bits=64`
 
