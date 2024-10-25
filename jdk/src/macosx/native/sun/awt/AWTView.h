@@ -37,7 +37,7 @@
     NSTrackingArea* rolloverTrackingArea;
 
     // TODO: NSMenu *contextualMenu;
-    
+
     // Keyboard layout
     NSString *kbdLayout;
 
