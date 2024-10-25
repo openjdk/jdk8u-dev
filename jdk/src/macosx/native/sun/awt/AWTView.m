@@ -1005,6 +1005,15 @@ JNF_CLASS_CACHE(jc_CInputMethod, "sun/lwawt/macosx/CInputMethod");
 
 }
 
+- (void)keyboardInputSourceChanged:(NSNotification *)notification
+{
+#ifdef IM_DEBUG
+    NSLog(@"keyboardInputSourceChangeNotification received");
+#endif
+    NSTextInputContext *curContxt = [NSTextInputContext currentInputContext];
+    kbdLayout = curContxt.selectedKeyboardInputSource;
+}
+
 - (void) doCommandBySelector:(SEL)aSelector
 {
 #ifdef IM_DEBUG
@@ -1330,6 +1339,13 @@ JNF_CLASS_CACHE(jc_CInputMethod, "sun/lwawt/macosx/CInputMethod");
         fInputMethodLOCKABLE = JNFNewGlobalRef(env, inputMethod);
     else
         fInputMethodLOCKABLE = NULL;
+    
+    NSTextInputContext *curContxt = [NSTextInputContext currentInputContext];
+    kbdLayout = curContxt.selectedKeyboardInputSource;
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                           selector:@selector(keyboardInputSourceChanged:)
+                                               name:NSTextInputContextKeyboardSelectionDidChangeNotification
+                                             object:nil];
 }
 
 - (void)abandonInput
