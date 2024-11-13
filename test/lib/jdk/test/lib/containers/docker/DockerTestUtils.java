@@ -91,7 +91,7 @@ public class DockerTestUtils {
         if (isDockerEngineAvailable()) {
             return true;
         } else {
-	    throw new SkippedException("Docker engine is not available on this system");
+            throw new SkippedException("Docker engine is not available on this system");
         }
     }
 
