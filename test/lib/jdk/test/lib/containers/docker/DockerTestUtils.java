@@ -89,9 +89,7 @@ public class DockerTestUtils {
         if (isDockerEngineAvailable()) {
             return true;
         } else {
-            System.out.println("Docker engine is not available on this system");
-            System.out.println("This test is SKIPPED");
-            return false;
+	    throw new SkippedException("Docker engine is not available on this system");
         }
     }
 
