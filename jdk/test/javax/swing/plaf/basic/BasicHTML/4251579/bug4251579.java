@@ -24,6 +24,7 @@
 
 /*
  * @test
+ * @key headful
  * @bug 4251579
  * @summary  Tests if style sheets are working in JLabel
  * @run main bug4251579

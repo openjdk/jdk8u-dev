@@ -21,12 +21,13 @@
  * questions.
  */
 
-/*
-  test
-  @bug       5028014
-  @summary   Focus request & mouse click performed nearly synchronously shouldn't lead to a focus race.
-  @author    anton.tarasov@sun.com: area=awt-focus
-  @run       applet MouseClickRequestFocusRaceTest.html
+/**
+ * test
+ * @key headful
+ * @bug       5028014
+ * @summary   Focus request & mouse click performed nearly synchronously shouldn't lead to a focus race.
+ * @author    anton.tarasov@sun.com: area=awt-focus
+ * @run       applet MouseClickRequestFocusRaceTest.html
 */
 
 import java.awt.*;
