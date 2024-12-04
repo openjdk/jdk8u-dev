@@ -153,7 +153,7 @@ public class ExtractFilesTest {
                 "testfile2" + nl;
 
         Assertions.assertArrayEquals(baos.toByteArray(), output.getBytes());
-        Assertions.assertEquals("Warning: The -k/k option is not valid with current usage, will be ignored." + nl, err);
+        Assertions.assertEquals("Warning: The k option is not valid with current usage, will be ignored." + nl, err);
     }
 
     private Stream<Path> mkpath(String... args) {
