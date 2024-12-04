@@ -436,7 +436,7 @@ class Main {
             return false;
         }
         if (kflag && !xflag) {
-            warn(formatMsg("warn.option.is.ignored", "-k/k"));
+            warn(formatMsg("warn.option.is.ignored", "k"));
         }
 
         /* parse file arguments */
