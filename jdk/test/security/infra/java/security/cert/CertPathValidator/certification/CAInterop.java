@@ -207,8 +207,7 @@
  * @summary Interoperability tests with Google's GlobalSign R4 and GTS Root certificates
  * @library /test/lib
  * @build jtreg.SkippedException ValidatePathWithURL CAInterop
- * @run main/othervm -Djava.security.debug=certpath,ocsp CAInterop globalsigneccrootcar4 OCSP
- * @run main/othervm -Djava.security.debug=certpath CAInterop globalsigneccrootcar4 CRL
+ * @run main/othervm -Djava.security.debug=certpath,ocsp CAInterop globalsigneccrootcar4 DEFAULT
  */
 
 /*
@@ -217,8 +216,7 @@
  * @summary Interoperability tests with Google's GlobalSign R4 and GTS Root certificates
  * @library /test/lib
  * @build jtreg.SkippedException ValidatePathWithURL CAInterop
- * @run main/othervm -Djava.security.debug=certpath,ocsp CAInterop gtsrootcar1 OCSP
- * @run main/othervm -Djava.security.debug=certpath CAInterop gtsrootcar1 CRL
+ * @run main/othervm -Djava.security.debug=certpath,ocsp CAInterop gtsrootcar1 DEFAULT
  */
 
 /*
@@ -227,8 +225,7 @@
  * @summary Interoperability tests with Google's GlobalSign R4 and GTS Root certificates
  * @library /test/lib
  * @build jtreg.SkippedException ValidatePathWithURL CAInterop
- * @run main/othervm -Djava.security.debug=certpath,ocsp CAInterop gtsrootcar2 OCSP
- * @run main/othervm -Djava.security.debug=certpath CAInterop gtsrootcar2 CRL
+ * @run main/othervm -Djava.security.debug=certpath,ocsp CAInterop gtsrootcar2 DEFAULT
  */
 
 /*
@@ -237,8 +234,7 @@
  * @summary Interoperability tests with Google's GlobalSign R4 and GTS Root certificates
  * @library /test/lib
  * @build jtreg.SkippedException ValidatePathWithURL CAInterop
- * @run main/othervm -Djava.security.debug=certpath,ocsp CAInterop gtsrootecccar3 OCSP
- * @run main/othervm -Djava.security.debug=certpath CAInterop gtsrootecccar3 CRL
+ * @run main/othervm -Djava.security.debug=certpath,ocsp CAInterop gtsrootecccar3 DEFAULT
  */
 
 /*
@@ -247,8 +243,7 @@
  * @summary Interoperability tests with Google's GlobalSign R4 and GTS Root certificates
  * @library /test/lib
  * @build jtreg.SkippedException ValidatePathWithURL CAInterop
- * @run main/othervm -Djava.security.debug=certpath,ocsp CAInterop gtsrootecccar4 OCSP
- * @run main/othervm -Djava.security.debug=certpath CAInterop gtsrootecccar4 CRL
+ * @run main/othervm -Djava.security.debug=certpath,ocsp CAInterop gtsrootecccar4 DEFAULT
  */
 
 /*
@@ -469,6 +464,48 @@
  * @run main/othervm -Djava.security.debug=certpath,ocsp CAInterop certainlyroote1 DEFAULT
  */
 
+/*
+ * @test id=globalsignr46
+ * @bug 8316138
+ * @summary Interoperability tests with GlobalSign Root R46
+ * @library /test/lib
+ * @build jtreg.SkippedException ValidatePathWithURL CAInterop
+ * @run main/othervm -Djava.security.debug=certpath,ocsp CAInterop globalsignr46 OCSP
+ * @run main/othervm -Djava.security.debug=certpath CAInterop globalsignr46 CRL
+ */
+
+/*
+ * @test id=globalsigne46
+ * @bug 8316138
+ * @summary Interoperability tests with GlobalSign Root E46
+ * @library /test/lib
+ * @build jtreg.SkippedException ValidatePathWithURL CAInterop
+ * @run main/othervm -Djava.security.debug=certpath,ocsp CAInterop globalsigne46 OCSP
+ * @run main/othervm -Djava.security.debug=certpath CAInterop globalsigne46 CRL
+ */
+
+/*
+ * @test id=ssltlsrootecc2022
+ * @bug 8341057
+ * @summary Interoperability tests with SSL TLS 2022 root CAs
+ * @library /test/lib
+ * @build jtreg.SkippedException ValidatePathWithURL CAInterop
+ * @run main/othervm -Djava.security.debug=certpath,ocsp CAInterop ssltlsrootecc2022 DEFAULT
+ * @run main/othervm -Djava.security.debug=certpath,ocsp -Dcom.sun.security.ocsp.useget=false CAInterop ssltlsrootecc2022 DEFAULT
+ * @run main/othervm -Djava.security.debug=certpath CAInterop ssltlsrootecc2022 CRL
+ */
+
+/*
+ * @test id=ssltlsrootrsa2022
+ * @bug 8341057
+ * @summary Interoperability tests with SSL TLS 2022 root CAs
+ * @library /test/lib
+ * @build jtreg.SkippedException ValidatePathWithURL CAInterop
+ * @run main/othervm -Djava.security.debug=certpath,ocsp CAInterop ssltlsrootrsa2022 DEFAULT
+ * @run main/othervm -Djava.security.debug=certpath,ocsp -Dcom.sun.security.ocsp.useget=false CAInterop ssltlsrootrsa2022 DEFAULT
+ * @run main/othervm -Djava.security.debug=certpath CAInterop ssltlsrootrsa2022 CRL
+ */
+
 /**
  * Collection of certificate validation tests for interoperability with external CAs
  */
@@ -637,6 +674,20 @@ public class CAInterop {
             case "certainlyroote1":
                     return new CATestURLs("https://valid.root-e1.certainly.com",
                             "https://revoked.root-e1.certainly.com");
+
+            case "globalsignr46":
+                    return new CATestURLs("https://valid.r46.roots.globalsign.com",
+                            "https://revoked.r46.roots.globalsign.com");
+            case "globalsigne46":
+                    return new CATestURLs("https://valid.e46.roots.globalsign.com",
+                            "https://revoked.e46.roots.globalsign.com");
+
+            case "ssltlsrootecc2022":
+                    return new CATestURLs("https://test-root-2022-ecc.ssl.com",
+                            "https://revoked-root-2022-ecc.ssl.com");
+            case "ssltlsrootrsa2022":
+                    return new CATestURLs("https://test-root-2022-rsa.ssl.com",
+                            "https://revoked-root-2022-rsa.ssl.com");
 
             default: throw new RuntimeException("No test setup found for: " + alias);
         }
