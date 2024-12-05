@@ -21,8 +21,7 @@
 * questions.
 */
 
-import sun.awt.OSInfo;
-
+import jdk.testlibrary.OSInfo;
 import java.awt.*;
 import java.awt.Robot;
 import java.awt.event.InputEvent;
@@ -41,6 +40,8 @@ import javax.swing.WindowConstants;
  * @summary Native Mac OS X full screen does not work after showing the splash
  * @requires (os.family == "mac")
  * @library ../
+ * @library ../../../../lib/testlibrary
+ * @build jdk.testlibrary.OSInfo
  * @build GenerateTestImage
  * @run main GenerateTestImage
  * @author Petr Pchelko area=awt.event
