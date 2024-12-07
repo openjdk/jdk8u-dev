@@ -588,7 +588,8 @@ class SWPointer VALUE_OBJ_CLASS_SPEC {
         _scale == q._scale   &&
         _invar == q._invar   &&
         _negate_invar == q._negate_invar) {
-      jlong difference = abs(java_subtract((jlong)_offset, (jlong)q._offset));
+      jlong output = java_subtract((jlong)_offset, (jlong)q._offset);
+      jlong difference = output >= 0 ? output : -1ll * output;
       jlong max_diff = (jlong)1 << 31;
       if (difference >= max_diff) {
         return NotComparable;
