@@ -42,6 +42,7 @@ import jdk.test.lib.Container;
 import jdk.test.lib.Utils;
 import jdk.test.lib.process.OutputAnalyzer;
 import jdk.test.lib.process.ProcessTools;
+import jtreg.SkippedException;
 
 
 public class DockerTestUtils {
@@ -90,9 +91,7 @@ public class DockerTestUtils {
         if (isDockerEngineAvailable()) {
             return true;
         } else {
-            System.out.println("Docker engine is not available on this system");
-            System.out.println("This test is SKIPPED");
-            return false;
+            throw new SkippedException("Docker engine is not available on this system");
         }
     }
 
@@ -171,8 +170,17 @@ public class DockerTestUtils {
                            DockerfileConfig.getBaseImageVersion());
 
         // Build the docker
-        execute(Container.ENGINE_COMMAND, "build", "--no-cache", "--tag", imageName, buildDir.toString())
-            .shouldHaveExitValue(0);
+        try {
+            // Build the docker
+            execute(Container.ENGINE_COMMAND, "build", "--no-cache", "--tag", imageName, buildDir.toString())
+                .shouldHaveExitValue(0)
+                .shouldContain("Successfully built");
+        } catch (Exception e) {
+            // If docker image building fails there is a good chance it happens due to environment and/or
+            // configuration other than product failure. Throw jtreg skipped exception in such case
+            // instead of failing the test.
+            throw new SkippedException("Building docker image failed. Details: \n" + e.getMessage());
+        }
     }
 
 
