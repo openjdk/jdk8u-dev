@@ -30,6 +30,7 @@
 #include "opto/phaseX.hpp"
 #include "opto/vectornode.hpp"
 #include "utilities/growableArray.hpp"
+#include "cstdlib"
 
 //
 //                  S U P E R W O R D   T R A N S F O R M
@@ -588,8 +589,7 @@ class SWPointer VALUE_OBJ_CLASS_SPEC {
         _scale == q._scale   &&
         _invar == q._invar   &&
         _negate_invar == q._negate_invar) {
-      jlong output = java_subtract((jlong)_offset, (jlong)q._offset);
-      jlong difference = output >= 0 ? output : -1ll * output;
+      jlong difference = abs(java_subtract((jlong)_offset, (jlong)q._offset));
       jlong max_diff = (jlong)1 << 31;
       if (difference >= max_diff) {
         return NotComparable;
