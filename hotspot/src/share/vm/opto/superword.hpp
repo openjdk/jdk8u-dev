@@ -30,7 +30,10 @@
 #include "opto/phaseX.hpp"
 #include "opto/vectornode.hpp"
 #include "utilities/growableArray.hpp"
+
+#ifdef AIX
 #include "cstdlib"
+#endif
 
 //
 //                  S U P E R W O R D   T R A N S F O R M
