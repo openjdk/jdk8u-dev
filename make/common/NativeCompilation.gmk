@@ -1,9 +1,5 @@
 #
-<<<<<<< HEAD
-# Copyright (c) 2011, 2021, Oracle and/or its affiliates. All rights reserved.
-=======
 # Copyright (c) 2011, 2020, Oracle and/or its affiliates. All rights reserved.
->>>>>>> 907f9ee7083 (8237192: Generate stripped/public pdbs on Windows for jdk images)
 # DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
 #
 # This code is free software; you can redistribute it and/or modify it
@@ -441,22 +437,6 @@ define SetupNativeCompilation
 
   # Need to make sure TARGET is first on list
   $1 := $$($1_TARGET)
-<<<<<<< HEAD
-  ifeq ($$($1_STATIC_LIBRARY),)
-    ifneq ($$($1_DEBUG_SYMBOLS),)
-      ifeq ($(ENABLE_DEBUG_SYMBOLS), true)
-        ifneq ($$($1_OUTPUT_DIR),$$($1_OBJECT_DIR))
-          ifeq ($(OPENJDK_TARGET_OS), macosx)
-            # MacOS debug symbols are in %.dSYM directories
-            $$($1_OUTPUT_DIR)/$$($1_BASENAME).dSYM/Contents/Info.plist : $$($1_OBJECT_DIR)/$$($1_BASENAME).dSYM/Contents/Info.plist
-		mkdir -p $$(@D)
-		$(CP) $$< $$@
-            $$($1_OUTPUT_DIR)/$$($1_BASENAME).dSYM/Contents/Resources/DWARF/$$($1_BASENAME) : $$($1_OBJECT_DIR)/$$($1_BASENAME).dSYM/Contents/Resources/DWARF/$$($1_BASENAME)
-		mkdir -p $$(@D)
-		$(CP) $$< $$@
-            $$($1_OUTPUT_DIR)/$$($1_NOSUFFIX).diz : $$($1_OBJECT_DIR)/$$($1_NOSUFFIX).diz
-		$(CP) $$< $$@
-=======
 
   ifneq ($$($1_COPY_DEBUG_SYMBOLS), false)
     $1_COPY_DEBUG_SYMBOLS := $(COPY_DEBUG_SYMBOLS)
@@ -565,7 +545,6 @@ define SetupNativeCompilation
         ifeq ($(STATIC_BUILD), true)
           ifeq ($$($1_USE_MAPFILE_FOR_SYMBOLS), true)
 	    $(CP) $$($1_MAPFILE) $$(@D)/$$(basename $$(@F)).symbols
->>>>>>> 907f9ee7083 (8237192: Generate stripped/public pdbs on Windows for jdk images)
           else
             # The dependency on TARGET is needed on windows for debuginfo files
             # to be rebuilt properly.
