@@ -150,12 +150,6 @@ javax/management/MBeanServer/OldMBeanServerTest.java            aix-all
 
 # jdk_other
 
-# 6988950
-demo/jvmti/compiledMethodLoad/CompiledMethodLoadTest.java	generic-all
-
-# 7027502
-demo/jvmti/hprof/MonitorTest.java                               generic-all
-
 ############################################################################
 
 # jdk_net
