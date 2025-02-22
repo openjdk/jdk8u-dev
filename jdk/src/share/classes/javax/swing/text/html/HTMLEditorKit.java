@@ -391,12 +391,23 @@ public class HTMLEditorKit extends StyledEditorKit implements Accessible {
         if (defaultStyles == null) {
             defaultStyles = new StyleSheet();
             appContext.put(DEFAULT_STYLES_KEY, defaultStyles);
+<<<<<<< HEAD:jdk/src/share/classes/javax/swing/text/html/HTMLEditorKit.java
             try {
                 InputStream is = HTMLEditorKit.getResourceAsStream(DEFAULT_CSS);
                 Reader r = new BufferedReader(
                         new InputStreamReader(is, "ISO-8859-1"));
+||||||| parent of fecde385a66 (8274893: Update java.desktop classes to use try-with-resources):src/java.desktop/share/classes/javax/swing/text/html/HTMLEditorKit.java
+            try {
+                InputStream is = HTMLEditorKit.getResourceAsStream(DEFAULT_CSS);
+                Reader r = new BufferedReader(
+                        new InputStreamReader(is, ISO_8859_1));
+=======
+            try (InputStream is = HTMLEditorKit.getResourceAsStream(DEFAULT_CSS);
+                 InputStreamReader isr = new InputStreamReader(is, ISO_8859_1);
+                 Reader r = new BufferedReader(isr))
+            {
+>>>>>>> fecde385a66 (8274893: Update java.desktop classes to use try-with-resources):src/java.desktop/share/classes/javax/swing/text/html/HTMLEditorKit.java
                 defaultStyles.loadRules(r, null);
-                r.close();
             } catch (Throwable e) {
                 // on error we simply have no styles... the html
                 // will look mighty wrong but still function.

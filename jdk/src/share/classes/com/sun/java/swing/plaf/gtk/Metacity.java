@@ -531,15 +531,42 @@ class Metacity implements SynthConstants {
                     URL url = new URL(new File(userHome).toURI().toURL(),
                                       ".gconf/apps/metacity/general/%25gconf.xml");
                     // Pending: verify character encoding spec for gconf
+<<<<<<< HEAD:jdk/src/share/classes/com/sun/java/swing/plaf/gtk/Metacity.java
                     Reader reader = new InputStreamReader(url.openStream(), "ISO-8859-1");
                     char[] buf = new char[1024];
                     StringBuffer strBuf = new StringBuffer();
                     int n;
                     while ((n = reader.read(buf)) >= 0) {
                         strBuf.append(buf, 0, n);
+||||||| parent of fecde385a66 (8274893: Update java.desktop classes to use try-with-resources):src/java.desktop/share/classes/com/sun/java/swing/plaf/gtk/Metacity.java
+                    Reader reader = new InputStreamReader(url.openStream(),
+                                                          ISO_8859_1);
+                    char[] buf = new char[1024];
+                    StringBuilder sb = new StringBuilder();
+                    int n;
+                    while ((n = reader.read(buf)) >= 0) {
+                        sb.append(buf, 0, n);
+=======
+                    StringBuilder sb = new StringBuilder();
+                    try (InputStream in = url.openStream();
+                         Reader reader = new InputStreamReader(in, ISO_8859_1))
+                    {
+                        char[] buf = new char[1024];
+                        int n;
+                        while ((n = reader.read(buf)) >= 0) {
+                            sb.append(buf, 0, n);
+                        }
+>>>>>>> fecde385a66 (8274893: Update java.desktop classes to use try-with-resources):src/java.desktop/share/classes/com/sun/java/swing/plaf/gtk/Metacity.java
                     }
+<<<<<<< HEAD:jdk/src/share/classes/com/sun/java/swing/plaf/gtk/Metacity.java
                     reader.close();
                     String str = strBuf.toString();
+||||||| parent of fecde385a66 (8274893: Update java.desktop classes to use try-with-resources):src/java.desktop/share/classes/com/sun/java/swing/plaf/gtk/Metacity.java
+                    reader.close();
+                    String str = sb.toString();
+=======
+                    String str = sb.toString();
+>>>>>>> fecde385a66 (8274893: Update java.desktop classes to use try-with-resources):src/java.desktop/share/classes/com/sun/java/swing/plaf/gtk/Metacity.java
                     if (str != null) {
                         String strLowerCase = str.toLowerCase();
                         int i = strLowerCase.indexOf("<entry name=\"theme\"");
