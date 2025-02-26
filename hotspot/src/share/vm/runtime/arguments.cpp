@@ -595,18 +595,25 @@ char* SysClassPath::add_jars_to_path(char* path, const char* directory) {
 // Parses a memory size specification string.
 static bool atomull(const char *s, julong* result) {
   julong n = 0;
-  int args_read = sscanf(s, JULONG_FORMAT, &n);
-  if (args_read != 1) {
+
+  // First char must be a digit. Don't allow negative numbers or leading spaces.
+  if (!isdigit(*s)) {
     return false;
   }
-  while (*s != '\0' && isdigit(*s)) {
-    s++;
-  }
-  // 4705540: illegal if more characters are found after the first non-digit
-  if (strlen(s) > 1) {
+
+  char* remainder;
+  errno = 0;
+  n = strtoull(s, &remainder, 10);
+  if (errno != 0) {
     return false;
   }
-  switch (*s) {
+
+  // Fail if no number was read at all or if the remainder contains more than a single non-digit character.
+  if (remainder == s || strlen(remainder) > 1) {
+    return false;
+  }
+
+  switch (*remainder) {
     case 'T': case 't':
       *result = n * G * K;
       // Check for overflow.
