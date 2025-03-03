@@ -269,7 +269,6 @@ public final class TzdbZoneRulesCompiler {
         }
     }
 
-    private static final Pattern YEAR = Pattern.compile("(?i)(?<min>min)|(?<max>max)|(?<only>only)|(?<year>[0-9]+)");
     private static final Matcher TIME = Pattern.compile("(?<neg>-)?+(?<hour>[0-9]{1,2})(:(?<minute>[0-5][0-9]))?+(:(?<second>[0-5][0-9]))?+").matcher("");
 
     /** The TZDB rules. */
@@ -330,7 +329,8 @@ public final class TzdbZoneRulesCompiler {
                 } else {
                     if (s.hasNext()) {
                         String first = s.next();
-                        if (first.equals("Zone")) {
+                        int len = first.length();
+                        if (first.regionMatches(true, 0, "Zone", 0, len)) {
                             openZone = new ArrayList<>();
                             try {
                                 zones.put(s.next(), openZone);
@@ -343,14 +343,14 @@ public final class TzdbZoneRulesCompiler {
                             }
                         } else {
                             openZone = null;
-                            if (first.equals("Rule")) {
+                            if (first.regionMatches(true, 0, "Rule", 0, len)) {
                                 try {
                                     parseRuleLine(s);
                                 } catch (NoSuchElementException x) {
                                     printVerbose("Invalid Rule line in file: " + file + ", line: " + line);
                                     throw new IllegalArgumentException("Invalid Rule line");
                                 }
-                            } else if (first.equals("Link")) {
+                            } else if (first.regionMatches(true, 0, "Link", 0, len)) {
                                 try {
                                     String realId = s.next();
                                     String aliasId = s.next();
@@ -440,7 +440,7 @@ public final class TzdbZoneRulesCompiler {
         mdt.month = parseMonth(s);
         if (s.hasNext()) {
             String dayRule = s.next();
-            if (dayRule.startsWith("last")) {
+            if (dayRule.regionMatches(true, 0, "last", 0, 4)) {
                 mdt.dayOfMonth = -1;
                 mdt.dayOfWeek = parseDayOfWeek(dayRule.substring(4));
                 mdt.adjustForwards = false;
@@ -473,31 +473,15 @@ public final class TzdbZoneRulesCompiler {
         }
     }
 
-    private int parseYear(Scanner s, int defaultYear) {
-        if (s.hasNext(YEAR)) {
-            s.next(YEAR);
-            MatchResult mr = s.match();
-            if (mr.group(1) != null) {
-                return 1900;  // systemv has min
-            } else if (mr.group(2) != null) {
-                return YEAR_MAX_VALUE;
-            } else if (mr.group(3) != null) {
-                return defaultYear;
-            }
-            return Integer.parseInt(mr.group(4));
-            /*
-            if (mr.group("min") != null) {
-                //return YEAR_MIN_VALUE;
-                return 1900;  // systemv has min
-            } else if (mr.group("max") != null) {
-                return YEAR_MAX_VALUE;
-            } else if (mr.group("only") != null) {
-                return defaultYear;
-            }
-            return Integer.parseInt(mr.group("year"));
-            */
-        }
-        throw new IllegalArgumentException("Unknown year: " + s.next());
+    int parseYear(Scanner s, int defaultYear) {
+        String year = s.next();
+        int len = year.length();
+
+        if (year.regionMatches(true, 0, "minimum", 0, len)) return 1900;
+        if (year.regionMatches(true, 0, "maximum", 0, len)) return YEAR_MAX_VALUE;
+        if (year.regionMatches(true, 0, "only", 0, len)) return defaultYear;
+
+        return Integer.parseInt(year);
     }
 
     private int parseMonth(Scanner s) {
