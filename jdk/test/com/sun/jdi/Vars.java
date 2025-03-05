@@ -29,7 +29,7 @@
  *
  *  @run build JDIScaffold VMConnection
  *  @run compile -g Vars.java
- *  @run main/othervm Vars
+ *  @run driver Vars
  */
 
 import com.sun.jdi.*;
