@@ -35,6 +35,8 @@ import java.io.ObjectOutputStream;
 import java.io.ObjectInputStream;
 import java.io.IOException;
 
+import java.util.Enumeration;
+import sun.awt.CausedFocusEvent;
 
 /**
  * An implementation of a two-state button.
@@ -206,6 +208,41 @@ public class JToggleButton extends AbstractButton implements Accessible {
      */
     boolean shouldUpdateSelectedStateFromAction() {
         return true;
+    }
+
+    JToggleButton getGroupSelection(CausedFocusEvent.Cause cause) {
+        switch (cause) {
+            case ACTIVATION:
+            case TRAVERSAL:
+            case TRAVERSAL_UP:
+            case TRAVERSAL_DOWN:
+            case TRAVERSAL_FORWARD:
+            case TRAVERSAL_BACKWARD:
+                ButtonModel model = getModel();
+                JToggleButton selection = this;
+                if (model instanceof DefaultButtonModel) {
+                    ButtonGroup group = ((DefaultButtonModel) model).getGroup();
+                    if (group != null && group.getSelection() != null
+                                                      && !group.isSelected(model)) {
+                        Enumeration<AbstractButton> iterator =
+                                                   group.getElements();
+                        while (iterator.hasMoreElements()) {
+                            AbstractButton member = iterator.nextElement();
+                            if (group.isSelected(member.getModel())) {
+                                if (member instanceof JToggleButton &&
+                                    member.isVisible() && member.isDisplayable() &&
+                                    member.isEnabled() && member.isFocusable()) {
+                                    selection = (JToggleButton) member;
+                                }
+                                break;
+                            }
+                        }
+                    }
+                }
+                return selection;
+            default:
+                return this;
+        }
     }
 
     // *********************************************************************
