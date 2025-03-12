@@ -3857,7 +3857,7 @@ void MoveResolver::insert_move(LIR_Opr from_opr, Interval* to_interval) {
   assert(_insert_list != NULL && _insert_idx != -1, "must setup insert position first");
   assert(_insertion_buffer.lir_list() == _insert_list, "wrong insertion buffer");
 
-  LIR_Opr to_opr =get_virtual_register(to_interval);
+  LIR_Opr to_opr = get_virtual_register(to_interval);
   _insertion_buffer.move(_insert_idx, from_opr, to_opr);
 
   TRACE_LINEAR_SCAN(4, tty->print("MoveResolver: inserted move from constant "); from_opr->print(); tty->print_cr("  to %d (%d, %d)", to_interval->reg_num(), to_interval->assigned_reg(), to_interval->assigned_regHi()));
