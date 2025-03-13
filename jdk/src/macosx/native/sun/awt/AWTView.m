@@ -40,6 +40,9 @@
 #import "OSVersion.h"
 #import "CGLLayer.h"
 
+// Constant for keyman layouts
+#define KEYMAN_LAYOUT "keyman"
+
 @interface AWTView()
 @property (retain) CDropTarget *_dropTarget;
 @property (retain) CDragSource *_dragSource;
@@ -284,7 +287,7 @@ AWT_ASSERT_APPKIT_THREAD;
 
 - (void) keyDown: (NSEvent *)event {
     fProcessingKeystroke = YES;
-    fKeyEventsNeeded = YES;
+    fKeyEventsNeeded = ![(NSString *)kbdLayout containsString:@KEYMAN_LAYOUT];
 
     // Allow TSM to look at the event and potentially send back NSTextInputClient messages.
     [self interpretKeyEvents:[NSArray arrayWithObject:event]];
@@ -966,7 +969,8 @@ JNF_CLASS_CACHE(jc_CInputMethod, "sun/lwawt/macosx/CInputMethod");
     NSUInteger utf8Length = [aString lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
     BOOL aStringIsComplex = NO;
     if ((utf16Length > 2) ||
-        ((utf8Length > 1) && [self isCodePointInUnicodeBlockNeedingIMEvent:[aString characterAtIndex:0]])) {
+        ((utf8Length > 1) && [self isCodePointInUnicodeBlockNeedingIMEvent:[aString characterAtIndex:0]]) ||
+        [(NSString *)kbdLayout containsString:@KEYMAN_LAYOUT]) {
         aStringIsComplex = YES;
     }
 
@@ -999,6 +1003,15 @@ JNF_CLASS_CACHE(jc_CInputMethod, "sun/lwawt/macosx/CInputMethod");
 
     fPAHNeedsToSelect = NO;
 
+}
+
+- (void)keyboardInputSourceChanged:(NSNotification *)notification
+{
+#ifdef IM_DEBUG
+    NSLog(@"keyboardInputSourceChangeNotification received");
+#endif
+    NSTextInputContext *curContxt = [NSTextInputContext currentInputContext];
+    kbdLayout = curContxt.selectedKeyboardInputSource;
 }
 
 - (void) doCommandBySelector:(SEL)aSelector
@@ -1326,6 +1339,13 @@ JNF_CLASS_CACHE(jc_CInputMethod, "sun/lwawt/macosx/CInputMethod");
         fInputMethodLOCKABLE = JNFNewGlobalRef(env, inputMethod);
     else
         fInputMethodLOCKABLE = NULL;
+    
+    NSTextInputContext *curContxt = [NSTextInputContext currentInputContext];
+    kbdLayout = curContxt.selectedKeyboardInputSource;
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                           selector:@selector(keyboardInputSourceChanged:)
+                                               name:NSTextInputContextKeyboardSelectionDidChangeNotification
+                                             object:nil];
 }
 
 - (void)abandonInput
