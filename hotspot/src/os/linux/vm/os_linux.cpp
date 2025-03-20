@@ -1952,6 +1952,9 @@ void * os::dll_load(const char *filename, char *ebuf, int ebuflen)
   #ifndef EM_LOONGARCH
   #define EM_LOONGARCH  258               /* LoongArch */
   #endif
+  #ifndef EM_RISCV
+  #define EM_RISCV      243               /* RISC-V */
+  #endif
 
   static const arch_t arch_array[]={
     {EM_386,         EM_386,     ELFCLASS32, ELFDATA2LSB, (char*)"IA 32"},
@@ -1976,6 +1979,7 @@ void * os::dll_load(const char *filename, char *ebuf, int ebuflen)
     {EM_68K,         EM_68K,     ELFCLASS32, ELFDATA2MSB, (char*)"M68k"},
     {EM_AARCH64,     EM_AARCH64, ELFCLASS64, ELFDATA2LSB, (char*)"AARCH64"},
     {EM_LOONGARCH,   EM_LOONGARCH, ELFCLASS64, ELFDATA2LSB, (char*)"LoongArch"},
+    {EM_RISCV,       EM_RISCV,   ELFCLASS64, ELFDATA2LSB, (char*)"RISC-V"},
   };
 
   #if  (defined IA32)
@@ -2010,9 +2014,11 @@ void * os::dll_load(const char *filename, char *ebuf, int ebuflen)
     static  Elf32_Half running_arch_code=EM_AARCH64;
   #elif  (defined LOONGARCH64)
     static  Elf32_Half running_arch_code=EM_LOONGARCH;
+  #elif  (defined RISCV)
+    static  Elf32_Half running_arch_code=EM_RISCV;
   #else
     #error Method os::dll_load requires that one of following is defined:\
-         IA32, AMD64, IA64, __sparc, __powerpc__, ARM, S390, ALPHA, MIPS, MIPSEL, PARISC, M68K, AARCH64, LOONGARCH64
+         IA32, AMD64, IA64, __sparc, __powerpc__, ARM, S390, ALPHA, MIPS, MIPSEL, PARISC, M68K, AARCH64, LOONGARCH64, RISCV
   #endif
 
   // Identify compatability class for VM's architecture and library's architecture
