@@ -26,6 +26,8 @@
  * @key headful
  * @bug 4977491 8160767
  * @summary State changes should always be reported as events
+ * @library ../../../../lib/testlibrary
+ * @build ExtendedRobot
  * @run main MaximizedToIconified
  */
 
@@ -38,7 +40,6 @@
  */
 
 import java.awt.Frame;
-import java.awt.Robot;
 import java.awt.Toolkit;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowStateListener;
@@ -48,7 +49,7 @@ public class MaximizedToIconified
     static volatile int lastFrameState = Frame.NORMAL;
     static volatile boolean failed = false;
     static volatile Toolkit myKit;
-    private static Robot robot;
+    private static ExtendedRobot robot;
 
     private static void checkState(Frame frame, int state) {
         frame.setExtendedState(state);
@@ -120,7 +121,7 @@ public class MaximizedToIconified
 
     public static void main( String args[] ) throws Exception
     {
-        robot = new Robot();
+        robot = new ExtendedRobot();
         doTest();
 
     }
