@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, 2018, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2016, 2025, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -493,6 +493,7 @@ public class TestMemoryOptions {
             ProcessBuilder pb;
             if (flightRecorderOptions != null) {
                 pb = ProcessTools.createJavaProcessBuilder(true,
+                                                           "-Xmx256m",
                                                            flightRecorderOptions,
                                                            "-XX:StartFlightRecording",
                                                            SUT.class.getName(),
@@ -500,6 +501,7 @@ public class TestMemoryOptions {
             } else {
                 // default, no FlightRecorderOptions passed
                 pb = ProcessTools.createJavaProcessBuilder(true,
+                                                           "-Xmx256m",
                                                            "-XX:StartFlightRecording",
                                                            SUT.class.getName(),
                                                            tc.getTestName());
