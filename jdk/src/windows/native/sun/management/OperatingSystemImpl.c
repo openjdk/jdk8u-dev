@@ -215,7 +215,7 @@ static PdhLookupPerfNameByIndexFunc PdhLookupPerfNameByIndex_i;
  */
 typedef struct {
     HQUERY      query;
-    uint64_t    lastUpdate; // Last time query was updated (ticks)
+    uint64_t    lastUpdate; // Last time query was updated (millis)
 } UpdateQueryS, *UpdateQueryP;
 
 // Min time between query updates (ticks)
@@ -993,7 +993,7 @@ bindPdhFunctionPointers(HMODULE h) {
  */
 static int
 getPerformanceData(UpdateQueryP query, HCOUNTER c, PDH_FMT_COUNTERVALUE* value, DWORD format) {
-    clock_t now = clock();
+    uint64_t now = GetTickCount64();
 
     /*
      * Need to limit how often we update the query
