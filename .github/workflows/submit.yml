@@ -19,7 +19,7 @@ concurrency:
 jobs:
   prerequisites:
     name: Prerequisites
-    runs-on: "ubuntu-20.04"
+    runs-on: "ubuntu-22.04"
     outputs:
       should_run: ${{ steps.check_submit.outputs.should_run }}
       bundle_id: ${{ steps.check_bundle_id.outputs.bundle_id }}
@@ -115,7 +115,7 @@ jobs:
 
   linux_x64_build:
     name: Linux x64
-    runs-on: "ubuntu-20.04"
+    runs-on: "ubuntu-22.04"
     needs: prerequisites
     if: needs.prerequisites.outputs.should_run != 'false' && needs.prerequisites.outputs.platform_linux_x64 != 'false'
 
@@ -191,7 +191,7 @@ jobs:
 
   linux_x64_test:
     name: Linux x64
-    runs-on: "ubuntu-20.04"
+    runs-on: "ubuntu-22.04"
     needs:
       - prerequisites
       - linux_x64_build
@@ -203,6 +203,7 @@ jobs:
           - jdk/tier1
           - langtools/tier1
           - hotspot/tier1
+          - jdk/security_infra
         include:
           - test: jdk/tier1
             suites: jdk_tier1
@@ -210,6 +211,8 @@ jobs:
             suites: langtools_tier1
           - test: hotspot/tier1
             suites: hotspot_tier1
+          - test: jdk/security_infra
+            suites: jdk_security_infra
 
     env:
       JDK_VERSION: "${{ fromJson(needs.prerequisites.outputs.dependencies).JDK_MAJOR_VERSION }}.${{ fromJson(needs.prerequisites.outputs.dependencies).JDK_MINOR_VERSION }}.${{ fromJson(needs.prerequisites.outputs.dependencies).JDK_MICRO_VERSION }}"
@@ -305,7 +308,7 @@ jobs:
 
   linux_additional_build:
     name: Linux additional
-    runs-on: "ubuntu-20.04"
+    runs-on: "ubuntu-22.04"
     needs:
       - prerequisites
     if: needs.prerequisites.outputs.should_run != 'false' && needs.prerequisites.outputs.platform_linux_additional != 'false'
@@ -461,7 +464,7 @@ jobs:
 
   linux_x86_build:
     name: Linux x86
-    runs-on: "ubuntu-20.04"
+    runs-on: "ubuntu-22.04"
     needs: prerequisites
     if: needs.prerequisites.outputs.should_run != 'false' && needs.prerequisites.outputs.platform_linux_x86 != 'false'
 
@@ -547,7 +550,7 @@ jobs:
 
   linux_x86_test:
     name: Linux x86
-    runs-on: "ubuntu-20.04"
+    runs-on: "ubuntu-22.04"
     needs:
       - prerequisites
       - linux_x86_build
@@ -559,6 +562,7 @@ jobs:
           - jdk/tier1
           - langtools/tier1
           - hotspot/tier1
+          - jdk/security_infra
         include:
           - test: jdk/tier1
             suites: jdk_tier1
@@ -566,6 +570,8 @@ jobs:
             suites: langtools_tier1
           - test: hotspot/tier1
             suites: hotspot_tier1
+          - test: jdk/security_infra
+            suites: jdk_security_infra
 
     # Reduced 32-bit build uses the same boot JDK as 64-bit build
     env:
@@ -1034,6 +1040,7 @@ jobs:
           - jdk/tier1
           - langtools/tier1
           - hotspot/tier1
+          - jdk/security_infra
         include:
           - test: jdk/tier1
             suites: jdk_tier1
@@ -1041,6 +1048,8 @@ jobs:
             suites: langtools_tier1
           - test: hotspot/tier1
             suites: hotspot_tier1
+          - test: jdk/security_infra
+            suites: jdk_security_infra
 
     env:
       JDK_VERSION: "${{ fromJson(needs.prerequisites.outputs.dependencies).JDK_MAJOR_VERSION }}.${{ fromJson(needs.prerequisites.outputs.dependencies).JDK_MINOR_VERSION }}.${{ fromJson(needs.prerequisites.outputs.dependencies).JDK_MICRO_VERSION }}"
@@ -1192,6 +1201,7 @@ jobs:
           - jdk/tier1
           - langtools/tier1
           - hotspot/tier1
+          - jdk/security_infra
         include:
           - test: jdk/tier1
             suites: jdk_tier1
@@ -1199,6 +1209,8 @@ jobs:
             suites: langtools_tier1
           - test: hotspot/tier1
             suites: hotspot_tier1
+          - test: jdk/security_infra
+            suites: jdk_security_infra
 
     env:
       JDK_VERSION: "${{ fromJson(needs.prerequisites.outputs.dependencies).JDK_MAJOR_VERSION }}.${{ fromJson(needs.prerequisites.outputs.dependencies).JDK_MINOR_VERSION }}.${{ fromJson(needs.prerequisites.outputs.dependencies).JDK_MICRO_VERSION }}"
@@ -1448,6 +1460,7 @@ jobs:
           - jdk/tier1
           - langtools/tier1
           - hotspot/tier1
+          - jdk/security_infra
         include:
           - test: jdk/tier1
             suites: jdk_tier1
@@ -1455,6 +1468,8 @@ jobs:
             suites: langtools_tier1
           - test: hotspot/tier1
             suites: hotspot_tier1
+          - test: jdk/security_infra
+            suites: jdk_security_infra
 
     env:
       JDK_VERSION: "${{ fromJson(needs.prerequisites.outputs.dependencies).JDK_MAJOR_VERSION }}.${{ fromJson(needs.prerequisites.outputs.dependencies).JDK_MINOR_VERSION }}.${{ fromJson(needs.prerequisites.outputs.dependencies).JDK_MICRO_VERSION }}"
@@ -1569,7 +1584,7 @@ jobs:
 
   artifacts:
     name: Post-process artifacts
-    runs-on: "ubuntu-20.04"
+    runs-on: "ubuntu-22.04"
     if: always()
     continue-on-error: true
     needs:
