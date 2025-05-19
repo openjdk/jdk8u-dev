@@ -1046,7 +1046,7 @@ LIR_Opr LIRGenerator::new_register(BasicType type) {
   if (vreg_num + 20 >= LIR_OprDesc::vreg_max) {
     bailout("out of virtual registers in LIR generator");
     if (vreg_num + 2 >= LIR_OprDesc::vreg_max) {
-    // Wrap it around and continue until bailout really happens to avoid hitting assertions.
+      // Wrap it around and continue until bailout really happens to avoid hitting assertions.
       _virtual_register_number = LIR_OprDesc::vreg_base;
       vreg_num = LIR_OprDesc::vreg_base;
     }
