@@ -30,7 +30,7 @@
  *
  *  @run build JDIScaffold VMConnection
  *  @run compile -g HelloWorld.java
- *  @run main/othervm FilterMatch
+ *  @run driver FilterMatch
  */
 
 /* Look at patternMatch in JDK file:
