@@ -351,7 +351,7 @@ Java_java_net_Inet4AddressImpl_getLocalHostName(JNIEnv *env, jobject this) {
         hints.ai_family = AF_INET;
 
         if (getaddrinfo(hostname, NULL, &hints, &res) == 0) {
-            getnameinfo(res->ai_addr, res->ai_addrlen, hostname, sizeof(hostname),
+            getnameinfo(res->ai_addr, res->ai_addrlen, hostname, NI_MAXHOST,
                         NULL, 0, NI_NAMEREQD);
             freeaddrinfo(res);
         }
