@@ -243,7 +243,7 @@ public class LayoutFocusTraversalPolicy extends SortingFocusTraversalPolicy
                     ButtonGroup group = model.getGroup();
                     if (group != null) {
                         Enumeration<AbstractButton> elements =
-                                                            group.getElements();
+                                                        group.getElements();
                         int idx = 0;
                         while (elements.hasMoreElements()) {
                             AbstractButton member = elements.nextElement();

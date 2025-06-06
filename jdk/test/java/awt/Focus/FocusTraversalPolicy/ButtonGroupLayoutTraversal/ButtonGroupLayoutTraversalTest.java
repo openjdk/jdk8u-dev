@@ -75,7 +75,7 @@ public class ButtonGroupLayoutTraversalTest {
                 throw new RuntimeException("Component " + i +
                         " got focus more than once in the forward focus cycle");
             }
-       }
+        }
 
         for(int i = 0; i < nx * ny / 2; i++) {
             robot.keyPress(KeyEvent.VK_SHIFT);
