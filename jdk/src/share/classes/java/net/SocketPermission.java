@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2022, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2025, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -928,7 +928,7 @@ public final class SocketPermission extends Permission
 
             // check and see if we have any wildcards...
             if (this.wildcard || that.wildcard) {
-                // if they are both wildcards, return true iff
+                // if they are both wildcards, return true if
                 // that's cname ends with this cname (i.e., *.sun.com
                 // implies *.eng.sun.com)
                 if (this.wildcard && that.wildcard)
@@ -938,12 +938,12 @@ public final class SocketPermission extends Permission
                 if (that.wildcard)
                     return false;
 
-                // this is a wildcard, lets see if that's cname ends with
-                // it...
-                if (that.cname == null) {
-                    that.getCanonName();
+                // if "that" was initialized with an IP address
+                // return false
+                if (that.init_with_ip) {
+                    return false;
                 }
-                return (that.cname.endsWith(this.cname));
+                return (that.hostname.endsWith(this.cname));
             }
 
             // comapare IP addresses
