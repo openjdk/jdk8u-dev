@@ -23,7 +23,7 @@
 
 /*
  * @test
- * @bug 4866847 7152564 7155693
+ * @bug 4866847 7152564 7155693 8360166
  * @summary various CodeSource.implies tests
  */
 
