@@ -23,7 +23,7 @@
 
 /*
  * @test
- * @bug 4866847 7152564 7155693
+ * @bug 4866847 7152564 7155693 8360166
  * @summary various CodeSource.implies tests
  */
 
@@ -46,6 +46,16 @@ public class Implies {
         thatURL = new URL("HTTP", "localhost", "dir/file");
         // port check should match default port of thatURL
         testImplies(thisURL, thatURL, true);
+
+        thisURL = new URL("http", "*.example.com", "/file");
+        thatURL = new URL("HTTP", "www.example.com", "/file");
+        // wildcard check should match specific hostname of thatURL
+        testImplies(thisURL, thatURL, true);
+
+        thisURL = new URL("http", "*.example.com", "/file");
+        thatURL = new URL("HTTP", "127.0.0.1", "/file");
+        // wildcard check should not match url with ip
+        testImplies(thisURL, thatURL, false);
 
         System.out.println("test passed");
     }
