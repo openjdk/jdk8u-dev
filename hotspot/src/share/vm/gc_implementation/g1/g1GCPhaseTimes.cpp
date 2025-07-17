@@ -41,7 +41,7 @@ private:
   int _cur;
 
   void vappend(const char* format, va_list ap)  ATTRIBUTE_PRINTF(2, 0) {
-    if (_cur < BUFFER_LEN) {
+    if (_cur > BUFFER_LEN) {
       DEBUG_ONLY(warning("previous LineBuffer overflow, request ignored");)
       return;
     }
