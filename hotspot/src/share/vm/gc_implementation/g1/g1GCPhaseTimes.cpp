@@ -41,7 +41,10 @@ private:
   int _cur;
 
   void vappend(const char* format, va_list ap)  ATTRIBUTE_PRINTF(2, 0) {
-    guarantee(_cur < BUFFER_LEN, "buffer overflow in LineBuffer");
+    if (_cur < BUFFER_LEN) {
+      DEBUG_ONLY(warning("previous LineBuffer overflow, request ignored");)
+      return;
+    }
     int res = os::vsnprintf(&_buffer[_cur], BUFFER_LEN - _cur, format, ap);
     if (res > BUFFER_LEN) {
       DEBUG_ONLY(warning("buffer too small in LineBuffer");)
