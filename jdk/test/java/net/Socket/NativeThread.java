@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, 2018, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2020, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -19,23 +19,19 @@
  * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
  * or visit www.oracle.com if you need additional information or have any
  * questions.
- *
  */
 
-#ifndef SHARE_VM_RUNTIME_SEMAPHORE_INLINE_HPP
-#define SHARE_VM_RUNTIME_SEMAPHORE_INLINE_HPP
+public class NativeThread {
 
-#include "runtime/interfaceSupport.hpp"
-#include "runtime/semaphore.hpp"
-#include "runtime/thread.inline.hpp"
+    public static final int SIGPIPE;
 
-inline void Semaphore::wait_with_safepoint_check(JavaThread* thread) {
-  // Prepare to block and allow safepoints while blocked
-  ThreadBlockInVM tbivm(thread);
-  OSThreadWaitState osts(thread->osthread(), false /* not in Object.wait() */);
+    static {
+        SIGPIPE = getSIGPIPE();
+    }
 
-  // Wait for value
-  _impl.wait();
+    public static native long getID();
+
+    public static native int signal(long threadId, int sig);
+
+    private static native int getSIGPIPE();
 }
-
-#endif // SHARE_VM_RUNTIME_SEMAPHORE_INLINE_HPP
