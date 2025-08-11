@@ -31,7 +31,7 @@ extern "C" {
 #endif
 
 JNIEXPORT
-void JNICALL Java_DynamicCodeGeneratedTest_changeEventNotificationMode(JNIEnv* jni, jclass cls) {
+void JNICALL Java_DynamicCodeGenerated_changeEventNotificationMode(JNIEnv* jni, jclass cls) {
   while (true) {
     jvmti->SetEventNotificationMode(JVMTI_ENABLE, JVMTI_EVENT_DYNAMIC_CODE_GENERATED, NULL);
     jvmti->SetEventNotificationMode(JVMTI_DISABLE, JVMTI_EVENT_DYNAMIC_CODE_GENERATED, NULL);
