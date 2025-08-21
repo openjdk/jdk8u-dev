@@ -1725,14 +1725,14 @@ THE SOFTWARE.
 
 -------------------------------------------------------------------------------
 
-%% This notice is provided with respect to Little CMS 2.16, which may be
+%% This notice is provided with respect to Little CMS 2.17, which may be
 included with JRE 8, JDK 8, and OpenJDK 8.
 
 --- begin of LICENSE ---
 
 MIT License
 
-Copyright (C) 1998-2023 Marti Maria Saguer
+Copyright (C) 1998-2025 Marti Maria Saguer
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the "Software"),
@@ -1753,10 +1753,10 @@ OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ---------------------------------
-The below license applies to the following files:
+The below applies to the following file(s):
 liblcms/cmssm.c
 
-Copyright 2001, softSurfer (www.softsurfer.com)
+Copyright (C) 2001, softSurfer (www.softsurfer.com)
 
 This code may be freely used and modified for any purpose
 providing that this copyright notice is included with it.
@@ -1823,6 +1823,7 @@ Christian Albrecht
 Dimitrios Anastassakis
 Lemke Software
 Tim Zaman
+Amir Montazery and Open Source Technology Improvement Fund (ostif.org), Google, for fuzzer fundings.
 
 --- end of LICENSE ---
 
