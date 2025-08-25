@@ -177,7 +177,7 @@ class java_lang_String : AllStatic {
   // hash P(31) from Kernighan & Ritchie
   //
   // For this reason, THIS ALGORITHM MUST MATCH String.hashCode().
-  template <typename T> static unsigned int hash_code(T* s, int len) {
+  static unsigned int hash_code(const jchar* s, int len) {
     unsigned int h = 0;
     while (len-- > 0) {
       h = 31*h + (unsigned int) *s;
@@ -185,6 +185,16 @@ class java_lang_String : AllStatic {
     }
     return h;
   }
+
+  static unsigned int hash_code(const jbyte* s, int len) {
+    unsigned int h = 0;
+    while (len-- > 0) {
+      h = 31*h + (((unsigned int) *s) & 0xFF);
+      s++;
+    }
+    return h;
+  }
+
   static unsigned int hash_code(oop java_string);
 
   // This is the string hash code used by the StringTable, which may be
@@ -513,12 +523,12 @@ class java_lang_Throwable: AllStatic {
   static void set_backtrace(oop throwable, oop value);
   // Needed by JVMTI to filter out this internal field.
   static int get_backtrace_offset() { return backtrace_offset;}
-  static int get_detailMessage_offset() { return detailMessage_offset;}
   // Message
+  static int get_detailMessage_offset() { return detailMessage_offset;}
   static oop message(oop throwable);
   static oop message(Handle throwable);
+  static const char* message_as_utf8(oop throwable);
   static void set_message(oop throwable, oop value);
-  static Symbol* detail_message(oop throwable);
   static void print_stack_element(outputStream *st, Handle mirror, int method,
                                   int version, int bci, int cpref);
   static void print_stack_element(outputStream *st, methodHandle method, int bci);
