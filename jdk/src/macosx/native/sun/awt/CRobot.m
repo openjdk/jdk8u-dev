@@ -47,10 +47,6 @@
 
 #define k_JAVA_ROBOT_WHEEL_COUNT 1
 
-#if !defined(kCGBitmapByteOrder32Host)
-#define kCGBitmapByteOrder32Host 0
-#endif
-
 // In OS X, left and right mouse button share the same click count.
 // That is, if one starts clicking the left button rapidly and then
 // switches to the right button, then the click count will continue
@@ -317,14 +313,14 @@ Java_sun_lwawt_macosx_CRobot_nativeGetScreenPixels
 
     // create a graphics context around the Java int array
     CGColorSpaceRef picColorSpace = CGColorSpaceCreateWithName(
-                                            kCGColorSpaceGenericRGB);
+                                            kCGColorSpaceSRGB);
     CGContextRef jPicContextRef = CGBitmapContextCreate(
                                             jPixelData,
                                             picWidth, picHeight,
                                             8, picWidth * sizeof(jint),
                                             picColorSpace,
                                             kCGBitmapByteOrder32Host |
-                                            kCGImageAlphaPremultipliedFirst);
+                                            kCGImageAlphaNoneSkipFirst);
 
     CGColorSpaceRelease(picColorSpace);
 

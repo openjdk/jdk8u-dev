@@ -40,11 +40,12 @@ import sun.hotspot.WhiteBox;
  * @key jfr
  *
  *
- * @library /lib /
+ * @library /test/lib /
  * @build sun.hotspot.WhiteBox
  * @run main ClassFileInstaller sun.hotspot.WhiteBox
  *     sun.hotspot.WhiteBox$WhiteBoxPermission
  * @run main/othervm -Xbootclasspath/a:.
+ *     -XX:-NeverActAsServerClassMachine
  *     -XX:+UnlockDiagnosticVMOptions -XX:+WhiteBoxAPI
  *     -XX:CompileOnly=jdk.jfr.event.compiler.TestCompilerPhase::dummyMethod
  *     -Xbootclasspath/a:.

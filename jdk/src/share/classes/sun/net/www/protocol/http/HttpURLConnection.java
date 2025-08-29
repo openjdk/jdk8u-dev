@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1995, 2019, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1995, 2025, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -77,6 +77,8 @@ import java.text.SimpleDateFormat;
 import java.util.TimeZone;
 import java.net.MalformedURLException;
 import java.nio.ByteBuffer;
+
+import static sun.net.util.ProxyUtil.copyProxy;
 import static sun.net.www.protocol.http.AuthScheme.BASIC;
 import static sun.net.www.protocol.http.AuthScheme.DIGEST;
 import static sun.net.www.protocol.http.AuthScheme.NTLM;
@@ -162,6 +164,8 @@ public class HttpURLConnection extends java.net.HttpURLConnection {
     /* buffer size for buffered error stream;
     */
     private static int bufSize4ES = 0;
+
+    private static final int maxHeaderSize;
 
     /*
      * Restrict setting of request headers through the public api
@@ -284,6 +288,19 @@ public class HttpURLConnection extends java.net.HttpURLConnection {
         } else {
             restrictedHeaderSet = null;
         }
+
+        int defMaxHeaderSize = 384 * 1024;
+        String maxHeaderSizeStr = getNetProperty("jdk.http.maxHeaderSize");
+        int maxHeaderSizeVal = defMaxHeaderSize;
+        if (maxHeaderSizeStr != null) {
+            try {
+                maxHeaderSizeVal = Integer.parseInt(maxHeaderSizeStr);
+            } catch (NumberFormatException n) {
+                maxHeaderSizeVal = defMaxHeaderSize;
+            }
+        }
+        if (maxHeaderSizeVal < 0) maxHeaderSizeVal = 0;
+        maxHeaderSize = maxHeaderSizeVal;
     }
 
     static final String httpVersion = "HTTP/1.1";
@@ -707,7 +724,7 @@ public class HttpURLConnection extends java.net.HttpURLConnection {
                 }
                 ps = (PrintStream) http.getOutputStream();
                 connected=true;
-                responses = new MessageHeader();
+                responses = new MessageHeader(maxHeaderSize);
                 setRequests=false;
                 writeRequests();
             }
@@ -862,10 +879,10 @@ public class HttpURLConnection extends java.net.HttpURLConnection {
             throws IOException {
         super(checkURL(u));
         requests = new MessageHeader();
-        responses = new MessageHeader();
+        responses = new MessageHeader(maxHeaderSize);
         userHeaders = new MessageHeader();
         this.handler = handler;
-        instProxy = p;
+        instProxy = copyProxy(p);
         if (instProxy instanceof sun.net.ApplicationProxy) {
             /* Application set Proxies should not have access to cookies
              * in a secure environment unless explicitly allowed. */
@@ -1156,7 +1173,7 @@ public class HttpURLConnection extends java.net.HttpURLConnection {
                     Iterator<Proxy> it = sel.select(uri).iterator();
                     Proxy p;
                     while (it.hasNext()) {
-                        p = it.next();
+                        p = copyProxy(it.next());
                         try {
                             if (!failedOnce) {
                                 http = getNewHttpClient(url, p, connectTimeout);
@@ -2241,7 +2258,8 @@ public class HttpURLConnection extends java.net.HttpURLConnection {
      * the connection.
      */
     @SuppressWarnings("fallthrough")
-    private AuthenticationInfo getHttpProxyAuthentication (AuthenticationHeader authhdr) {
+    private AuthenticationInfo getHttpProxyAuthentication (AuthenticationHeader authhdr)
+            throws IOException {
         /* get authorization from authenticator */
         AuthenticationInfo ret = null;
         String raw = authhdr.raw();
@@ -2330,6 +2348,7 @@ public class HttpURLConnection extends java.net.HttpURLConnection {
                             a = privilegedRequestPasswordAuthentication(
                                                 host, null, port, url.getProtocol(),
                                                 "", scheme, url, RequestorType.PROXY);
+                            validateNTLMCredentials(a);
                         }
                         /* If we are not trying transparent authentication then
                          * we need to have a PasswordAuthentication instance. For
@@ -2395,7 +2414,8 @@ public class HttpURLConnection extends java.net.HttpURLConnection {
      * preferred.
      */
     @SuppressWarnings("fallthrough")
-    private AuthenticationInfo getServerAuthentication (AuthenticationHeader authhdr) {
+    private AuthenticationInfo getServerAuthentication (AuthenticationHeader authhdr)
+            throws IOException {
         /* get authorization from authenticator */
         AuthenticationInfo ret = null;
         String raw = authhdr.raw();
@@ -2494,6 +2514,7 @@ public class HttpURLConnection extends java.net.HttpURLConnection {
                             a = privilegedRequestPasswordAuthentication(
                                 url.getHost(), addr, port, url.getProtocol(),
                                 "", scheme, url, RequestorType.SERVER);
+                            validateNTLMCredentials(a);
                         }
 
                         /* If we are not trying transparent authentication then
@@ -2671,7 +2692,7 @@ public class HttpURLConnection extends java.net.HttpURLConnection {
         }
 
         // clear out old response headers!!!!
-        responses = new MessageHeader();
+        responses = new MessageHeader(maxHeaderSize);
         if (stat == HTTP_USE_PROXY) {
             /* This means we must re-request the resource through the
              * proxy denoted in the "Location:" field of the response.
@@ -2860,7 +2881,7 @@ public class HttpURLConnection extends java.net.HttpURLConnection {
             } catch (IOException e) { }
         }
         responseCode = -1;
-        responses = new MessageHeader();
+        responses = new MessageHeader(maxHeaderSize);
         connected = false;
     }
 
@@ -3770,6 +3791,27 @@ public class HttpURLConnection extends java.net.HttpURLConnection {
             if (is != null) {
                 is.close();
             }
+        }
+    }
+
+    // ensure there are no null characters in username or password
+    private static void validateNTLMCredentials(PasswordAuthentication pw)
+        throws IOException {
+
+        if (pw == null) {
+            return;
+        }
+        char[] password = pw.getPassword();
+        if (password != null) {
+            for (int i=0; i<password.length; i++) {
+                if (password[i] == 0) {
+                    throw new IOException("NUL character not allowed in NTLM password");
+                }
+            }
+        }
+        String username = pw.getUserName();
+        if (username != null && username.indexOf(0) != -1) {
+            throw new IOException("NUL character not allowed in NTLM username or domain");
         }
     }
 }
