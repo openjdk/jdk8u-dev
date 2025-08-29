@@ -247,7 +247,7 @@ public class VersionCheck extends TestHelper {
             if (isWindows && !name.endsWith(EXE_FILE_EXT)) {
                 return false;
             }
-            if(name.endsWith(DEBUGINFO_FILE_EXT)) {
+            if(name.endsWith(NIX_DBGINFO_EXT)) {
                 return false;
             }
             for (String x : exclude) {
