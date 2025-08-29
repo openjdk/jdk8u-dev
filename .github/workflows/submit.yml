@@ -456,8 +456,8 @@ jobs:
 
       - name: Build
         run: |
-          cat build/linux-${{ matrix.gnu-arch }}-hotspot/spec.gmk
-          cat build/linux-${{ matrix.gnu-arch }}-hotspot/hotspot-spec.gmk
+          cat build/linux-${{ matrix.gnu-arch }}/spec.gmk
+          cat build/linux-${{ matrix.gnu-arch }}/hotspot-spec.gmk
           make CONF_NAME=linux-${{ matrix.gnu-arch }} LOG_LEVEL=debug images
         working-directory: jdk
 
