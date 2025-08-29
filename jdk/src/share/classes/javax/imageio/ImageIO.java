@@ -1408,11 +1408,13 @@ public final class ImageIO {
             throw new IIOException("Can't create an ImageInputStream!");
         }
         BufferedImage bi;
-        try (istream) {
+        try {
             bi = read(stream);
             if (bi == null) {
                 stream.close();
             }
+        } finally {
+            istream.close();
         }
         return bi;
     }
@@ -1454,10 +1456,11 @@ public final class ImageIO {
         ImageReadParam param = reader.getDefaultReadParam();
         reader.setInput(stream, true, true);
         BufferedImage bi;
-        try (stream) {
+        try {
             bi = reader.read(0, param);
         } finally {
             reader.dispose();
+            stream.close();
         }
         return bi;
     }
@@ -1539,8 +1542,10 @@ public final class ImageIO {
         if (stream == null) {
             throw new IIOException("Can't create an ImageOutputStream!");
         }
-        try (stream) {
+        try {
             return doWrite(im, writer, stream);
+        } finally {
+            stream.close();
         }
     }
 
@@ -1577,8 +1582,10 @@ public final class ImageIO {
         if (stream == null) {
             throw new IIOException("Can't create an ImageOutputStream!");
         }
-        try (stream) {
+        try {
             return doWrite(im, getWriter(im, formatName), stream);
+        } finally {
+            stream.close();
         }
     }
 

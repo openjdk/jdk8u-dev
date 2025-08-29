@@ -181,7 +181,7 @@ public class Beans {
         else
             ins =  cls.getResourceAsStream(serName);
         if (ins != null) {
-            try (ins) {
+            try {
                 if (cls == null) {
                     oins = new ObjectInputStream(ins);
                 } else {
@@ -194,6 +194,8 @@ public class Beans {
                 // Drop through and try opening the class.  But remember
                 // the exception in case we can't find the class either.
                 serex = ex;
+            } finally {
+                ins.close();
             }
         }
 
