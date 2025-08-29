@@ -149,24 +149,10 @@ public final class StandardMidiFileWriter extends MidiFileWriter {
     }
 
     public int write(Sequence in, int type, File out) throws IOException {
-<<<<<<< HEAD:jdk/src/share/classes/com/sun/media/sound/StandardMidiFileWriter.java
-        FileOutputStream fos = new FileOutputStream(out); // throws IOException
-        int bytesWritten = write( in, type, fos );
-        fos.close();
-        return bytesWritten;
-||||||| parent of fecde385a66 (8274893: Update java.desktop classes to use try-with-resources):src/java.desktop/share/classes/com/sun/media/sound/StandardMidiFileWriter.java
-        Objects.requireNonNull(in);
-        FileOutputStream fos = new FileOutputStream(out); // throws IOException
-        int bytesWritten = write( in, type, fos );
-        fos.close();
-        return bytesWritten;
-=======
-        Objects.requireNonNull(in);
         try (FileOutputStream fos = new FileOutputStream(out)) { // throws IOException
             int bytesWritten = write(in, type, fos);
             return bytesWritten;
         }
->>>>>>> fecde385a66 (8274893: Update java.desktop classes to use try-with-resources):src/java.desktop/share/classes/com/sun/media/sound/StandardMidiFileWriter.java
     }
 
     //=================================================================================
