@@ -59,6 +59,7 @@ import com.sun.imageio.plugins.common.ReaderUtil;
 import com.sun.imageio.plugins.common.SubImageInputStream;
 import java.io.ByteArrayOutputStream;
 import sun.awt.image.ByteInterleavedRaster;
+import sun.misc.IOUtils;
 
 class PNGImageDataEnumeration implements Enumeration<InputStream> {
 
@@ -621,7 +622,7 @@ public class PNGImageReader extends ImageReader {
     private static byte[] inflate(byte[] b) throws IOException {
         InputStream bais = new ByteArrayInputStream(b);
         try (InputStream iis = new InflaterInputStream(bais)) {
-            return iis.readAllBytes();
+            return IOUtils.readAllBytes(iis);
         }
     }
 
