@@ -88,7 +88,8 @@ public final class JARSoundbankReader extends SoundbankReader {
                 "META-INF/services/javax.sound.midi.Soundbank");
         if (stream == null)
             return null;
-        try {
+        try
+        {
             BufferedReader r = new BufferedReader(new InputStreamReader(stream));
             String line = r.readLine();
             while (line != null) {
@@ -106,7 +107,9 @@ public final class JARSoundbankReader extends SoundbankReader {
                 }
                 line = r.readLine();
             }
-        } finally {
+        }
+        finally
+        {
             stream.close();
         }
         if (soundbanks.size() == 0)
