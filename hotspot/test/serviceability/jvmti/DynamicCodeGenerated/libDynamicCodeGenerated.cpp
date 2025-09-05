@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2017, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2021, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -21,32 +21,37 @@
  * questions.
  */
 
-/**
- * @test
- * @key headful
- * @bug 6668439
- * @summary Verifies that no exceptions are thrown when frame is resized to 0x0
- * @author Dmitri.Trembovetski@sun.com: area=Graphics
- * @run main/othervm IAEforEmptyFrameTest
- * @run main/othervm -Dsun.java2d.d3d=false IAEforEmptyFrameTest
- */
+#include <string.h>
+#include <jvmti.h>
 
-import javax.swing.JFrame;
+static jvmtiEnv* jvmti = NULL;
 
-public class IAEforEmptyFrameTest {
-    public static void main(String[] args) {
-        JFrame f = null;
-        try {
-            f = new JFrame("IAEforEmptyFrameTest");
-            f.setUndecorated(true);
-            f.setBounds(100, 100, 320, 240);
-            f.setVisible(true);
-            try { Thread.sleep(1000); } catch (Exception z) {}
-            f.setBounds(0, 0, 0, 0);
-            try { Thread.sleep(1000); } catch (Exception z) {}
-            f.dispose();
-        } finally {
-            f.dispose();
-        };
-    }
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+JNIEXPORT
+void JNICALL Java_DynamicCodeGenerated_changeEventNotificationMode(JNIEnv* jni, jclass cls) {
+  while (true) {
+    jvmti->SetEventNotificationMode(JVMTI_ENABLE, JVMTI_EVENT_DYNAMIC_CODE_GENERATED, NULL);
+    jvmti->SetEventNotificationMode(JVMTI_DISABLE, JVMTI_EVENT_DYNAMIC_CODE_GENERATED, NULL);
+  }
+}
+
+#ifdef __cplusplus
+}
+#endif
+
+void JNICALL DynamicCodeGenerated(jvmtiEnv* jvmti, const char* name, const void* address, jint length) {
+
+}
+
+jint Agent_OnLoad(JavaVM* vm, char* options, void* reserved) {
+    vm->GetEnv((void**)&jvmti, JVMTI_VERSION_1_0);
+    jvmtiEventCallbacks callbacks;
+    memset(&callbacks, 0, sizeof(callbacks));
+    callbacks.DynamicCodeGenerated = DynamicCodeGenerated;
+    jvmti->SetEventCallbacks(&callbacks, sizeof(callbacks));
+
+    return 0;
 }

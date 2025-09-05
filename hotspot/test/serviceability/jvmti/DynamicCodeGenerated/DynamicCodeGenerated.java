@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2017, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2021, 2025, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -21,32 +21,31 @@
  * questions.
  */
 
-/**
- * @test
- * @key headful
- * @bug 6668439
- * @summary Verifies that no exceptions are thrown when frame is resized to 0x0
- * @author Dmitri.Trembovetski@sun.com: area=Graphics
- * @run main/othervm IAEforEmptyFrameTest
- * @run main/othervm -Dsun.java2d.d3d=false IAEforEmptyFrameTest
- */
+public class DynamicCodeGenerated {
+    static {
+        System.loadLibrary("DynamicCodeGenerated");
+    }
+    public static native void changeEventNotificationMode();
 
-import javax.swing.JFrame;
-
-public class IAEforEmptyFrameTest {
     public static void main(String[] args) {
-        JFrame f = null;
-        try {
-            f = new JFrame("IAEforEmptyFrameTest");
-            f.setUndecorated(true);
-            f.setBounds(100, 100, 320, 240);
-            f.setVisible(true);
-            try { Thread.sleep(1000); } catch (Exception z) {}
-            f.setBounds(0, 0, 0, 0);
-            try { Thread.sleep(1000); } catch (Exception z) {}
-            f.dispose();
-        } finally {
-            f.dispose();
-        };
+        // Try to enable DynamicCodeGenerated event while it is posted
+        // using JvmtiDynamicCodeEventCollector from VtableStubs::find_stub
+        Thread t = new Thread(() -> {
+            changeEventNotificationMode();
+        });
+        t.setDaemon(true);
+        t.start();
+
+        for (int i = 0; i < 2000; i++) {
+            new Thread(() -> {
+                String result = "string" + System.currentTimeMillis();
+
+                // Keep a reference to result
+                if (result.hashCode() == System.currentTimeMillis()) {
+                    // Shouldn't happen
+                    return;
+                }
+            }).start();
+        }
     }
 }
