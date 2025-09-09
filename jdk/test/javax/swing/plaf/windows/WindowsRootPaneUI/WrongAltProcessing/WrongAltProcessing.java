@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, 2013, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2012, 2017, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -21,12 +21,15 @@
  * questions.
  */
 
-/* @test
-   @bug 8001633 8028271
-   @summary Wrong alt processing during switching between windows
-   @author mikhail.cherkasov@oracle.com
-   @run main WrongAltProcessing
-*/
+/**
+ * @test
+ * @key headful
+ * @bug 8001633 8028271 8039888
+ * @summary Wrong alt processing during switching between windows
+ * @author mikhail.cherkasov@oracle.com
+ * @requires (os.family == "windows")
+ * @run main WrongAltProcessing
+ */
 
 import javax.swing.*;
 import java.awt.*;
@@ -54,8 +57,8 @@ public class WrongAltProcessing {
                 createWindows();
             }
         });
-        robot.waitForIdle();
         initRobot();
+        robot.waitForIdle();
         runScript();
         SwingUtilities.invokeLater(new Runnable() {
             @Override

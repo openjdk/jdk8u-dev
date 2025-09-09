@@ -332,37 +332,33 @@ Java_java_net_Inet4AddressImpl_getHostByAddr(JNIEnv *env, jobject this,
  */
 JNIEXPORT jstring JNICALL
 Java_java_net_Inet4AddressImpl_getLocalHostName(JNIEnv *env, jobject this) {
-    char hostname[NI_MAXHOST+1];
+    char hostname[NI_MAXHOST + 1];
 
     hostname[0] = '\0';
     if (JVM_GetHostName(hostname, sizeof(hostname))) {
-        /* Something went wrong, maybe networking is not setup? */
         strcpy(hostname, "localhost");
     } else {
+#if defined(__solaris__)
+        // try to resolve hostname via nameservice
+        // if it is known but getnameinfo fails, hostname will still be the
+        // value from gethostname
         struct addrinfo hints, *res;
-        int error;
 
+        // make sure string is null-terminated
         hostname[NI_MAXHOST] = '\0';
         memset(&hints, 0, sizeof(hints));
         hints.ai_flags = AI_CANONNAME;
         hints.ai_family = AF_INET;
 
-        error = getaddrinfo(hostname, NULL, &hints, &res);
-
-        if (error == 0) {/* host is known to name service */
-            getnameinfo(res->ai_addr,
-                        res->ai_addrlen,
-                        hostname,
-                        NI_MAXHOST,
-                        NULL,
-                        0,
-                        NI_NAMEREQD);
-
-            /* if getnameinfo fails hostname is still the value
-               from gethostname */
-
+        if (getaddrinfo(hostname, NULL, &hints, &res) == 0) {
+            getnameinfo(res->ai_addr, res->ai_addrlen, hostname, NI_MAXHOST,
+                        NULL, 0, NI_NAMEREQD);
             freeaddrinfo(res);
         }
+#else
+        // make sure string is null-terminated
+        hostname[NI_MAXHOST] = '\0';
+#endif
     }
     return (*env)->NewStringUTF(env, hostname);
 }
@@ -579,7 +575,7 @@ ping4(JNIEnv *env, jint fd, struct sockaddr_in* him, jint timeout,
     struct sockaddr_in sa_recv;
     jchar pid;
     jint tmout2, seq = 1;
-    struct timeval tv;
+    struct timeval tv = { 0, 0 };
     size_t plen;
 
     /* icmp_id is a 16 bit data type, therefore down cast the pid */
@@ -619,7 +615,7 @@ ping4(JNIEnv *env, jint fd, struct sockaddr_in* him, jint timeout,
       seq++;
       gettimeofday(&tv, NULL);
       memcpy(icmp->icmp_data, &tv, sizeof(tv));
-      plen = ICMP_ADVLENMIN + sizeof(tv);
+      plen = ICMP_MINLEN + sizeof(tv);
       icmp->icmp_cksum = 0;
       icmp->icmp_cksum = in_cksum((u_short *)icmp, plen);
       /*

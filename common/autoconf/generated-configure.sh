@@ -691,10 +691,14 @@ FDLIBM_CFLAGS
 USE_FORMAT_OVERFLOW
 NO_LIFETIME_DSE_CFLAG
 NO_DELETE_NULL_POINTER_CHECKS_CFLAG
-LEGACY_EXTRA_ASFLAGS
-LEGACY_EXTRA_LDFLAGS
-LEGACY_EXTRA_CXXFLAGS
-LEGACY_EXTRA_CFLAGS
+LEGACY_TARGET_ASFLAGS
+LEGACY_TARGET_LDFLAGS
+LEGACY_TARGET_CXXFLAGS
+LEGACY_TARGET_CFLAGS
+LEGACY_HOST_ASFLAGS
+LEGACY_HOST_LDFLAGS
+LEGACY_HOST_CXXFLAGS
+LEGACY_HOST_CFLAGS
 CXXSTD_CXXFLAG
 CXX_O_FLAG_NONE
 CXX_O_FLAG_NORM
@@ -948,6 +952,7 @@ build_os
 build_vendor
 build_cpu
 build
+PANDOC
 CPIO
 SETFILE
 DF
@@ -1016,7 +1021,6 @@ infodir
 docdir
 oldincludedir
 includedir
-runstatedir
 localstatedir
 sharedstatedir
 sysconfdir
@@ -1178,6 +1182,7 @@ READLINK
 DF
 SETFILE
 CPIO
+PANDOC
 UNZIP
 ZIP
 LDD
@@ -1261,7 +1266,6 @@ datadir='${datarootdir}'
 sysconfdir='${prefix}/etc'
 sharedstatedir='${prefix}/com'
 localstatedir='${prefix}/var'
-runstatedir='${localstatedir}/run'
 includedir='${prefix}/include'
 oldincludedir='/usr/include'
 docdir='${datarootdir}/doc/${PACKAGE_TARNAME}'
@@ -1514,15 +1518,6 @@ do
   | -silent | --silent | --silen | --sile | --sil)
     silent=yes ;;
 
-  -runstatedir | --runstatedir | --runstatedi | --runstated \
-  | --runstate | --runstat | --runsta | --runst | --runs \
-  | --run | --ru | --r)
-    ac_prev=runstatedir ;;
-  -runstatedir=* | --runstatedir=* | --runstatedi=* | --runstated=* \
-  | --runstate=* | --runstat=* | --runsta=* | --runst=* | --runs=* \
-  | --run=* | --ru=* | --r=*)
-    runstatedir=$ac_optarg ;;
-
   -sbindir | --sbindir | --sbindi | --sbind | --sbin | --sbi | --sb)
     ac_prev=sbindir ;;
   -sbindir=* | --sbindir=* | --sbindi=* | --sbind=* | --sbin=* \
@@ -1660,7 +1655,7 @@ fi
 for ac_var in	exec_prefix prefix bindir sbindir libexecdir datarootdir \
 		datadir sysconfdir sharedstatedir localstatedir includedir \
 		oldincludedir docdir infodir htmldir dvidir pdfdir psdir \
-		libdir localedir mandir runstatedir
+		libdir localedir mandir
 do
   eval ac_val=\$$ac_var
   # Remove trailing slashes.
@@ -1813,7 +1808,6 @@ Fine tuning of the installation directories:
   --sysconfdir=DIR        read-only single-machine data [PREFIX/etc]
   --sharedstatedir=DIR    modifiable architecture-independent data [PREFIX/com]
   --localstatedir=DIR     modifiable single-machine data [PREFIX/var]
-  --runstatedir=DIR       modifiable per-process data [LOCALSTATEDIR/run]
   --libdir=DIR            object code libraries [EPREFIX/lib]
   --includedir=DIR        C header files [PREFIX/include]
   --oldincludedir=DIR     C header files for non-gcc [/usr/include]
@@ -2074,6 +2068,7 @@ Some influential environment variables:
   DF          Override default value for DF
   SETFILE     Override default value for SETFILE
   CPIO        Override default value for CPIO
+  PANDOC      Override default value for PANDOC
   UNZIP       Override default value for UNZIP
   ZIP         Override default value for ZIP
   LDD         Override default value for LDD
@@ -2571,7 +2566,7 @@ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 $4
 int
-main ()
+main (void)
 {
 static int test_array [1 - 2 * !(($2) >= 0)];
 test_array [0] = 0;
@@ -2588,7 +2583,7 @@ if ac_fn_cxx_try_compile "$LINENO"; then :
 /* end confdefs.h.  */
 $4
 int
-main ()
+main (void)
 {
 static int test_array [1 - 2 * !(($2) <= $ac_mid)];
 test_array [0] = 0;
@@ -2615,7 +2610,7 @@ else
 /* end confdefs.h.  */
 $4
 int
-main ()
+main (void)
 {
 static int test_array [1 - 2 * !(($2) < 0)];
 test_array [0] = 0;
@@ -2632,7 +2627,7 @@ if ac_fn_cxx_try_compile "$LINENO"; then :
 /* end confdefs.h.  */
 $4
 int
-main ()
+main (void)
 {
 static int test_array [1 - 2 * !(($2) >= $ac_mid)];
 test_array [0] = 0;
@@ -2667,7 +2662,7 @@ while test "x$ac_lo" != "x$ac_hi"; do
 /* end confdefs.h.  */
 $4
 int
-main ()
+main (void)
 {
 static int test_array [1 - 2 * !(($2) <= $ac_mid)];
 test_array [0] = 0;
@@ -2692,12 +2687,12 @@ esac
     cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 $4
-static long int longval () { return $2; }
-static unsigned long int ulongval () { return $2; }
+static long int longval (void) { return $2; }
+static unsigned long int ulongval (void) { return $2; }
 #include <stdio.h>
 #include <stdlib.h>
 int
-main ()
+main (void)
 {
 
   FILE *f = fopen ("conftest.val", "w");
@@ -2804,7 +2799,7 @@ else
 #define $2 innocuous_$2
 
 /* System header to define __stub macros and hopefully few prototypes,
-    which can conflict with char $2 (); below.
+    which can conflict with char $2 (void); below.
     Prefer <limits.h> to <assert.h> if __STDC__ is defined, since
     <limits.h> exists even on freestanding compilers.  */
 
@@ -2822,7 +2817,7 @@ else
 #ifdef __cplusplus
 extern "C"
 #endif
-char $2 ();
+char $2 (void);
 /* The GNU C library defines this for functions which it implements
     to always fail with ENOSYS.  Some functions are actually named
     something starting with __ and the normal name is an alias.  */
@@ -2831,7 +2826,7 @@ choke me
 #endif
 
 int
-main ()
+main (void)
 {
 return $2 ();
   ;
@@ -4308,7 +4303,7 @@ TOOLCHAIN_DESCRIPTION_xlc="IBM XL C/C++"
 
 ################################################################################
 # The order of these defines the priority by which we try to find them.
-VALID_VS_VERSIONS="2010 2012 2013 2015 2017 2019"
+VALID_VS_VERSIONS="2010 2012 2013 2015 2017 2019 2022"
 
 VS_DESCRIPTION_2010="Microsoft Visual Studio 2010"
 VS_VERSION_INTERNAL_2010=100
@@ -4381,6 +4376,21 @@ VS_SDK_PLATFORM_NAME_2019=
 VS_SUPPORTED_2019=false
 VS_TOOLSET_SUPPORTED_2019=false
 
+VS_DESCRIPTION_2022="Microsoft Visual Studio 2022"
+VS_VERSION_INTERNAL_2022=143
+VS_MSVCR_2022=vcruntime140.dll
+VS_VCRUNTIME_1_2022=vcruntime140_1.dll
+VS_MSVCP_2022=msvcp140.dll
+VS_ENVVAR_2022="VS170COMNTOOLS"
+VS_USE_UCRT_2022="true"
+VS_VS_INSTALLDIR_2022="Microsoft Visual Studio/2022"
+VS_EDITIONS_2022="BuildTools Community Professional Enterprise"
+VS_SDK_INSTALLDIR_2022=
+VS_VS_PLATFORM_NAME_2022="v143"
+VS_SDK_PLATFORM_NAME_2022=
+VS_SUPPORTED_2022=true
+VS_TOOLSET_SUPPORTED_2022=true
+
 ################################################################################
 
 
@@ -4422,7 +4432,7 @@ VS_TOOLSET_SUPPORTED_2019=false
 #CUSTOM_AUTOCONF_INCLUDE
 
 # Do not change or remove the following line, it is needed for consistency checks:
-DATE_WHEN_GENERATED=1669893448
+DATE_WHEN_GENERATED=1716396030
 
 ###############################################################################
 #
@@ -13482,6 +13492,192 @@ $as_echo "$tool_specified" >&6; }
 
 
 
+  # Publish this variable in the help.
+
+
+  if test "x$PANDOC" = x; then
+    # The variable is not set by user, try to locate tool using the code snippet
+    for ac_prog in pandoc
+do
+  # Extract the first word of "$ac_prog", so it can be a program name with args.
+set dummy $ac_prog; ac_word=$2
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if ${ac_cv_path_PANDOC+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  case $PANDOC in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_PANDOC="$PANDOC" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
+    ac_cv_path_PANDOC="$as_dir/$ac_word$ac_exec_ext"
+    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+  ;;
+esac
+fi
+PANDOC=$ac_cv_path_PANDOC
+if test -n "$PANDOC"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $PANDOC" >&5
+$as_echo "$PANDOC" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+
+  test -n "$PANDOC" && break
+done
+
+  else
+    # The variable is set, but is it from the command line or the environment?
+
+    # Try to remove the string !PANDOC! from our list.
+    try_remove_var=${CONFIGURE_OVERRIDDEN_VARIABLES//!PANDOC!/}
+    if test "x$try_remove_var" = "x$CONFIGURE_OVERRIDDEN_VARIABLES"; then
+      # If it failed, the variable was not from the command line. Ignore it,
+      # but warn the user (except for BASH, which is always set by the calling BASH).
+      if test "xPANDOC" != xBASH; then
+        { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Ignoring value of PANDOC from the environment. Use command line variables instead." >&5
+$as_echo "$as_me: WARNING: Ignoring value of PANDOC from the environment. Use command line variables instead." >&2;}
+      fi
+      # Try to locate tool using the code snippet
+      for ac_prog in pandoc
+do
+  # Extract the first word of "$ac_prog", so it can be a program name with args.
+set dummy $ac_prog; ac_word=$2
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if ${ac_cv_path_PANDOC+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  case $PANDOC in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_PANDOC="$PANDOC" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
+    ac_cv_path_PANDOC="$as_dir/$ac_word$ac_exec_ext"
+    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+  ;;
+esac
+fi
+PANDOC=$ac_cv_path_PANDOC
+if test -n "$PANDOC"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $PANDOC" >&5
+$as_echo "$PANDOC" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+
+  test -n "$PANDOC" && break
+done
+
+    else
+      # If it succeeded, then it was overridden by the user. We will use it
+      # for the tool.
+
+      # First remove it from the list of overridden variables, so we can test
+      # for unknown variables in the end.
+      CONFIGURE_OVERRIDDEN_VARIABLES="$try_remove_var"
+
+      # Check if the provided tool contains a complete path.
+      tool_specified="$PANDOC"
+      tool_basename="${tool_specified##*/}"
+      if test "x$tool_basename" = "x$tool_specified"; then
+        # A command without a complete path is provided, search $PATH.
+        { $as_echo "$as_me:${as_lineno-$LINENO}: Will search for user supplied tool PANDOC=$tool_basename" >&5
+$as_echo "$as_me: Will search for user supplied tool PANDOC=$tool_basename" >&6;}
+        # Extract the first word of "$tool_basename", so it can be a program name with args.
+set dummy $tool_basename; ac_word=$2
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if ${ac_cv_path_PANDOC+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  case $PANDOC in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_PANDOC="$PANDOC" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
+    ac_cv_path_PANDOC="$as_dir/$ac_word$ac_exec_ext"
+    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+  ;;
+esac
+fi
+PANDOC=$ac_cv_path_PANDOC
+if test -n "$PANDOC"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $PANDOC" >&5
+$as_echo "$PANDOC" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+
+        if test "x$PANDOC" = x; then
+          as_fn_error $? "User supplied tool $tool_basename could not be found" "$LINENO" 5
+        fi
+      else
+        # Otherwise we believe it is a complete path. Use it as it is.
+        { $as_echo "$as_me:${as_lineno-$LINENO}: Will use user supplied tool PANDOC=$tool_specified" >&5
+$as_echo "$as_me: Will use user supplied tool PANDOC=$tool_specified" >&6;}
+        { $as_echo "$as_me:${as_lineno-$LINENO}: checking for PANDOC" >&5
+$as_echo_n "checking for PANDOC... " >&6; }
+        if test ! -x "$tool_specified"; then
+          { $as_echo "$as_me:${as_lineno-$LINENO}: result: not found" >&5
+$as_echo "not found" >&6; }
+          as_fn_error $? "User supplied tool PANDOC=$tool_specified does not exist or is not executable" "$LINENO" 5
+        fi
+        { $as_echo "$as_me:${as_lineno-$LINENO}: result: $tool_specified" >&5
+$as_echo "$tool_specified" >&6; }
+      fi
+    fi
+  fi
+
+
+
+
 # Now we can determine OpenJDK build and target platforms. This is required to
 # have early on.
 # Make sure we can run config.sub.
@@ -13726,6 +13922,12 @@ test -n "$target_alias" &&
       VAR_CPU_BITS=64
       VAR_CPU_ENDIAN=big
       ;;
+    loongarch64)
+      VAR_CPU=loongarch64
+      VAR_CPU_ARCH=loongarch
+      VAR_CPU_BITS=64
+      VAR_CPU_ENDIAN=little
+      ;;
     *)
       as_fn_error $? "unsupported cpu $build_cpu" "$LINENO" 5
       ;;
@@ -13863,6 +14065,12 @@ $as_echo "$OPENJDK_BUILD_OS-$OPENJDK_BUILD_CPU" >&6; }
       VAR_CPU_ARCH=sparc
       VAR_CPU_BITS=64
       VAR_CPU_ENDIAN=big
+      ;;
+    loongarch64)
+      VAR_CPU=loongarch64
+      VAR_CPU_ARCH=loongarch
+      VAR_CPU_BITS=64
+      VAR_CPU_ENDIAN=little
       ;;
     *)
       as_fn_error $? "unsupported cpu $host_cpu" "$LINENO" 5
@@ -14209,6 +14417,9 @@ $as_echo "$TOPDIR" >&6; }
   path="$CURDIR"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -14256,6 +14467,14 @@ $as_echo "$as_me: The path of CURDIR, which resolves as \"$path\", is invalid." 
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     CURDIR="$new_path"
@@ -14331,6 +14550,9 @@ $as_echo "$as_me: The path of CURDIR, which resolves as \"$path\", is invalid." 
   path="$TOPDIR"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -14378,6 +14600,14 @@ $as_echo "$as_me: The path of TOPDIR, which resolves as \"$path\", is invalid." 
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     TOPDIR="$new_path"
@@ -14821,6 +15051,9 @@ fi
   path="$with_devkit"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -14868,6 +15101,14 @@ $as_echo "$as_me: The path of with_devkit, which resolves as \"$path\", is inval
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     with_devkit="$new_path"
@@ -15258,6 +15499,9 @@ $as_echo "$CONF_NAME" >&6; }
   path="$OUTPUT_ROOT"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -15305,6 +15549,14 @@ $as_echo "$as_me: The path of OUTPUT_ROOT, which resolves as \"$path\", is inval
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     OUTPUT_ROOT="$new_path"
@@ -20337,6 +20589,9 @@ $as_echo "$as_me: (Your Boot JDK must be version 7 or 8)" >&6;}
   path="$BOOT_JDK"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -20384,6 +20639,14 @@ $as_echo "$as_me: The path of BOOT_JDK, which resolves as \"$path\", is invalid.
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     BOOT_JDK="$new_path"
@@ -20669,6 +20932,9 @@ $as_echo "$as_me: (Your Boot JDK must be version 7 or 8)" >&6;}
   path="$BOOT_JDK"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -20716,6 +20982,14 @@ $as_echo "$as_me: The path of BOOT_JDK, which resolves as \"$path\", is invalid.
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     BOOT_JDK="$new_path"
@@ -20815,6 +21089,9 @@ $as_echo "$BOOT_JDK_VERSION" >&6; }
   path="$JAVA_HOME_PROCESSED"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -20862,6 +21139,14 @@ $as_echo "$as_me: The path of JAVA_HOME_PROCESSED, which resolves as \"$path\", 
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     JAVA_HOME_PROCESSED="$new_path"
@@ -20987,6 +21272,9 @@ $as_echo "$as_me: (Your Boot JDK must be version 7 or 8)" >&6;}
   path="$BOOT_JDK"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -21034,6 +21322,14 @@ $as_echo "$as_me: The path of BOOT_JDK, which resolves as \"$path\", is invalid.
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     BOOT_JDK="$new_path"
@@ -21175,6 +21471,9 @@ $as_echo "$as_me: (Your Boot JDK must be version 7 or 8)" >&6;}
   path="$BOOT_JDK"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -21222,6 +21521,14 @@ $as_echo "$as_me: The path of BOOT_JDK, which resolves as \"$path\", is invalid.
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     BOOT_JDK="$new_path"
@@ -21503,6 +21810,9 @@ $as_echo "$as_me: (Your Boot JDK must be version 7 or 8)" >&6;}
   path="$BOOT_JDK"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -21550,6 +21860,14 @@ $as_echo "$as_me: The path of BOOT_JDK, which resolves as \"$path\", is invalid.
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     BOOT_JDK="$new_path"
@@ -21718,6 +22036,9 @@ $as_echo "$as_me: (Your Boot JDK must be version 7 or 8)" >&6;}
   path="$BOOT_JDK"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -21765,6 +22086,14 @@ $as_echo "$as_me: The path of BOOT_JDK, which resolves as \"$path\", is invalid.
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     BOOT_JDK="$new_path"
@@ -21898,6 +22227,9 @@ $as_echo "$as_me: (Your Boot JDK must be version 7 or 8)" >&6;}
   path="$BOOT_JDK"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -21945,6 +22277,14 @@ $as_echo "$as_me: The path of BOOT_JDK, which resolves as \"$path\", is invalid.
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     BOOT_JDK="$new_path"
@@ -22106,6 +22446,9 @@ $as_echo "$as_me: (Your Boot JDK must be version 7 or 8)" >&6;}
   path="$BOOT_JDK"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -22153,6 +22496,14 @@ $as_echo "$as_me: The path of BOOT_JDK, which resolves as \"$path\", is invalid.
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     BOOT_JDK="$new_path"
@@ -22286,6 +22637,9 @@ $as_echo "$as_me: (Your Boot JDK must be version 7 or 8)" >&6;}
   path="$BOOT_JDK"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -22333,6 +22687,14 @@ $as_echo "$as_me: The path of BOOT_JDK, which resolves as \"$path\", is invalid.
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     BOOT_JDK="$new_path"
@@ -22494,6 +22856,9 @@ $as_echo "$as_me: (Your Boot JDK must be version 7 or 8)" >&6;}
   path="$BOOT_JDK"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -22541,6 +22906,14 @@ $as_echo "$as_me: The path of BOOT_JDK, which resolves as \"$path\", is invalid.
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     BOOT_JDK="$new_path"
@@ -22674,6 +23047,9 @@ $as_echo "$as_me: (Your Boot JDK must be version 7 or 8)" >&6;}
   path="$BOOT_JDK"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -22721,6 +23097,14 @@ $as_echo "$as_me: The path of BOOT_JDK, which resolves as \"$path\", is invalid.
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     BOOT_JDK="$new_path"
@@ -22882,6 +23266,9 @@ $as_echo "$as_me: (Your Boot JDK must be version 7 or 8)" >&6;}
   path="$BOOT_JDK"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -22929,6 +23316,14 @@ $as_echo "$as_me: The path of BOOT_JDK, which resolves as \"$path\", is invalid.
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     BOOT_JDK="$new_path"
@@ -23062,6 +23457,9 @@ $as_echo "$as_me: (Your Boot JDK must be version 7 or 8)" >&6;}
   path="$BOOT_JDK"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -23109,6 +23507,14 @@ $as_echo "$as_me: The path of BOOT_JDK, which resolves as \"$path\", is invalid.
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     BOOT_JDK="$new_path"
@@ -23257,6 +23663,9 @@ $as_echo "$as_me: (Your Boot JDK must be version 7 or 8)" >&6;}
   path="$BOOT_JDK"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -23304,6 +23713,14 @@ $as_echo "$as_me: The path of BOOT_JDK, which resolves as \"$path\", is invalid.
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     BOOT_JDK="$new_path"
@@ -23435,6 +23852,9 @@ $as_echo "$as_me: (Your Boot JDK must be version 7 or 8)" >&6;}
   path="$BOOT_JDK"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -23482,6 +23902,14 @@ $as_echo "$as_me: The path of BOOT_JDK, which resolves as \"$path\", is invalid.
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     BOOT_JDK="$new_path"
@@ -23631,6 +24059,9 @@ $as_echo "$as_me: (Your Boot JDK must be version 7 or 8)" >&6;}
   path="$BOOT_JDK"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -23678,6 +24109,14 @@ $as_echo "$as_me: The path of BOOT_JDK, which resolves as \"$path\", is invalid.
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     BOOT_JDK="$new_path"
@@ -23809,6 +24248,9 @@ $as_echo "$as_me: (Your Boot JDK must be version 7 or 8)" >&6;}
   path="$BOOT_JDK"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -23856,6 +24298,14 @@ $as_echo "$as_me: The path of BOOT_JDK, which resolves as \"$path\", is invalid.
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     BOOT_JDK="$new_path"
@@ -24004,6 +24454,9 @@ $as_echo "$as_me: (Your Boot JDK must be version 7 or 8)" >&6;}
   path="$BOOT_JDK"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -24051,6 +24504,14 @@ $as_echo "$as_me: The path of BOOT_JDK, which resolves as \"$path\", is invalid.
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     BOOT_JDK="$new_path"
@@ -24182,6 +24643,9 @@ $as_echo "$as_me: (Your Boot JDK must be version 7 or 8)" >&6;}
   path="$BOOT_JDK"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -24229,6 +24693,14 @@ $as_echo "$as_me: The path of BOOT_JDK, which resolves as \"$path\", is invalid.
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     BOOT_JDK="$new_path"
@@ -24378,6 +24850,9 @@ $as_echo "$as_me: (Your Boot JDK must be version 7 or 8)" >&6;}
   path="$BOOT_JDK"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -24425,6 +24900,14 @@ $as_echo "$as_me: The path of BOOT_JDK, which resolves as \"$path\", is invalid.
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     BOOT_JDK="$new_path"
@@ -24556,6 +25039,9 @@ $as_echo "$as_me: (Your Boot JDK must be version 7 or 8)" >&6;}
   path="$BOOT_JDK"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -24603,6 +25089,14 @@ $as_echo "$as_me: The path of BOOT_JDK, which resolves as \"$path\", is invalid.
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     BOOT_JDK="$new_path"
@@ -24733,6 +25227,9 @@ $as_echo "$as_me: (Your Boot JDK must be version 7 or 8)" >&6;}
   path="$BOOT_JDK"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -24780,6 +25277,14 @@ $as_echo "$as_me: The path of BOOT_JDK, which resolves as \"$path\", is invalid.
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     BOOT_JDK="$new_path"
@@ -27073,13 +27578,6 @@ fi
       as_fn_error $? "The xcodebuild tool was not found, the Xcode command line tools are required to build on Mac OS X" "$LINENO" 5
     fi
 
-    # Fail-fast: verify we're building on a supported Xcode version
-    XCODE_VERSION=`$XCODEBUILD -version | grep '^Xcode ' | sed 's/Xcode //'`
-    XC_VERSION_PARTS=( ${XCODE_VERSION//./ } )
-    if test "${XC_VERSION_PARTS[0]}" != "6" -a "${XC_VERSION_PARTS[0]}" != "9" -a "${XC_VERSION_PARTS[0]}" != "10" -a "${XC_VERSION_PARTS[0]}" != "11" -a "${XC_VERSION_PARTS[0]}" != "12" ; then
-      as_fn_error $? "Xcode 6, 9-12 is required to build JDK 8, the version found was $XCODE_VERSION. Use --with-xcode-path to specify the location of Xcode or make Xcode active by using xcode-select." "$LINENO" 5
-    fi
-
     # Some versions of Xcode command line tools install gcc and g++ as symlinks to
     # clang and clang++, which will break the build. So handle that here if we need to.
     if test -L "/usr/bin/gcc" -o -L "/usr/bin/g++"; then
@@ -28428,7 +28926,7 @@ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
 int
-main ()
+main (void)
 {
 
   ;
@@ -28568,7 +29066,7 @@ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 #include <stdio.h>
 int
-main ()
+main (void)
 {
 FILE *f = fopen ("conftest.out", "w");
  return ferror (f) || fclose (f) != 0;
@@ -28632,7 +29130,7 @@ else
 /* end confdefs.h.  */
 
 int
-main ()
+main (void)
 {
 
   ;
@@ -28683,7 +29181,7 @@ else
 /* end confdefs.h.  */
 
 int
-main ()
+main (void)
 {
 #ifndef __GNUC__
        choke me
@@ -28724,7 +29222,7 @@ else
 /* end confdefs.h.  */
 
 int
-main ()
+main (void)
 {
 
   ;
@@ -28739,7 +29237,7 @@ else
 /* end confdefs.h.  */
 
 int
-main ()
+main (void)
 {
 
   ;
@@ -28755,7 +29253,7 @@ else
 /* end confdefs.h.  */
 
 int
-main ()
+main (void)
 {
 
   ;
@@ -28804,9 +29302,7 @@ struct stat;
 /* Most of the following tests are stolen from RCS 5.7's src/conf.sh.  */
 struct buf { int x; };
 FILE * (*rcsopen) (struct buf *, struct stat *, int);
-static char *e (p, i)
-     char **p;
-     int i;
+static char *e (char **p, int i)
 {
   return p[i];
 }
@@ -28841,7 +29337,7 @@ int pairnames (int, char **, FILE *(*)(struct buf *, struct stat *, int), int, i
 int argc;
 char **argv;
 int
-main ()
+main (void)
 {
 return f (e, argv, 0) != argv[0]  ||  f (e, argv, 1) != argv[1];
   ;
@@ -30174,7 +30670,7 @@ else
 /* end confdefs.h.  */
 
 int
-main ()
+main (void)
 {
 #ifndef __GNUC__
        choke me
@@ -30215,7 +30711,7 @@ else
 /* end confdefs.h.  */
 
 int
-main ()
+main (void)
 {
 
   ;
@@ -30230,7 +30726,7 @@ else
 /* end confdefs.h.  */
 
 int
-main ()
+main (void)
 {
 
   ;
@@ -30246,7 +30742,7 @@ else
 /* end confdefs.h.  */
 
 int
-main ()
+main (void)
 {
 
   ;
@@ -32759,7 +33255,7 @@ else
 /* end confdefs.h.  */
 
 int
-main ()
+main (void)
 {
 #ifndef __GNUC__
        choke me
@@ -32800,7 +33296,7 @@ else
 /* end confdefs.h.  */
 
 int
-main ()
+main (void)
 {
 
   ;
@@ -32815,7 +33311,7 @@ else
 /* end confdefs.h.  */
 
 int
-main ()
+main (void)
 {
 
   ;
@@ -32831,7 +33327,7 @@ else
 /* end confdefs.h.  */
 
 int
-main ()
+main (void)
 {
 
   ;
@@ -40895,6 +41391,9 @@ $as_echo_n "checking for jtreg... " >&6; }
   path="$JT_HOME"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -40942,6 +41441,14 @@ $as_echo "$as_me: The path of JT_HOME, which resolves as \"$path\", is invalid."
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     JT_HOME="$new_path"
@@ -41337,9 +41844,12 @@ $as_echo "$tool_specified" >&6; }
       SYSROOT_LDFLAGS="-isysroot \"$SYSROOT\""
     fi
     # Propagate the sysroot args to hotspot
-    LEGACY_EXTRA_CFLAGS="$LEGACY_EXTRA_CFLAGS $SYSROOT_CFLAGS"
-    LEGACY_EXTRA_CXXFLAGS="$LEGACY_EXTRA_CXXFLAGS $SYSROOT_CFLAGS"
-    LEGACY_EXTRA_LDFLAGS="$LEGACY_EXTRA_LDFLAGS $SYSROOT_LDFLAGS"
+    LEGACY_HOST_CFLAGS="$LEGACY_EXTRA_CFLAGS"
+    LEGACY_HOST_CXXFLAGS="$LEGACY_EXTRA_CXXFLAGS"
+    LEGACY_HOST_LDFLAGS="$LEGACY_EXTRA_LDFLAGS"
+    LEGACY_TARGET_CFLAGS="$LEGACY_EXTRA_CFLAGS $SYSROOT_CFLAGS"
+    LEGACY_TARGET_CXXFLAGS="$LEGACY_EXTRA_CXXFLAGS $SYSROOT_CFLAGS"
+    LEGACY_TARGET_LDFLAGS="$LEGACY_EXTRA_LDFLAGS $SYSROOT_LDFLAGS"
   fi
 
 
@@ -41363,7 +41873,7 @@ else
 #include <float.h>
 
 int
-main ()
+main (void)
 {
 
   ;
@@ -41433,7 +41943,7 @@ else
 
 #define XOR(e, f) (((e) && !(f)) || (!(e) && (f)))
 int
-main ()
+main (void)
 {
   int i;
   for (i = 0; i < 256; i++)
@@ -41731,7 +42241,7 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 	     #include <sys/param.h>
 
 int
-main ()
+main (void)
 {
 #if ! (defined BYTE_ORDER && defined BIG_ENDIAN \
 		     && defined LITTLE_ENDIAN && BYTE_ORDER && BIG_ENDIAN \
@@ -41751,7 +42261,7 @@ if ac_fn_cxx_try_compile "$LINENO"; then :
 		#include <sys/param.h>
 
 int
-main ()
+main (void)
 {
 #if BYTE_ORDER != BIG_ENDIAN
 		 not big endian
@@ -41777,7 +42287,7 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 #include <limits.h>
 
 int
-main ()
+main (void)
 {
 #if ! (defined _LITTLE_ENDIAN || defined _BIG_ENDIAN)
 	      bogus endian macros
@@ -41794,7 +42304,7 @@ if ac_fn_cxx_try_compile "$LINENO"; then :
 #include <limits.h>
 
 int
-main ()
+main (void)
 {
 #ifndef _BIG_ENDIAN
 		 not big endian
@@ -41836,7 +42346,7 @@ short int ascii_mm[] =
 		extern int foo;
 
 int
-main ()
+main (void)
 {
 return use_ascii (foo) == use_ebcdic (foo);
   ;
@@ -41862,7 +42372,7 @@ else
 /* end confdefs.h.  */
 $ac_includes_default
 int
-main ()
+main (void)
 {
 
 	     /* Are we little or big endian?  From Harbison&Steele.  */
@@ -42161,11 +42671,14 @@ $as_echo "$ac_cv_c_bigendian" >&6; }
     CFLAGS_JDK="${CFLAGS_JDK} -qchars=signed -q64 -qfullpath -qsaveopt"
     CXXFLAGS_JDK="${CXXFLAGS_JDK} -qchars=signed -q64 -qfullpath -qsaveopt"
   elif test "x$TOOLCHAIN_TYPE" = xgcc; then
-    LEGACY_EXTRA_CFLAGS="$LEGACY_EXTRA_CFLAGS -fstack-protector"
-    LEGACY_EXTRA_CXXFLAGS="$LEGACY_EXTRA_CXXFLAGS -fstack-protector"
+    LEGACY_HOST_CFLAGS="$LEGACY_HOST_CFLAGS -fstack-protector"
+    LEGACY_TARGET_CFLAGS="$LEGACY_TARGET_CFLAGS -fstack-protector"
+    LEGACY_HOST_CXXFLAGS="$LEGACY_HOST_CXXFLAGS -fstack-protector"
+    LEGACY_TARGET_CXXFLAGS="$LEGACY_TARGET_CXXFLAGS -fstack-protector"
     if test "x$OPENJDK_TARGET_OS" != xmacosx; then
       LDFLAGS_JDK="$LDFLAGS_JDK -Wl,-z,relro"
-      LEGACY_EXTRA_LDFLAGS="$LEGACY_EXTRA_LDFLAGS -Wl,-z,relro"
+      LEGACY_HOST_LDFLAGS="$LEGACY_HOST_LDFLAGS -Wl,-z,relro"
+      LEGACY_TARGET_LDFLAGS="$LEGACY_TARGET_LDFLAGS -Wl,-z,relro"
     fi
     CXXSTD_CXXFLAG="-std=gnu++98"
 
@@ -42266,10 +42779,18 @@ fi
   LDFLAGS_JDK="${LDFLAGS_JDK} $with_extra_ldflags"
 
   # Hotspot needs these set in their legacy form
-  LEGACY_EXTRA_CFLAGS="$LEGACY_EXTRA_CFLAGS $with_extra_cflags"
-  LEGACY_EXTRA_CXXFLAGS="$LEGACY_EXTRA_CXXFLAGS $with_extra_cxxflags"
-  LEGACY_EXTRA_LDFLAGS="$LEGACY_EXTRA_LDFLAGS $with_extra_ldflags"
-  LEGACY_EXTRA_ASFLAGS="$with_extra_asflags"
+  LEGACY_HOST_CFLAGS="$LEGACY_HOST_CFLAGS $with_extra_cflags"
+  LEGACY_TARGET_CFLAGS="$LEGACY_TARGET_CFLAGS $with_extra_cflags"
+  LEGACY_HOST_CXXFLAGS="$LEGACY_HOST_CXXFLAGS $with_extra_cxxflags"
+  LEGACY_TARGET_CXXFLAGS="$LEGACY_TARGET_CXXFLAGS $with_extra_cxxflags"
+  LEGACY_HOST_LDFLAGS="$LEGACY_HOST_LDFLAGS $with_extra_ldflags"
+  LEGACY_TARGET_LDFLAGS="$LEGACY_TARGET_LDFLAGS $with_extra_ldflags"
+  LEGACY_HOST_ASFLAGS="$with_extra_asflags"
+  LEGACY_TARGET_ASFLAGS="$with_extra_asflags"
+
+
+
+
 
 
 
@@ -43694,7 +44215,7 @@ if test "$ac_x_libraries" = no; then
 /* end confdefs.h.  */
 #include <X11/Xlib.h>
 int
-main ()
+main (void)
 {
 XrmInitialize ()
   ;
@@ -43780,7 +44301,7 @@ $as_echo_n "checking whether -R must be followed by a space... " >&6; }
 /* end confdefs.h.  */
 
 int
-main ()
+main (void)
 {
 
   ;
@@ -43797,7 +44318,7 @@ else
 /* end confdefs.h.  */
 
 int
-main ()
+main (void)
 {
 
   ;
@@ -43841,9 +44362,9 @@ rm -f core conftest.err conftest.$ac_objext \
 #ifdef __cplusplus
 extern "C"
 #endif
-char XOpenDisplay ();
+char XOpenDisplay (void);
 int
-main ()
+main (void)
 {
 return XOpenDisplay ();
   ;
@@ -43869,9 +44390,9 @@ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 #ifdef __cplusplus
 extern "C"
 #endif
-char dnet_ntoa ();
+char dnet_ntoa (void);
 int
-main ()
+main (void)
 {
 return dnet_ntoa ();
   ;
@@ -43910,9 +44431,9 @@ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 #ifdef __cplusplus
 extern "C"
 #endif
-char dnet_ntoa ();
+char dnet_ntoa (void);
 int
-main ()
+main (void)
 {
 return dnet_ntoa ();
   ;
@@ -43970,9 +44491,9 @@ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 #ifdef __cplusplus
 extern "C"
 #endif
-char gethostbyname ();
+char gethostbyname (void);
 int
-main ()
+main (void)
 {
 return gethostbyname ();
   ;
@@ -44011,9 +44532,9 @@ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 #ifdef __cplusplus
 extern "C"
 #endif
-char gethostbyname ();
+char gethostbyname (void);
 int
-main ()
+main (void)
 {
 return gethostbyname ();
   ;
@@ -44067,9 +44588,9 @@ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 #ifdef __cplusplus
 extern "C"
 #endif
-char connect ();
+char connect (void);
 int
-main ()
+main (void)
 {
 return connect ();
   ;
@@ -44116,9 +44637,9 @@ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 #ifdef __cplusplus
 extern "C"
 #endif
-char remove ();
+char remove (void);
 int
-main ()
+main (void)
 {
 return remove ();
   ;
@@ -44165,9 +44686,9 @@ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 #ifdef __cplusplus
 extern "C"
 #endif
-char shmat ();
+char shmat (void);
 int
-main ()
+main (void)
 {
 return shmat ();
   ;
@@ -44217,9 +44738,9 @@ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 #ifdef __cplusplus
 extern "C"
 #endif
-char IceConnectionNumber ();
+char IceConnectionNumber (void);
 int
-main ()
+main (void)
 {
 return IceConnectionNumber ();
   ;
@@ -44857,6 +45378,9 @@ $as_echo "$as_me: Could not find $POTENTIAL_FREETYPE_LIB_PATH/freetype.lib. Igno
   path="$POTENTIAL_FREETYPE_INCLUDE_PATH"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -44904,6 +45428,14 @@ $as_echo "$as_me: The path of POTENTIAL_FREETYPE_INCLUDE_PATH, which resolves as
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     POTENTIAL_FREETYPE_INCLUDE_PATH="$new_path"
@@ -44979,6 +45511,9 @@ $as_echo "$as_me: The path of POTENTIAL_FREETYPE_INCLUDE_PATH, which resolves as
   path="$POTENTIAL_FREETYPE_LIB_PATH"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -45026,6 +45561,14 @@ $as_echo "$as_me: The path of POTENTIAL_FREETYPE_LIB_PATH, which resolves as \"$
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     POTENTIAL_FREETYPE_LIB_PATH="$new_path"
@@ -45184,6 +45727,9 @@ $as_echo "$as_me: Could not find $POTENTIAL_FREETYPE_LIB_PATH/freetype.lib. Igno
   path="$POTENTIAL_FREETYPE_INCLUDE_PATH"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -45231,6 +45777,14 @@ $as_echo "$as_me: The path of POTENTIAL_FREETYPE_INCLUDE_PATH, which resolves as
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     POTENTIAL_FREETYPE_INCLUDE_PATH="$new_path"
@@ -45306,6 +45860,9 @@ $as_echo "$as_me: The path of POTENTIAL_FREETYPE_INCLUDE_PATH, which resolves as
   path="$POTENTIAL_FREETYPE_LIB_PATH"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -45353,6 +45910,14 @@ $as_echo "$as_me: The path of POTENTIAL_FREETYPE_LIB_PATH, which resolves as \"$
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     POTENTIAL_FREETYPE_LIB_PATH="$new_path"
@@ -45772,6 +46337,9 @@ $as_echo "$as_me: Could not find $POTENTIAL_FREETYPE_LIB_PATH/freetype.lib. Igno
   path="$POTENTIAL_FREETYPE_INCLUDE_PATH"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -45819,6 +46387,14 @@ $as_echo "$as_me: The path of POTENTIAL_FREETYPE_INCLUDE_PATH, which resolves as
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     POTENTIAL_FREETYPE_INCLUDE_PATH="$new_path"
@@ -45894,6 +46470,9 @@ $as_echo "$as_me: The path of POTENTIAL_FREETYPE_INCLUDE_PATH, which resolves as
   path="$POTENTIAL_FREETYPE_LIB_PATH"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -45941,6 +46520,14 @@ $as_echo "$as_me: The path of POTENTIAL_FREETYPE_LIB_PATH, which resolves as \"$
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     POTENTIAL_FREETYPE_LIB_PATH="$new_path"
@@ -46074,6 +46661,9 @@ $as_echo "$as_me: Could not find $POTENTIAL_FREETYPE_LIB_PATH/freetype.lib. Igno
   path="$POTENTIAL_FREETYPE_INCLUDE_PATH"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -46121,6 +46711,14 @@ $as_echo "$as_me: The path of POTENTIAL_FREETYPE_INCLUDE_PATH, which resolves as
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     POTENTIAL_FREETYPE_INCLUDE_PATH="$new_path"
@@ -46196,6 +46794,9 @@ $as_echo "$as_me: The path of POTENTIAL_FREETYPE_INCLUDE_PATH, which resolves as
   path="$POTENTIAL_FREETYPE_LIB_PATH"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -46243,6 +46844,14 @@ $as_echo "$as_me: The path of POTENTIAL_FREETYPE_LIB_PATH, which resolves as \"$
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     POTENTIAL_FREETYPE_LIB_PATH="$new_path"
@@ -46367,6 +46976,9 @@ $as_echo "$as_me: Could not find $POTENTIAL_FREETYPE_LIB_PATH/freetype.lib. Igno
   path="$POTENTIAL_FREETYPE_INCLUDE_PATH"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -46414,6 +47026,14 @@ $as_echo "$as_me: The path of POTENTIAL_FREETYPE_INCLUDE_PATH, which resolves as
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     POTENTIAL_FREETYPE_INCLUDE_PATH="$new_path"
@@ -46489,6 +47109,9 @@ $as_echo "$as_me: The path of POTENTIAL_FREETYPE_INCLUDE_PATH, which resolves as
   path="$POTENTIAL_FREETYPE_LIB_PATH"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -46536,6 +47159,14 @@ $as_echo "$as_me: The path of POTENTIAL_FREETYPE_LIB_PATH, which resolves as \"$
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     POTENTIAL_FREETYPE_LIB_PATH="$new_path"
@@ -46660,6 +47291,9 @@ $as_echo "$as_me: Could not find $POTENTIAL_FREETYPE_LIB_PATH/freetype.lib. Igno
   path="$POTENTIAL_FREETYPE_INCLUDE_PATH"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -46707,6 +47341,14 @@ $as_echo "$as_me: The path of POTENTIAL_FREETYPE_INCLUDE_PATH, which resolves as
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     POTENTIAL_FREETYPE_INCLUDE_PATH="$new_path"
@@ -46782,6 +47424,9 @@ $as_echo "$as_me: The path of POTENTIAL_FREETYPE_INCLUDE_PATH, which resolves as
   path="$POTENTIAL_FREETYPE_LIB_PATH"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -46829,6 +47474,14 @@ $as_echo "$as_me: The path of POTENTIAL_FREETYPE_LIB_PATH, which resolves as \"$
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     POTENTIAL_FREETYPE_LIB_PATH="$new_path"
@@ -46954,6 +47607,9 @@ $as_echo "$as_me: Could not find $POTENTIAL_FREETYPE_LIB_PATH/freetype.lib. Igno
   path="$POTENTIAL_FREETYPE_INCLUDE_PATH"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -47001,6 +47657,14 @@ $as_echo "$as_me: The path of POTENTIAL_FREETYPE_INCLUDE_PATH, which resolves as
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     POTENTIAL_FREETYPE_INCLUDE_PATH="$new_path"
@@ -47076,6 +47740,9 @@ $as_echo "$as_me: The path of POTENTIAL_FREETYPE_INCLUDE_PATH, which resolves as
   path="$POTENTIAL_FREETYPE_LIB_PATH"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -47123,6 +47790,14 @@ $as_echo "$as_me: The path of POTENTIAL_FREETYPE_LIB_PATH, which resolves as \"$
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     POTENTIAL_FREETYPE_LIB_PATH="$new_path"
@@ -47249,6 +47924,9 @@ $as_echo "$as_me: Could not find $POTENTIAL_FREETYPE_LIB_PATH/freetype.lib. Igno
   path="$POTENTIAL_FREETYPE_INCLUDE_PATH"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -47296,6 +47974,14 @@ $as_echo "$as_me: The path of POTENTIAL_FREETYPE_INCLUDE_PATH, which resolves as
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     POTENTIAL_FREETYPE_INCLUDE_PATH="$new_path"
@@ -47371,6 +48057,9 @@ $as_echo "$as_me: The path of POTENTIAL_FREETYPE_INCLUDE_PATH, which resolves as
   path="$POTENTIAL_FREETYPE_LIB_PATH"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -47418,6 +48107,14 @@ $as_echo "$as_me: The path of POTENTIAL_FREETYPE_LIB_PATH, which resolves as \"$
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     POTENTIAL_FREETYPE_LIB_PATH="$new_path"
@@ -47540,6 +48237,9 @@ $as_echo "$as_me: Could not find $POTENTIAL_FREETYPE_LIB_PATH/freetype.lib. Igno
   path="$POTENTIAL_FREETYPE_INCLUDE_PATH"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -47587,6 +48287,14 @@ $as_echo "$as_me: The path of POTENTIAL_FREETYPE_INCLUDE_PATH, which resolves as
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     POTENTIAL_FREETYPE_INCLUDE_PATH="$new_path"
@@ -47662,6 +48370,9 @@ $as_echo "$as_me: The path of POTENTIAL_FREETYPE_INCLUDE_PATH, which resolves as
   path="$POTENTIAL_FREETYPE_LIB_PATH"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -47709,6 +48420,14 @@ $as_echo "$as_me: The path of POTENTIAL_FREETYPE_LIB_PATH, which resolves as \"$
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     POTENTIAL_FREETYPE_LIB_PATH="$new_path"
@@ -47831,6 +48550,9 @@ $as_echo "$as_me: Could not find $POTENTIAL_FREETYPE_LIB_PATH/freetype.lib. Igno
   path="$POTENTIAL_FREETYPE_INCLUDE_PATH"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -47878,6 +48600,14 @@ $as_echo "$as_me: The path of POTENTIAL_FREETYPE_INCLUDE_PATH, which resolves as
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     POTENTIAL_FREETYPE_INCLUDE_PATH="$new_path"
@@ -47953,6 +48683,9 @@ $as_echo "$as_me: The path of POTENTIAL_FREETYPE_INCLUDE_PATH, which resolves as
   path="$POTENTIAL_FREETYPE_LIB_PATH"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -48000,6 +48733,14 @@ $as_echo "$as_me: The path of POTENTIAL_FREETYPE_LIB_PATH, which resolves as \"$
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     POTENTIAL_FREETYPE_LIB_PATH="$new_path"
@@ -48131,6 +48872,9 @@ $as_echo "$FREETYPE_LIB_PATH" >&6; }
   path="$FREETYPE_INCLUDE_PATH"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -48178,6 +48922,14 @@ $as_echo "$as_me: The path of FREETYPE_INCLUDE_PATH, which resolves as \"$path\"
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     FREETYPE_INCLUDE_PATH="$new_path"
@@ -48261,6 +49013,9 @@ $as_echo "$as_me: The path of FREETYPE_INCLUDE_PATH, which resolves as \"$path\"
   path="$FREETYPE_LIB_PATH"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -48308,6 +49063,14 @@ $as_echo "$as_me: The path of FREETYPE_LIB_PATH, which resolves as \"$path\", is
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     FREETYPE_LIB_PATH="$new_path"
@@ -48941,7 +49704,7 @@ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 
 
 int
-main ()
+main (void)
 {
 return main ();
   ;
@@ -49031,9 +49794,9 @@ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 #ifdef __cplusplus
 extern "C"
 #endif
-char DGifGetCode ();
+char DGifGetCode (void);
 int
-main ()
+main (void)
 {
 return DGifGetCode ();
   ;
@@ -49097,9 +49860,9 @@ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 #ifdef __cplusplus
 extern "C"
 #endif
-char compress ();
+char compress (void);
 int
-main ()
+main (void)
 {
 return compress ();
   ;
@@ -49183,7 +49946,7 @@ $as_echo "system not found" >&6; }
 /* end confdefs.h.  */
 #include <time.h>
 int
-main ()
+main (void)
 {
 return (int)altzone;
   ;
@@ -49224,9 +49987,9 @@ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 #ifdef __cplusplus
 extern "C"
 #endif
-char cos ();
+char cos (void);
 int
-main ()
+main (void)
 {
 return cos ();
   ;
@@ -49283,9 +50046,9 @@ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 #ifdef __cplusplus
 extern "C"
 #endif
-char dlopen ();
+char dlopen (void);
 int
-main ()
+main (void)
 {
 return dlopen ();
   ;
@@ -49353,7 +50116,7 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 /* end confdefs.h.  */
 
 int
-main ()
+main (void)
 {
 return 0;
   ;
@@ -49395,7 +50158,7 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 /* end confdefs.h.  */
 
 int
-main ()
+main (void)
 {
 return 0;
   ;
@@ -49693,6 +50456,9 @@ $as_echo "ok" >&6; }
   path="$MSVC_DLL"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -49740,6 +50506,14 @@ $as_echo "$as_me: The path of MSVC_DLL, which resolves as \"$path\", is invalid.
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     MSVC_DLL="$new_path"
@@ -49863,6 +50637,9 @@ $as_echo "ok" >&6; }
   path="$MSVC_DLL"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -49910,6 +50687,14 @@ $as_echo "$as_me: The path of MSVC_DLL, which resolves as \"$path\", is invalid.
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     MSVC_DLL="$new_path"
@@ -50009,6 +50794,9 @@ $as_echo "$as_me: The file type of the located $DLL_NAME is $MSVC_DLL_FILETYPE" 
   path="$CYGWIN_VC_INSTALL_DIR"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -50056,6 +50844,14 @@ $as_echo "$as_me: The path of CYGWIN_VC_INSTALL_DIR, which resolves as \"$path\"
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     CYGWIN_VC_INSTALL_DIR="$new_path"
@@ -50180,6 +50976,9 @@ $as_echo "ok" >&6; }
   path="$MSVC_DLL"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -50227,6 +51026,14 @@ $as_echo "$as_me: The path of MSVC_DLL, which resolves as \"$path\", is invalid.
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     MSVC_DLL="$new_path"
@@ -50352,6 +51159,9 @@ $as_echo "ok" >&6; }
   path="$MSVC_DLL"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -50399,6 +51209,14 @@ $as_echo "$as_me: The path of MSVC_DLL, which resolves as \"$path\", is invalid.
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     MSVC_DLL="$new_path"
@@ -50533,6 +51351,9 @@ $as_echo "ok" >&6; }
   path="$MSVC_DLL"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -50580,6 +51401,14 @@ $as_echo "$as_me: The path of MSVC_DLL, which resolves as \"$path\", is invalid.
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     MSVC_DLL="$new_path"
@@ -50721,6 +51550,9 @@ $as_echo "ok" >&6; }
   path="$MSVC_DLL"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -50768,6 +51600,14 @@ $as_echo "$as_me: The path of MSVC_DLL, which resolves as \"$path\", is invalid.
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     MSVC_DLL="$new_path"
@@ -50906,6 +51746,9 @@ $as_echo "ok" >&6; }
   path="$MSVC_DLL"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -50953,6 +51796,14 @@ $as_echo "$as_me: The path of MSVC_DLL, which resolves as \"$path\", is invalid.
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     MSVC_DLL="$new_path"
@@ -51096,6 +51947,9 @@ $as_echo "ok" >&6; }
   path="$MSVC_DLL"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -51143,6 +51997,14 @@ $as_echo "$as_me: The path of MSVC_DLL, which resolves as \"$path\", is invalid.
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     MSVC_DLL="$new_path"
@@ -51266,6 +52128,9 @@ $as_echo "ok" >&6; }
   path="$MSVC_DLL"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -51313,6 +52178,14 @@ $as_echo "$as_me: The path of MSVC_DLL, which resolves as \"$path\", is invalid.
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     MSVC_DLL="$new_path"
@@ -51412,6 +52285,9 @@ $as_echo "$as_me: The file type of the located $DLL_NAME is $MSVC_DLL_FILETYPE" 
   path="$CYGWIN_VC_INSTALL_DIR"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -51459,6 +52335,14 @@ $as_echo "$as_me: The path of CYGWIN_VC_INSTALL_DIR, which resolves as \"$path\"
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     CYGWIN_VC_INSTALL_DIR="$new_path"
@@ -51583,6 +52467,9 @@ $as_echo "ok" >&6; }
   path="$MSVC_DLL"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -51630,6 +52517,14 @@ $as_echo "$as_me: The path of MSVC_DLL, which resolves as \"$path\", is invalid.
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     MSVC_DLL="$new_path"
@@ -51755,6 +52650,9 @@ $as_echo "ok" >&6; }
   path="$MSVC_DLL"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -51802,6 +52700,14 @@ $as_echo "$as_me: The path of MSVC_DLL, which resolves as \"$path\", is invalid.
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     MSVC_DLL="$new_path"
@@ -51936,6 +52842,9 @@ $as_echo "ok" >&6; }
   path="$MSVC_DLL"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -51983,6 +52892,14 @@ $as_echo "$as_me: The path of MSVC_DLL, which resolves as \"$path\", is invalid.
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     MSVC_DLL="$new_path"
@@ -52124,6 +53041,9 @@ $as_echo "ok" >&6; }
   path="$MSVC_DLL"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -52171,6 +53091,14 @@ $as_echo "$as_me: The path of MSVC_DLL, which resolves as \"$path\", is invalid.
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     MSVC_DLL="$new_path"
@@ -52309,6 +53237,9 @@ $as_echo "ok" >&6; }
   path="$MSVC_DLL"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -52356,6 +53287,14 @@ $as_echo "$as_me: The path of MSVC_DLL, which resolves as \"$path\", is invalid.
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     MSVC_DLL="$new_path"
@@ -52500,6 +53439,9 @@ $as_echo "ok" >&6; }
   path="$MSVC_DLL"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -52547,6 +53489,14 @@ $as_echo "$as_me: The path of MSVC_DLL, which resolves as \"$path\", is invalid.
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     MSVC_DLL="$new_path"
@@ -52670,6 +53620,9 @@ $as_echo "ok" >&6; }
   path="$MSVC_DLL"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -52717,6 +53670,14 @@ $as_echo "$as_me: The path of MSVC_DLL, which resolves as \"$path\", is invalid.
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     MSVC_DLL="$new_path"
@@ -52816,6 +53777,9 @@ $as_echo "$as_me: The file type of the located $DLL_NAME is $MSVC_DLL_FILETYPE" 
   path="$CYGWIN_VC_INSTALL_DIR"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -52863,6 +53827,14 @@ $as_echo "$as_me: The path of CYGWIN_VC_INSTALL_DIR, which resolves as \"$path\"
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     CYGWIN_VC_INSTALL_DIR="$new_path"
@@ -52987,6 +53959,9 @@ $as_echo "ok" >&6; }
   path="$MSVC_DLL"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -53034,6 +54009,14 @@ $as_echo "$as_me: The path of MSVC_DLL, which resolves as \"$path\", is invalid.
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     MSVC_DLL="$new_path"
@@ -53159,6 +54142,9 @@ $as_echo "ok" >&6; }
   path="$MSVC_DLL"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -53206,6 +54192,14 @@ $as_echo "$as_me: The path of MSVC_DLL, which resolves as \"$path\", is invalid.
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     MSVC_DLL="$new_path"
@@ -53340,6 +54334,9 @@ $as_echo "ok" >&6; }
   path="$MSVC_DLL"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -53387,6 +54384,14 @@ $as_echo "$as_me: The path of MSVC_DLL, which resolves as \"$path\", is invalid.
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     MSVC_DLL="$new_path"
@@ -53528,6 +54533,9 @@ $as_echo "ok" >&6; }
   path="$MSVC_DLL"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -53575,6 +54583,14 @@ $as_echo "$as_me: The path of MSVC_DLL, which resolves as \"$path\", is invalid.
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     MSVC_DLL="$new_path"
@@ -53713,6 +54729,9 @@ $as_echo "ok" >&6; }
   path="$MSVC_DLL"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -53760,6 +54779,14 @@ $as_echo "$as_me: The path of MSVC_DLL, which resolves as \"$path\", is invalid.
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     MSVC_DLL="$new_path"
@@ -53882,6 +54909,9 @@ $as_echo "$with_ucrt_dll_dir" >&6; }
   path="$UCRT_DLL_DIR"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -53929,6 +54959,14 @@ $as_echo "$as_me: The path of UCRT_DLL_DIR, which resolves as \"$path\", is inva
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     UCRT_DLL_DIR="$new_path"
@@ -54011,6 +55049,9 @@ $as_echo "$UCRT_DLL_DIR" >&6; }
   path="$CYGWIN_WINDOWSSDKDIR"
   new_path=`$CYGPATH -u "$path"`
 
+  # preserve original basename
+  original_basename=`$BASENAME "${new_path}"`
+
   # Cygwin tries to hide some aspects of the Windows file system, such that binaries are
   # named .exe but called without that suffix. Therefore, "foo" and "foo.exe" are considered
   # the same file, most of the time (as in "test -f"). But not when running cygpath -s, then
@@ -54058,6 +55099,14 @@ $as_echo "$as_me: The path of CYGWIN_WINDOWSSDKDIR, which resolves as \"$path\",
     fi
   fi
 
+
+  # get basename after fixup
+  fixed_basename=`$BASENAME "${new_path}"`
+
+  # if basename changed replace it with original value
+  if test "x$original_basename" != "x$fixed_basename"; then
+    new_path=`echo "${new_path}" | sed "s/${fixed_basename}$/${original_basename}/g"`
+  fi
 
   if test "x$path" != "x$new_path"; then
     CYGWIN_WINDOWSSDKDIR="$new_path"
@@ -54900,7 +55949,7 @@ $as_echo_n "checking if C-compiler supports ccache precompiled headers... " >&6;
 /* end confdefs.h.  */
 
 int
-main ()
+main (void)
 {
 
   ;

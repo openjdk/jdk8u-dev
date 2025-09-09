@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2009, 2017, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -21,8 +21,9 @@
  * questions.
  */
 
-/*
+/**
  * @test
+ * @key headful
  * @bug 6325652
  * @summary Tests keyboard shortcuts
  * @author Sergey Malenkov
@@ -63,6 +64,7 @@ public class Test6325652 {
 
     public static void stepFirst() throws AWTException {
         robot = new Robot(); // initialize shared static field first time
+        robot.setAutoDelay(50);
         click(KeyEvent.VK_CONTROL, KeyEvent.VK_F9); // iconify internal frame
     }
 

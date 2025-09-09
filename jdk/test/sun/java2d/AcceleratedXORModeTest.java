@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -22,12 +22,13 @@
  */
 
 /*
-* @test
-* @bug     8024343
-* @summary Test verifies that accelerated pipelines
-*          correctly draws primitives in XOR mode.
-* @run main/othervm -Dsun.java2d.xrender=True AcceleratedXORModeTest
-*/
+ * @test
+ * @key headful
+ * @bug     8024343 8042098
+ * @summary Test verifies that accelerated pipelines
+ *          correctly draws primitives in XOR mode.
+ * @run main/othervm -Dsun.java2d.xrender=True AcceleratedXORModeTest
+ */
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -128,6 +129,7 @@ public class AcceleratedXORModeTest {
 
     void test() {
         createVImg();
+        BufferedImage bi = null;
         do {
             int valCode = vImg.validate(getDefaultGC());
             if (valCode == VolatileImage.IMAGE_INCOMPATIBLE) {
@@ -135,9 +137,11 @@ public class AcceleratedXORModeTest {
             }
             Graphics2D g = vImg.createGraphics();
             draw(g);
-            BufferedImage bi = vImg.getSnapshot();
+            bi = vImg.getSnapshot();
+        } while (vImg.contentsLost());
+        if (bi != null) {
             test(bi);
             write(bi);
-        } while (vImg.contentsLost());
+        }
     }
 }

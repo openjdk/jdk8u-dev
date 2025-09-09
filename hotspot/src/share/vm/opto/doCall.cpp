@@ -702,6 +702,7 @@ void Parse::catch_call_exceptions(ciExceptionHandlerStream& handlers) {
   GrowableArray<const Type*>* extypes = new (C->node_arena()) GrowableArray<const Type*>(C->node_arena(), 8, 0, NULL);
   GrowableArray<int>* saw_unloaded = new (C->node_arena()) GrowableArray<int>(C->node_arena(), 8, 0, 0);
 
+  bool default_handler = false;
   for (; !handlers.is_done(); handlers.next()) {
     ciExceptionHandler* h        = handlers.handler();
     int                 h_bci    = h->handler_bci();
@@ -724,6 +725,14 @@ void Parse::catch_call_exceptions(ciExceptionHandlerStream& handlers) {
     // Note:  It's OK if the BCIs repeat themselves.
     bcis->append(h_bci);
     extypes->append(h_extype);
+    if (h_bci == -1) {
+      default_handler = true;
+    }
+  }
+
+  if (!default_handler) {
+    bcis->append(-1);
+    extypes->append(TypeOopPtr::make_from_klass(env()->Throwable_klass())->is_instptr());
   }
 
   int len = bcis->length();
@@ -883,6 +892,8 @@ void Parse::catch_inline_exceptions(SafePointNode* ex_map) {
         tty->print_cr("  Catching every inline exception bci:%d -> handler_bci:%d", bci(), handler_bci);
       }
 #endif
+      // If this is a backwards branch in the bytecodes, add safepoint
+      maybe_add_safepoint(handler_bci);
       merge_exception(handler_bci); // jump to handler
       return;                   // No more handling to be done here!
     }
@@ -916,6 +927,8 @@ void Parse::catch_inline_exceptions(SafePointNode* ex_map) {
         tty->cr();
       }
 #endif
+      // If this is a backwards branch in the bytecodes, add safepoint
+      maybe_add_safepoint(handler_bci);
       merge_exception(handler_bci);
     }
     set_control(not_subtype_ctrl);

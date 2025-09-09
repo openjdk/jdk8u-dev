@@ -751,6 +751,11 @@ void os::set_native_thread_name(const char *name) {
   // is already attached to a debugger; debugger must observe
   // the exception below to show the correct name.
 
+  // If there is no debugger attached skip raising the exception
+  if (!IsDebuggerPresent()) {
+    return;
+  }
+
   const DWORD MS_VC_EXCEPTION = 0x406D1388;
   struct {
     DWORD dwType;     // must be 0x1000
@@ -1828,7 +1833,10 @@ void os::win32::print_windows_version(outputStream* st) {
       // - 2016 GA 10/2016 build: 14393
       // - 2019 GA 11/2018 build: 17763
       // - 2022 GA 08/2021 build: 20348
-      if (build_number > 20347) {
+      // - 2025 Preview build   : 26040
+      if (build_number > 26039) {
+        st->print("Server 2025");
+      } else if (build_number > 20347) {
         st->print("Server 2022");
       } else if (build_number > 17762) {
         st->print("Server 2019");
@@ -2864,17 +2872,6 @@ address os::win32::fast_jni_accessor_wrapper(BasicType type) {
   return (address)-1;
 }
 #endif
-
-void os::win32::call_test_func_with_wrapper(void (*funcPtr)(void)) {
-  // Install a win32 structured exception handler around the test
-  // function call so the VM can generate an error dump if needed.
-  __try {
-    (*funcPtr)();
-  } __except(topLevelExceptionFilter(
-             (_EXCEPTION_POINTERS*)_exception_info())) {
-    // Nothing to do.
-  }
-}
 
 // Virtual Memory
 
@@ -4896,7 +4893,7 @@ bool os::ThreadCrashProtection::call(os::CrashProtectionCallback& cb) {
 
   Thread::muxAcquire(&_crash_mux, "CrashProtection");
 
-  _protected_thread = ThreadLocalStorage::thread();
+  _protected_thread = Thread::current_or_null();
   assert(_protected_thread != NULL, "Cannot crash protect a NULL thread");
 
   bool success = true;
