@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2013, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2021, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -35,13 +35,11 @@
 
 package sun.java2d.cmm.lcms;
 
-import java.awt.color.ICC_Profile;
 import java.awt.color.ProfileDataException;
 import java.awt.color.CMMException;
 import java.awt.color.ColorSpace;
+import java.awt.color.ICC_Profile;
 import java.awt.image.BufferedImage;
-import java.awt.image.Raster;
-import java.awt.image.WritableRaster;
 import java.awt.image.ColorModel;
 import java.awt.image.DirectColorModel;
 import java.awt.image.ComponentColorModel;
@@ -52,7 +50,12 @@ import java.awt.image.ComponentSampleModel;
 import sun.java2d.cmm.*;
 import sun.java2d.cmm.lcms.*;
 import static sun.java2d.cmm.lcms.LCMSImageLayout.ImageLayoutException;
+import java.awt.image.Raster;
+import java.awt.image.WritableRaster;
 
+import sun.java2d.cmm.ColorTransform;
+
+import static sun.java2d.cmm.lcms.LCMSImageLayout.ImageLayoutException;
 
 public class LCMSTransform implements ColorTransform {
     long ID;
@@ -70,13 +73,6 @@ public class LCMSTransform implements ColorTransform {
     private int numOutComponents = -1;
 
     private Object disposerReferent = new Object();
-
-    /* the class initializer */
-    static {
-        if (ProfileDeferralMgr.deferring) {
-            ProfileDeferralMgr.activateProfiles();
-        }
-    }
 
     public LCMSTransform(ICC_Profile profile, int renderType,
                          int transformType)
