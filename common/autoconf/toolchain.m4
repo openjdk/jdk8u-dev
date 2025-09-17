@@ -852,7 +852,7 @@ AC_DEFUN_ONCE([TOOLCHAIN_MISC_CHECKS],
       COMPILER_VERSION_NUMBER_MAJOR=`$ECHO "$COMPILER_VERSION_NUMBER" | $SED  "s/@<:@^0-9@:>@.*//"`
       AC_MSG_RESULT([found $COMPILER_VERSION_NUMBER_MAJOR.x])
       if test $COMPILER_VERSION_NUMBER_MAJOR -lt 5; then
-        AC_MSG_ERROR([GCC < 5 is known to lead to incorrect compilation on aarch64. See JDK-8360869.])
+        AC_MSG_ERROR([GCC < 5 may incorrectly compile HotSpot on aarch64. See JDK-8360869.])
       fi
     fi
   fi
