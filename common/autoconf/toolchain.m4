@@ -850,10 +850,10 @@ AC_DEFUN_ONCE([TOOLCHAIN_MISC_CHECKS],
     if test "x$OPENJDK_TARGET_CPU_ARCH" = "xaarch64" ; then
       AC_MSG_CHECKING([for broken aarch64 gcc 4.x])
       COMPILER_VERSION_NUMBER_MAJOR=`$ECHO "$COMPILER_VERSION_NUMBER" | $SED  "s/@<:@^0-9@:>@.*//"`
+      AC_MSG_RESULT([found $COMPILER_VERSION_NUMBER_MAJOR.x])
       if test $COMPILER_VERSION_NUMBER_MAJOR -lt 5; then
-        AC_MSG_ERROR([GCC < 5 is known to be compiling incorrectly on aarch64. See JDK-8360869. Gcc $COMPILER_VERSION_NUMBER_MAJOR.x detected])
+        AC_MSG_ERROR([GCC < 5 is known to lead to incorrect compilation on aarch64. See JDK-8360869.])
       fi
-      AC_MSG_RESULT([ok ($COMPILER_VERSION_NUMBER_MAJOR.x)])
     fi
   fi
 
