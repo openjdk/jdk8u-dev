@@ -218,7 +218,7 @@ typedef struct {
     uint64_t    lastUpdate; // Last time query was updated (millis)
 } UpdateQueryS, *UpdateQueryP;
 
-// Min time between query updates (ticks)
+// Min time between query updates (millis)
 static const int MIN_UPDATE_INTERVAL = 500;
 
 /*
