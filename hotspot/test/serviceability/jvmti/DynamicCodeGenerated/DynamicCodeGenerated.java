@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022, Tencent. All rights reserved.
+ * Copyright (c) 2021, 2025, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -21,31 +21,31 @@
  * questions.
  */
 
-/*
- * @test
- * @bug 8284910
- * @summary Check that PasswordCallback.clearPassword() clears the password
- */
+public class DynamicCodeGenerated {
+    static {
+        System.loadLibrary("DynamicCodeGenerated");
+    }
+    public static native void changeEventNotificationMode();
 
-import javax.security.auth.callback.PasswordCallback;
-import java.util.Arrays;
+    public static void main(String[] args) {
+        // Try to enable DynamicCodeGenerated event while it is posted
+        // using JvmtiDynamicCodeEventCollector from VtableStubs::find_stub
+        Thread t = new Thread(() -> {
+            changeEventNotificationMode();
+        });
+        t.setDaemon(true);
+        t.start();
 
-public final class PasswordCleanup {
-    public static void main(String[] args) throws Exception {
-        // Create an object
-        PasswordCallback passwordCallback =
-                new PasswordCallback("Password: ", false);
-        passwordCallback.setPassword("ThisIsAPassword".toCharArray());
-        char[] originPassword = passwordCallback.getPassword();
+        for (int i = 0; i < 2000; i++) {
+            new Thread(() -> {
+                String result = "string" + System.currentTimeMillis();
 
-        // Use password clear method.
-        passwordCallback.clearPassword();
-
-        // Check that the password is cleared.
-        char[] clearedPassword = passwordCallback.getPassword();
-        if (Arrays.equals(originPassword, clearedPassword)) {
-            throw new RuntimeException(
-                "PasswordCallback.clearPassword() does not clear passwords");
+                // Keep a reference to result
+                if (result.hashCode() == System.currentTimeMillis()) {
+                    // Shouldn't happen
+                    return;
+                }
+            }).start();
         }
     }
 }
