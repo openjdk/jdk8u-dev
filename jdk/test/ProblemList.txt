@@ -277,8 +277,6 @@ sun/rmi/transport/tcp/DisableRMIOverHttp/DisableRMIOverHTTPTest.java    windows-
 
 # jdk_security
 
-# 8026976
-sun/security/pkcs11/ec/TestKeyFactory.java                      generic-all
 # 8180837
 sun/security/pkcs11/Secmod/AddTrustedCert.java                  generic-all
 sun/security/pkcs11/tls/TestKeyMaterial.java                    generic-all
@@ -389,6 +387,7 @@ sample/chatserver/ChatTest.java					8178912 generic-all
 # cacerts tests
 
 ############################################################################
+security/infra/java/security/cert/CertPathValidator/certification/CAInterop.java#actalisauthenticationrootca    8366176 generic-all
 security/infra/java/security/cert/CertPathValidator/certification/CAInterop.java#certignarootca         8331883 generic-all
 security/infra/java/security/cert/CertPathValidator/certification/CAInterop.java#teliasonerarootcav1    8333640 generic-all
 security/infra/java/security/cert/CertPathValidator/certification/LuxTrustCA.java                       8314509 generic-all
