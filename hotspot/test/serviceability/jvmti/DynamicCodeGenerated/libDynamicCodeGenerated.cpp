@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020, Tencent. All rights reserved.
+ * Copyright (c) 2021, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -21,19 +21,37 @@
  * questions.
  */
 
-import com.sun.management.OperatingSystemMXBean;
-import java.lang.management.ManagementFactory;
+#include <string.h>
+#include <jvmti.h>
 
-public class GetFreeSwapSpaceSize {
-    public static void main(String[] args) {
-        System.out.println("TestGetFreeSwapSpaceSize");
-        OperatingSystemMXBean osBean = (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
-        for (int i = 0; i < 100; i++) {
-            long size = osBean.getFreeSwapSpaceSize();
-            if (size < 0) {
-                System.out.println("Error: getFreeSwapSpaceSize returns " + size);
-                System.exit(-1);
-            }
-        }
-    }
+static jvmtiEnv* jvmti = NULL;
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+JNIEXPORT
+void JNICALL Java_DynamicCodeGenerated_changeEventNotificationMode(JNIEnv* jni, jclass cls) {
+  while (true) {
+    jvmti->SetEventNotificationMode(JVMTI_ENABLE, JVMTI_EVENT_DYNAMIC_CODE_GENERATED, NULL);
+    jvmti->SetEventNotificationMode(JVMTI_DISABLE, JVMTI_EVENT_DYNAMIC_CODE_GENERATED, NULL);
+  }
+}
+
+#ifdef __cplusplus
+}
+#endif
+
+void JNICALL DynamicCodeGenerated(jvmtiEnv* jvmti, const char* name, const void* address, jint length) {
+
+}
+
+jint Agent_OnLoad(JavaVM* vm, char* options, void* reserved) {
+    vm->GetEnv((void**)&jvmti, JVMTI_VERSION_1_0);
+    jvmtiEventCallbacks callbacks;
+    memset(&callbacks, 0, sizeof(callbacks));
+    callbacks.DynamicCodeGenerated = DynamicCodeGenerated;
+    jvmti->SetEventCallbacks(&callbacks, sizeof(callbacks));
+
+    return 0;
 }
