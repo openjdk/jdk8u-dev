@@ -25,7 +25,7 @@
  * @bug 4313887 6873621 6979526 7006126 7020517
  * @summary Unit test for java.nio.file.FileStore
  * @key intermittent
- * @library .. /lib/testlibrary
+ * @library .. /lib/testlibrary /test/lib
  * @build jdk.testlibrary.FileUtils
  * @run main Basic
  */
@@ -36,6 +36,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import jdk.testlibrary.FileUtils;
+import jdk.test.lib.Platform;
 
 public class Basic {
 
