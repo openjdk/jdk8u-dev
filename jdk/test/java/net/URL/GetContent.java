@@ -24,13 +24,13 @@
 /**
  * @test
  * @bug 4145315
- * @library /test/lib
+ * @library /lib/testlibrary
  * @summary Test a read from nonexistant URL
  */
 
 import java.net.*;
 import java.io.*;
-import jdk.test.lib.net.URIBuilder;
+import jdk.testlibrary.net.URIBuilder;
 
 public class GetContent implements Runnable {
 

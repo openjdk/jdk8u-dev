@@ -25,13 +25,13 @@
  * @test
  * @bug 4392195
  * @summary Infinite loop in sun.net.www.http.KeepAliveStream [due to skip()]
- * @library /test/lib
+ * @library /lib/testlibrary
  * @run main/othervm/timeout=30 KeepAliveStreamClose
  */
 
 import java.net.*;
 import java.io.*;
-import jdk.test.lib.net.URIBuilder;
+import jdk.testlibrary.net.URIBuilder;
 
 public class KeepAliveStreamClose {
     static class XServer extends Thread {

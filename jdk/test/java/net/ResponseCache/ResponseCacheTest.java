@@ -24,7 +24,7 @@
 /* @test
  * @summary Unit test for java.net.ResponseCache
  * @bug 4837267
- * @library /test/lib
+ * @library /lib/testlibrary
  * @author Yingxian Wang
  */
 
@@ -33,7 +33,7 @@ import java.util.*;
 import java.io.*;
 import sun.net.www.ParseUtil;
 import javax.net.ssl.*;
-import jdk.test.lib.net.URIBuilder;
+import jdk.testlibrary.net.URIBuilder;
 
 /**
  * Request should get serviced by the cache handler. Response get

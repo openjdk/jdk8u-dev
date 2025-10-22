@@ -24,7 +24,7 @@
 /**
  * @test
  * @bug 7128648
- * @library /test/lib
+ * @library /lib/testlibrary
  * @modules jdk.httpserver
  * @summary HttpURLConnection.getHeaderFields should return an unmodifiable Map
  */
@@ -43,7 +43,7 @@ import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 import com.sun.net.httpserver.Headers;
 import static java.net.Proxy.NO_PROXY;
-import jdk.test.lib.net.URIBuilder;
+import jdk.testlibrary.net.URIBuilder;
 
 public class UnmodifiableMaps {
 

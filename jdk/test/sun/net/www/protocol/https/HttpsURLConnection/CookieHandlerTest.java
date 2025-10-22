@@ -24,7 +24,7 @@
 /* @test
  * @bug 4696506 4942650
  * @summary Unit test for java.net.CookieHandler
- * @library /test/lib
+ * @library /lib/testlibrary
  * @run main/othervm CookieHandlerTest
  *
  *     SunJSSE does not support dynamic system properties, no way to re-use
@@ -36,7 +36,7 @@ import java.net.*;
 import java.util.*;
 import java.io.*;
 import javax.net.ssl.*;
-import jdk.test.lib.net.URIBuilder;
+import jdk.testlibrary.net.URIBuilder;
 
 public class CookieHandlerTest {
     static Map<String,String> cookies;
