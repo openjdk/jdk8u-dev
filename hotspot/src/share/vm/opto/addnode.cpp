@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2025, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -833,6 +833,95 @@ const Type *XorLNode::add_ring( const Type *t0, const Type *t1 ) const {
   return TypeLong::make( r0->get_con() ^ r1->get_con() );
 }
 
+
+Node* MaxNode::build_min_max(Node* a, Node* b, bool is_max, bool is_unsigned, const Type* t, PhaseGVN& gvn) {
+  bool is_int = gvn.type(a)->isa_int();
+  assert(is_int || gvn.type(a)->isa_long(), "int or long inputs");
+  assert(is_int == (gvn.type(b)->isa_int() != NULL), "inconsistent inputs");
+  if (!is_unsigned) {
+    if (is_max) {
+      if (is_int) {
+        Node* res =  gvn.transform(new (gvn.C) MaxINode(a, b));
+        assert(gvn.type(res)->is_int()->_lo >= t->is_int()->_lo && gvn.type(res)->is_int()->_hi <= t->is_int()->_hi, "type doesn't match");
+        return res;
+      } else {
+        Node* cmp = gvn.transform(new (gvn.C) CmpLNode(a, b));
+        Node* bol = gvn.transform(new (gvn.C) BoolNode(cmp, BoolTest::lt));
+        return gvn.transform(new (gvn.C) CMoveLNode(bol, a, b, t->is_long()));
+      }
+    } else {
+      if (is_int) {
+        Node* res =  gvn.transform(new (gvn.C) MinINode(a, b));
+        assert(gvn.type(res)->is_int()->_lo >= t->is_int()->_lo && gvn.type(res)->is_int()->_hi <= t->is_int()->_hi, "type doesn't match");
+        return res;
+      } else {
+        Node* cmp = gvn.transform(new (gvn.C) CmpLNode(b, a));
+        Node* bol = gvn.transform(new (gvn.C) BoolNode(cmp, BoolTest::lt));
+        return gvn.transform(new (gvn.C) CMoveLNode(bol, a, b, t->is_long()));
+      }
+    }
+  } else {
+    if (is_max) {
+      if (is_int) {
+        Node* cmp = gvn.transform(new (gvn.C) CmpUNode(a, b));
+        Node* bol = gvn.transform(new (gvn.C) BoolNode(cmp, BoolTest::lt));
+        return gvn.transform(new (gvn.C) CMoveINode(bol, a, b, t->is_int()));
+      } else {
+        Node* cmp = gvn.transform(new (gvn.C) CmpULNode(a, b));
+        Node* bol = gvn.transform(new (gvn.C) BoolNode(cmp, BoolTest::lt));
+        return gvn.transform(new (gvn.C) CMoveLNode(bol, a, b, t->is_long()));
+      }
+    } else {
+      if (is_int) {
+        Node* cmp = gvn.transform(new (gvn.C) CmpUNode(b, a));
+        Node* bol = gvn.transform(new (gvn.C) BoolNode(cmp, BoolTest::lt));
+        return gvn.transform(new (gvn.C) CMoveINode(bol, a, b, t->is_int()));
+      } else {
+        Node* cmp = gvn.transform(new (gvn.C) CmpULNode(b, a));
+        Node* bol = gvn.transform(new (gvn.C) BoolNode(cmp, BoolTest::lt));
+        return gvn.transform(new (gvn.C) CMoveLNode(bol, a, b, t->is_long()));
+      }
+    }
+  }
+}
+
+Node* MaxNode::build_min_max_diff_with_zero(Node* a, Node* b, bool is_max, const Type* t, PhaseGVN& gvn) {
+  bool is_int = gvn.type(a)->isa_int();
+  assert(is_int || gvn.type(a)->isa_long(), "int or long inputs");
+  assert(is_int == (gvn.type(b)->isa_int() != NULL), "inconsistent inputs");
+  Node* zero = NULL;
+  if (is_int) {
+    zero = gvn.intcon(0);
+  } else {
+    zero = gvn.longcon(0);
+  }
+  if (is_max) {
+    if (is_int) {
+      Node* cmp = gvn.transform(new (gvn.C) CmpINode(a, b));
+      Node* sub = gvn.transform(new (gvn.C) SubINode(a, b));
+      Node* bol = gvn.transform(new (gvn.C) BoolNode(cmp, BoolTest::lt));
+      return gvn.transform(new (gvn.C) CMoveINode(bol, sub, zero, t->is_int()));
+    } else {
+      Node* cmp = gvn.transform(new (gvn.C) CmpLNode(a, b));
+      Node* sub = gvn.transform(new (gvn.C) SubLNode(a, b));
+      Node* bol = gvn.transform(new (gvn.C) BoolNode(cmp, BoolTest::lt));
+      return gvn.transform(new (gvn.C) CMoveLNode(bol, sub, zero, t->is_long()));
+    }
+  } else {
+    if (is_int) {
+      Node* cmp = gvn.transform(new (gvn.C) CmpINode(b, a));
+      Node* sub = gvn.transform(new (gvn.C) SubINode(a, b));
+      Node* bol = gvn.transform(new (gvn.C) BoolNode(cmp, BoolTest::lt));
+      return gvn.transform(new (gvn.C) CMoveINode(bol, sub, zero, t->is_int()));
+    } else {
+      Node* cmp = gvn.transform(new (gvn.C) CmpLNode(b, a));
+      Node* sub = gvn.transform(new (gvn.C) SubLNode(a, b));
+      Node* bol = gvn.transform(new (gvn.C) BoolNode(cmp, BoolTest::lt));
+      return gvn.transform(new (gvn.C) CMoveLNode(bol, sub, zero, t->is_long()));
+    }
+  }
+}
+
 //=============================================================================
 //------------------------------add_ring---------------------------------------
 // Supplied function returns the sum of the inputs.
@@ -848,6 +937,14 @@ const Type *MaxINode::add_ring( const Type *t0, const Type *t1 ) const {
 static bool can_overflow(const TypeInt* t, jint c) {
   jint t_lo = t->_lo;
   jint t_hi = t->_hi;
+  return ((c < 0 && (java_add(t_lo, c) > t_lo)) ||
+          (c > 0 && (java_add(t_hi, c) < t_hi)));
+}
+
+// Check if addition of a long with type 't' and a constant 'c' can overflow.
+static bool can_overflow(const TypeLong* t, jlong c) {
+  jlong t_lo = t->_lo;
+  jlong t_hi = t->_hi;
   return ((c < 0 && (java_add(t_lo, c) > t_lo)) ||
           (c > 0 && (java_add(t_hi, c) < t_hi)));
 }
@@ -931,6 +1028,169 @@ Node *MinINode::Ideal(PhaseGVN *phase, bool can_reshape) {
         !can_overflow(tx, y_off)) {
       return new (phase->C) AddINode(x,phase->intcon(MIN2(x_off,y_off)));
     }
+  }
+  return NULL;
+}
+
+// Collapse the "addition with overflow-protection" pattern, and the symmetrical
+// "subtraction with underflow-protection" pattern. These are created during the
+// unrolling, when we have to adjust the limit by subtracting the stride, but want
+// to protect against underflow: MaxL(SubL(limit, stride), min_jint).
+// If we have more than one of those in a sequence:
+//
+//   x  con2
+//   |  |
+//   AddL  clamp2
+//     |    |
+//    Max/MinL con1
+//          |  |
+//          AddL  clamp1
+//            |    |
+//           Max/MinL (n)
+//
+// We want to collapse it to:
+//
+//   x  con1  con2
+//   |    |    |
+//   |   AddLNode (new_con)
+//   |    |
+//  AddLNode  clamp1
+//        |    |
+//       Max/MinL (n)
+//
+// Note: we assume that SubL was already replaced by an AddL, and that the stride
+// has its sign flipped: SubL(limit, stride) -> AddL(limit, -stride).
+//
+// Proof MaxL collapsed version equivalent to original (MinL version similar):
+// is_sub_con ensures that con1, con2 ∈ [min_int, 0[
+//
+// Original:
+// - AddL2 underflow => x + con2 ∈ ]max_long - min_int, max_long], ALWAYS BAILOUT as x + con1 + con2 surely fails can_overflow (*)
+// - AddL2 no underflow => x + con2 ∈ [min_long, max_long]
+//   - MaxL2 clamp => min_int
+//     - AddL1 underflow: NOT POSSIBLE: cannot underflow since min_int + con1 ∈ [2 * min_int, min_int] always > min_long
+//     - AddL1 no underflow => min_int + con1 ∈ [2 * min_int, min_int]
+//       - MaxL1 clamp => min_int (RESULT 1)
+//       - MaxL1 no clamp: NOT POSSIBLE: min_int + con1 ∈ [2 * min_int, min_int] always <= min_int, so clamp always taken
+//   - MaxL2 no clamp => x + con2 ∈ [min_int, max_long]
+//     - AddL1 underflow: NOT POSSIBLE: cannot underflow since x + con2 + con1 ∈ [2 * min_int, max_long] always > min_long
+//     - AddL1 no underflow => x + con2 + con1 ∈ [2 * min_int, max_long]
+//       - MaxL1 clamp => min_int (RESULT 2)
+//       - MaxL1 no clamp => x + con2 + con1 ∈ ]min_int, max_long] (RESULT 3)
+//
+// Collapsed:
+// - AddL2 (cannot underflow) => con2 + con1 ∈ [2 * min_int, 0]
+//   - AddL1 underflow: NOT POSSIBLE: would have bailed out at can_overflow (*)
+//   - AddL1 no underflow => x + con2 + con1 ∈ [min_long, max_long]
+//     - MaxL clamp => min_int (RESULT 1 and RESULT 2)
+//     - MaxL no clamp => x + con2 + con1 ∈ ]min_int, max_long] (RESULT 3)
+//
+static bool is_clamp(PhaseGVN* phase, Node* n, Node* c) {
+  // Check that the two clamps have the correct values.
+  jlong clamp = (n->Opcode() == Op_MaxL) ? min_jint : max_jint;
+  const TypeLong* t = phase->type(c)->isa_long();
+  return t != NULL && t->is_con() &&
+          t->get_con() == clamp;
+}
+
+static bool is_sub_con(PhaseGVN* phase, Node* n, Node* c) {
+  // Check that the constants are negative if MaxL, and positive if MinL.
+  const TypeLong* t = phase->type(c)->isa_long();
+  return t != NULL && t->is_con() &&
+          t->get_con() < max_jint && t->get_con() > min_jint &&
+          (t->get_con() < 0) == (n->Opcode() == Op_MaxL);
+}
+
+Node* fold_subI_no_underflow_pattern(Node* n, PhaseGVN* phase) {
+  assert(n->Opcode() == Op_MaxL || n->Opcode() == Op_MinL, "sanity");
+  // Verify the graph level by level:
+  Node* add1   = n->in(1);
+  Node* clamp1 = n->in(2);
+  if (add1->Opcode() == Op_AddL && is_clamp(phase, n, clamp1)) {
+    Node* max2 = add1->in(1);
+    Node* con1 = add1->in(2);
+    if (max2->Opcode() == n->Opcode() && is_sub_con(phase, n, con1)) {
+      Node* add2   = max2->in(1);
+      Node* clamp2 = max2->in(2);
+      if (add2->Opcode() == Op_AddL && is_clamp(phase, n, clamp2)) {
+        Node* x    = add2->in(1);
+        Node* con2 = add2->in(2);
+        if (is_sub_con(phase, n, con2)) {
+          // Collapsed graph not equivalent if potential over/underflow -> bailing out (*)
+          if (can_overflow(phase->type(x)->is_long(), con1->get_long() + con2->get_long())) {
+            return NULL;
+          }
+          Node* new_con = phase->transform(new (phase->C) AddLNode(con1, con2));
+          Node* new_sub = phase->transform(new (phase->C) AddLNode(x, new_con));
+          n->set_req_X(1, new_sub, phase);
+          return n;
+        }
+      }
+    }
+  }
+  return NULL;
+}
+
+const Type* MaxLNode::add_ring(const Type* t0, const Type* t1) const {
+  const TypeLong* r0 = t0->is_long();
+  const TypeLong* r1 = t1->is_long();
+
+  return TypeLong::make(MAX2(r0->_lo, r1->_lo), MAX2(r0->_hi, r1->_hi), MAX2(r0->_widen, r1->_widen));
+}
+
+Node* MaxLNode::Identity(PhaseTransform* phase) {
+  const TypeLong* t1 = phase->type(in(1))->is_long();
+  const TypeLong* t2 = phase->type(in(2))->is_long();
+
+  // Can we determine maximum statically?
+  if (t1->_lo >= t2->_hi) {
+    return in(1);
+  } else if (t2->_lo >= t1->_hi) {
+    return in(2);
+  }
+
+  return MaxNode::Identity(phase);
+}
+
+Node* MaxLNode::Ideal(PhaseGVN* phase, bool can_reshape) {
+  Node* n = AddNode::Ideal(phase, can_reshape);
+  if (n != NULL) {
+    return n;
+  }
+  if (can_reshape) {
+    return fold_subI_no_underflow_pattern(this, phase);
+  }
+  return NULL;
+}
+
+const Type* MinLNode::add_ring(const Type* t0, const Type* t1) const {
+  const TypeLong* r0 = t0->is_long();
+  const TypeLong* r1 = t1->is_long();
+
+  return TypeLong::make(MIN2(r0->_lo, r1->_lo), MIN2(r0->_hi, r1->_hi), MIN2(r0->_widen, r1->_widen));
+}
+
+Node* MinLNode::Identity(PhaseTransform* phase) {
+  const TypeLong* t1 = phase->type(in(1))->is_long();
+  const TypeLong* t2 = phase->type(in(2))->is_long();
+
+  // Can we determine minimum statically?
+  if (t1->_lo >= t2->_hi) {
+    return in(2);
+  } else if (t2->_lo >= t1->_hi) {
+    return in(1);
+  }
+
+  return MaxNode::Identity(phase);
+}
+
+Node* MinLNode::Ideal(PhaseGVN* phase, bool can_reshape) {
+  Node* n = AddNode::Ideal(phase, can_reshape);
+  if (n != NULL) {
+    return n;
+  }
+  if (can_reshape) {
+    return fold_subI_no_underflow_pattern(this, phase);
   }
   return NULL;
 }
