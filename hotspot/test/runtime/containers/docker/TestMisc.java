@@ -103,8 +103,6 @@ public class TestMisc {
             "Memory Usage",
             "Maximum Memory Usage",
             "memory_max_usage_in_bytes",
-            "maximum number of tasks",
-            "current number of tasks",
             "rss_usage_in_bytes",
             "cache_usage_in_bytes"
         };
