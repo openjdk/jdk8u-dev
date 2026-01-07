@@ -41,79 +41,77 @@ export CONFIG_SHELL=$BASH
 export _as_can_reexec=no
 
 conf_script_dir="$TOPDIR/common/autoconf"
+generated_script="$conf_script_dir/generated-configure.sh"
 
 if [ "$CUSTOM_CONFIG_DIR" = "" ]; then
   conf_custom_script_dir="$TOPDIR/jdk/make/closed/autoconf"
 else
   conf_custom_script_dir="$CUSTOM_CONFIG_DIR"
 fi
+custom_generated_script="$conf_custom_script_dir/generated-configure.sh"
 
 ###
 ### Test that the generated configure is up-to-date
 ###
 
 run_autogen_or_fail() {
-  if test "x`which autoconf 2> /dev/null`" = x; then
-    echo "Cannot locate autoconf, unable to correct situation."
-    echo "Please install autoconf and run 'bash autogen.sh' to update the generated files."
+  echo "Running autogen.sh to correct the situation"
+  if ! bash $conf_script_dir/autogen.sh; then
+    echo "Error: unable to regenerate the configure script by running autogen.sh."
     echo "Error: Cannot continue" 1>&2
     exit 1
-  else
-    echo "Running autogen.sh to correct the situation"
-    bash $conf_script_dir/autogen.sh
   fi
 }
 
 check_autoconf_timestamps() {
   for file in $conf_script_dir/configure.ac $conf_script_dir/*.m4 ; do
-    if test $file -nt $conf_script_dir/generated-configure.sh; then
+    if test $file -nt $generated_script; then
       echo "Warning: The configure source files is newer than the generated files."
-      run_autogen_or_fail
+      return 0
     fi
   done
 
-  if test -e $conf_custom_script_dir/generated-configure.sh; then
+  if test -e $custom_generated_script; then
     # If custom source configure is available, make sure it is up-to-date as well.
     for file in $conf_script_dir/configure.ac $conf_script_dir/*.m4 $conf_custom_script_dir/*.m4; do
-      if test $file -nt $conf_custom_script_dir/generated-configure.sh; then
+      if test $file -nt $custom_generated_script; then
         echo "Warning: The configure source files is newer than the custom generated files."
-        run_autogen_or_fail
+        return 0
       fi
     done
   fi
+  return 1
 }
 
-check_hg_updates() {
-  if test "x`which hg 2> /dev/null`" != x; then
-    conf_updated_autoconf_files=`cd $conf_script_dir && hg status -mard 2> /dev/null | grep autoconf`
-    if test "x$conf_updated_autoconf_files" != x; then
-      echo "Configure source code has been updated, checking time stamps"
-      check_autoconf_timestamps
-    fi
-
-    if test -e $conf_custom_script_dir; then
-      # If custom source configure is available, make sure it is up-to-date as well.
-      conf_custom_updated_autoconf_files=`cd $conf_custom_script_dir && hg status -mard 2> /dev/null | grep autoconf`
-      if test "x$conf_custom_updated_autoconf_files" != x; then
-        echo "Configure custom source code has been updated, checking time stamps"
-        check_autoconf_timestamps
-      fi
+run_autoconf=false
+if test "x$1" = "xautogen"; then
+  # User called us as "configure autogen", so force regeneration
+  echo "User requested configure script regeneration"
+  run_autoconf=true
+  shift
+elif test ! -s $generated_script; then
+  # Generated script is missing, so we need to create it
+  echo "Runnable configure script is not present"
+  run_autoconf=true
+else
+  # Check for local changes
+  if check_autoconf_timestamps; then
+    echo "Runnable configure script is not up to date"
+    run_autoconf=true
+  elif test -e $custom_generated_script; then
+    # Test if open configure is newer than custom configure, if so, custom needs to
+    # be regenerated. This test is required to ensure consistency with custom source.
+    conf_open_configure_timestamp=`grep DATE_WHEN_GENERATED= $generated_script  | cut -d"=" -f 2`
+    conf_custom_configure_timestamp=`grep DATE_WHEN_GENERATED= $custom_generated_script  | cut -d"=" -f 2`
+    if test $conf_open_configure_timestamp -gt $conf_custom_configure_timestamp; then
+      echo "Warning: The generated configure file contains changes not present in the custom generated file."
+      run_autoconf=true
     fi
   fi
-}
+fi
 
-# Check for local changes
-check_hg_updates
-
-if test -e $conf_custom_script_dir/generated-configure.sh; then
-  # Test if open configure is newer than custom configure, if so, custom needs to
-  # be regenerated. This test is required to ensure consistency with custom source.
-  conf_open_configure_timestamp=`grep DATE_WHEN_GENERATED= $conf_script_dir/generated-configure.sh  | cut -d"=" -f 2`
-  conf_custom_configure_timestamp=`grep DATE_WHEN_GENERATED= $conf_custom_script_dir/generated-configure.sh  | cut -d"=" -f 2`
-  if test $conf_open_configure_timestamp -gt $conf_custom_configure_timestamp; then
-    echo "Warning: The generated configure file contains changes not present in the custom generated file."
-    run_autogen_or_fail
-  fi
+if test "x$run_autoconf" = xtrue; then
+  run_autogen_or_fail
 fi
 
 # Autoconf calls the configure script recursively sometimes.
@@ -239,10 +237,10 @@ conf_processed_arguments=("--enable-option-checking=fatal" "${conf_processed_arg
 if test -e $conf_custom_script_dir/generated-configure.sh; then
   # Custom source configure available; run that instead
   echo "Running custom generated-configure.sh"
-  conf_script_to_run=$conf_custom_script_dir/generated-configure.sh
+  conf_script_to_run=$custom_generated_script
 else
   echo "Running generated-configure.sh"
-  conf_script_to_run=$conf_script_dir/generated-configure.sh
+  conf_script_to_run=$generated_script
 fi
 
 if test "x$conf_debug_configure" != x; then

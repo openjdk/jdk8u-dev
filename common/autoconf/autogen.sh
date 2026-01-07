@@ -61,16 +61,37 @@ fi
 
 custom_hook=$custom_script_dir/custom-hook.m4
 
-AUTOCONF="`which autoconf 2> /dev/null | grep -v '^no autoconf in'`"
-
-if test "x${AUTOCONF}" = x; then
-  echo "You need autoconf installed to be able to regenerate the configure script"
-  echo "Error: Cannot find autoconf" 1>&2
-  exit 1
+if test "x$AUTOCONF" != x; then
+  if test ! -x "$AUTOCONF"; then
+    echo
+    echo "Error: The specified AUTOCONF variable does not point to a valid autoconf executable:"
+    echo "AUTOCONF=$AUTOCONF"
+    echo "Error: Cannot run autoconf" 1>&2
+    exit 1
+  fi
+else
+  AUTOCONF="`which autoconf 2> /dev/null | grep -v '^no autoconf in'`"
+  if test "x${AUTOCONF}" = x; then
+    echo "Error: Autoconf is not found on the PATH ($PATH), and AUTOCONF is not set."
+    echo "You need autoconf installed to be able to regenerate the configure script."
+    echo "Please install autoconf and run 'bash common/autoconf/autogen.sh' to update the generated files."
+    echo "Error: Cannot find autoconf" 1>&2
+    exit 1
+  fi
 fi
 
 autoconf_version=`$AUTOCONF --version | head -1`
 echo "Using autoconf at ${AUTOCONF} [$autoconf_version]"
+
+recommended_autoconf_version="autoconf (GNU Autoconf) 2.69"
+if test "x$autoconf_version" != "x$recommended_autoconf_version"; then
+  echo
+  echo "Warning: if you are going to submit your changes via a pull request to OpenJDK repository,"
+  echo "using non-recommended autoconf version may produce a huge diff with non-essential changes"
+  echo "for generated script at $script_dir/generate-configure.sh."
+  echo "Please try to use [$recommended_autoconf_version]."
+  echo
+fi
 
 echo "Generating generated-configure.sh"
 generate_configure_script "$script_dir/generated-configure.sh" 'cat'
