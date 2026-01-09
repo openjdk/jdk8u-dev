@@ -124,7 +124,7 @@ AC_DEFUN_ONCE([FLAGS_SETUP_INIT_FLAGS],
     if test "x$TOOLCHAIN_TYPE" = xsolstudio; then
       if test "x$OPENJDK_TARGET_OS" = xsolaris; then
         # Solaris Studio does not have a concept of sysroot. Instead we must
-        # make sure the default include and lib dirs are appended to each 
+        # make sure the default include and lib dirs are appended to each
         # compile and link command line.
         SYSROOT_CFLAGS="-I$SYSROOT/usr/include"
         SYSROOT_LDFLAGS="-L$SYSROOT/usr/lib$OPENJDK_TARGET_CPU_ISADIR \
@@ -546,7 +546,7 @@ AC_DEFUN_ONCE([FLAGS_SETUP_COMPILER_FLAGS_FOR_JDK],
       CCXXFLAGS_JDK="$CCXXFLAGS_JDK -DcpuIntel -Di586 -D$OPENJDK_TARGET_CPU_LEGACY_LIB"
       CFLAGS_JDK="$CFLAGS_JDK -erroff=E_BAD_PRAGMA_PACK_VALUE"
     fi
-  
+
     CFLAGS_JDK="$CFLAGS_JDK -xc99=%none -xCC -errshort=tags -Xa -v -mt -W0,-noglobal"
     CXXFLAGS_JDK="$CXXFLAGS_JDK -errtags=yes +w -mt -features=no%except -DCC_NOEX -norunpath -xnolib"
   elif test "x$TOOLCHAIN_TYPE" = xxlc; then
@@ -627,14 +627,14 @@ AC_DEFUN_ONCE([FLAGS_SETUP_COMPILER_FLAGS_FOR_JDK],
   if test "x$OPENJDK_TARGET_CPU" = xppc64le; then
     CCXXFLAGS_JDK="$CCXXFLAGS_JDK -DABI_ELFv2"
   fi
-  
+
   # Setup target OS define. Use OS target name but in upper case.
   OPENJDK_TARGET_OS_UPPERCASE=`$ECHO $OPENJDK_TARGET_OS | $TR 'abcdefghijklmnopqrstuvwxyz' 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'`
   CCXXFLAGS_JDK="$CCXXFLAGS_JDK -D$OPENJDK_TARGET_OS_UPPERCASE"
 
   # Setup target CPU
   CCXXFLAGS_JDK="$CCXXFLAGS_JDK -DARCH='\"$OPENJDK_TARGET_CPU_LEGACY\"' -D$OPENJDK_TARGET_CPU_LEGACY"
-  
+
   # Setup debug/release defines
   if test "x$DEBUG_LEVEL" = xrelease; then
     CCXXFLAGS_JDK="$CCXXFLAGS_JDK -DNDEBUG"
@@ -669,7 +669,7 @@ AC_DEFUN_ONCE([FLAGS_SETUP_COMPILER_FLAGS_FOR_JDK],
     # The expected format is X.Y.Z
     MACOSX_VERSION_MIN=11.00.00
     AC_SUBST(MACOSX_VERSION_MIN)
-    
+
     # The macro takes the version with no dots, ex: 1070
     # Let the flags variables get resolved in make for easier override on make
     # command line.
@@ -803,7 +803,7 @@ AC_DEFUN([FLAGS_C_COMPILER_CHECK_ARGUMENTS],
   saved_cflags="$CFLAGS"
   CFLAGS="$CFLAGS $1"
   AC_LANG_PUSH([C])
-  AC_COMPILE_IFELSE([AC_LANG_SOURCE([[int i;]])], [], 
+  AC_COMPILE_IFELSE([AC_LANG_SOURCE([[int i;]])], [],
       [supports=no])
   AC_LANG_POP([C])
   CFLAGS="$saved_cflags"
@@ -828,11 +828,11 @@ AC_DEFUN([FLAGS_CXX_COMPILER_CHECK_ARGUMENTS],
   saved_cxxflags="$CXXFLAGS"
   CXXFLAGS="$CXXFLAG $1"
   AC_LANG_PUSH([C++])
-  AC_COMPILE_IFELSE([AC_LANG_SOURCE([[int i;]])], [], 
+  AC_COMPILE_IFELSE([AC_LANG_SOURCE([[int i;]])], [],
       [supports=no])
   AC_LANG_POP([C++])
   CXXFLAGS="$saved_cxxflags"
-  
+
   AC_MSG_RESULT([$supports])
   if test "x$supports" = "xyes" ; then
     m4_ifval([$2], [$2], [:])
@@ -857,7 +857,7 @@ AC_DEFUN([FLAGS_COMPILER_CHECK_ARGUMENTS],
   AC_MSG_CHECKING([if both compilers support "$1"])
   supports=no
   if test "x$C_COMP_SUPPORTS" = "xyes" -a "x$CXX_COMP_SUPPORTS" = "xyes"; then supports=yes; fi
-  
+
   AC_MSG_RESULT([$supports])
   if test "x$supports" = "xyes" ; then
     m4_ifval([$2], [$2], [:])
@@ -904,4 +904,3 @@ AC_DEFUN_ONCE([FLAGS_SETUP_GCC6_COMPILER_FLAGS],
   CFLAGS_JDK="${CFLAGS_JDK} ${NO_DELETE_NULL_POINTER_CHECKS_CFLAG} ${NO_LIFETIME_DSE_CFLAG}"
   AC_SUBST([NO_LIFETIME_DSE_CFLAG])
 ])
-
