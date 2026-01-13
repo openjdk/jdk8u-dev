@@ -66,22 +66,10 @@ else
     SASRCFILES = $(DARWIN_NON_STUB_SASRCFILES)
     SALIBS = -g \
              -framework Foundation \
-             -framework JavaNativeFoundation \
              -framework Security \
              -framework CoreFoundation
     #objc compiler blows up on -march=i586, perhaps it should not be included in the macosx intel 32-bit C++ compiles?
     SAARCH = $(subst -march=i586,,$(ARCHFLAG))
-
-    # This is needed to locate JavaNativeFoundation.framework
-    # JDK 8 doesn't have SYSROOT_CFLAGS, so we'll cobble it together here
-    SA_SYSROOT_FLAGS=
-    ifneq ($(SDKPATH),)
-      SA_SYSROOT_FLAGS += -isysroot "$(SDKPATH)" -iframework"$(SDKPATH)/System/Library/Frameworks"
-    endif
-    ifneq ($(wildcard "$(SDKPATH)/System/Library/Frameworks/JavaVM.framework/Frameworks"), "")
-      # always needed, even if SDKPATH is empty
-      SA_SYSROOT_FLAGS += -F"$(SDKPATH)/System/Library/Frameworks/JavaVM.framework/Frameworks"
-    endif
   else
     SASRCFILES = $(SASRCDIR)/StubDebuggerLocal.c
     SALIBS = 
