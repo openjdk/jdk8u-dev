@@ -2292,6 +2292,19 @@ void os::Linux::print_full_memory_info(outputStream* st) {
    st->cr();
 }
 
+static void print_container_helper(outputStream* st, jlong j, const char* metrics) {
+  st->print("%s: ", metrics);
+  if (j > 0) {
+    if (j >= 1024) {
+      st->print_cr(UINT64_FORMAT " k", uint64_t(j) / 1024);
+    } else {
+      st->print_cr(UINT64_FORMAT, uint64_t(j));
+    }
+  } else {
+    st->print_cr("%s", j == OSCONTAINER_ERROR ? "not supported" : "unlimited");
+  }
+}
+
 void os::Linux::print_container_info(outputStream* st) {
   if (!OSContainer::is_containerized()) {
     return;
@@ -5549,10 +5562,6 @@ int os::stat(const char *path, struct stat *sbuf) {
 
 bool os::check_heap(bool force) {
   return true;
-}
-
-int local_vsnprintf(char* buf, size_t count, const char* format, va_list args) {
-  return ::vsnprintf(buf, count, format, args);
 }
 
 // Is a (classpath) directory empty?
