@@ -1413,14 +1413,14 @@ jobs:
       - name: Select Xcode version
         run: sudo xcode-select --switch /Applications/Xcode_14.3.1.app/Contents/Developer
 
-      # Remove once JDK-8257852 has been completed for 8u
+      # Remove once JDK-8376511 has been completed
       - name: Checkout the Apple Openjdk
         uses: actions/checkout@v4
         with:
           repository: apple/openjdk
           path: appleopenjdk
 
-      # Remove once JDK-8257852 has been completed for 8u
+      # Remove once JDK-8376511 has been completed
       - name: Copy missing JNF files
         run: |
           sudo mkdir /Applications/Xcode_16.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/System/Library/Frameworks/JavaNativeFoundation.framework/Versions/Current/Headers
