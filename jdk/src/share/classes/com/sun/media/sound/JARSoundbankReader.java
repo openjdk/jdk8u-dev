@@ -61,8 +61,7 @@ public final class JARSoundbankReader extends SoundbankReader {
     private static boolean isZIP(URL url) {
         boolean ok = false;
         try {
-            InputStream stream = url.openStream();
-            try {
+            try (InputStream stream = url.openStream()) {
                 byte[] buff = new byte[4];
                 ok = stream.read(buff) == 4;
                 if (ok) {
@@ -71,8 +70,6 @@ public final class JARSoundbankReader extends SoundbankReader {
                         && buff[2] == 0x03
                         && buff[3] == 0x04);
                 }
-            } finally {
-                stream.close();
             }
         } catch (IOException e) {
         }
