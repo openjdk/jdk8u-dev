@@ -445,21 +445,20 @@ jobs:
         run: >
           ${{ env.cross_conf_env }}
           bash configure
-          --with-conf-name=linux-${{ matrix.gnu-arch }}-hotspot
+          --with-conf-name=linux-${{ matrix.gnu-arch }}
           ${{ matrix.flags }}
           ${{ env.cross_flags }}
           --with-user-release-suffix=${GITHUB_ACTOR}-${GITHUB_SHA}
           --with-build-number=b00
           --with-boot-jdk=${BOOT_JDK}
-          --disable-headful
           --with-zlib=bundled
         working-directory: jdk
 
       - name: Build
         run: |
-          cat build/linux-${{ matrix.gnu-arch }}-hotspot/spec.gmk
-          cat build/linux-${{ matrix.gnu-arch }}-hotspot/hotspot-spec.gmk
-          make CONF_NAME=linux-${{ matrix.gnu-arch }}-hotspot LOG_LEVEL=debug hotspot
+          cat build/linux-${{ matrix.gnu-arch }}/spec.gmk
+          cat build/linux-${{ matrix.gnu-arch }}/hotspot-spec.gmk
+          make CONF_NAME=linux-${{ matrix.gnu-arch }} LOG_LEVEL=debug images
         working-directory: jdk
 
   linux_x86_build:
