@@ -540,7 +540,7 @@ jobs:
         run: |
           cat build/linux-x86/spec.gmk
           cat build/linux-x86/hotspot-spec.gmk
-          make CONF_NAME=linux-x86 LOG_LEVEL=debug images
+          make CONF_NAME=linux-x86 images
         working-directory: jdk
 
       - name: Pack artifacts
@@ -824,7 +824,7 @@ jobs:
         run: |
           $env:Path = "$HOME\cygwin\cygwin64\bin;$HOME\cygwin\cygwin64\bin;$env:Path" ;
           $env:Path = $env:Path -split ";" -match "C:\\Windows|PowerShell|cygwin" -join ";" ;
-          & make CONF_NAME=windows-x64 FORCE_MSC_VER=1912 FORCE_LD_VER=1412 LOG_LEVEL=debug images
+          & make CONF_NAME=windows-x64 FORCE_MSC_VER=1912 FORCE_LD_VER=1412 images
         working-directory: jdk
 
       - name: Pack artifacts
@@ -1007,7 +1007,7 @@ jobs:
         run: |
           $env:Path = "$HOME\cygwin\cygwin64\bin;$HOME\cygwin\cygwin64\bin;$env:Path" ;
           $env:Path = $env:Path -split ";" -match "C:\\Windows|PowerShell|cygwin" -join ";" ;
-          & make CONF_NAME=windows-x86 LOG_LEVEL=debug images
+          & make CONF_NAME=windows-x86 images
         working-directory: jdk
 
       - name: Pack artifacts
@@ -1435,7 +1435,7 @@ jobs:
         run: |
           cat build/macos-x64/spec.gmk
           cat build/macos-x64/hotspot-spec.gmk
-          make CONF_NAME=macos-x64 LOG_LEVEL=debug images
+          make CONF_NAME=macos-x64 images
         working-directory: jdk
 
       - name: Pack artifacts
