@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2016, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2025, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -74,6 +74,7 @@ mlib_status mlib_AffineEdges(mlib_affine_param *param,
   mlib_s32 top, bot;
   mlib_s32 topIdx, max_xsize = 0;
   mlib_s32 i, j, t;
+  int intSize;
 
   srcData = mlib_ImageGetData(src);
   dstData = mlib_ImageGetData(dst);
@@ -101,6 +102,11 @@ mlib_status mlib_AffineEdges(mlib_affine_param *param,
     return MLIB_FAILURE;
   }
 
+  intSize = sizeof(mlib_s32);
+  if (!SAFE_TO_MULT(dstHeight, intSize) ||
+      !SAFE_TO_ADD(dstHeight * intSize, 7)) {
+    return MLIB_FAILURE;
+  }
   bsize0 = (dstHeight * sizeof(mlib_s32) + 7) & ~7;
 
   if (lineAddr == NULL) {
@@ -108,6 +114,10 @@ mlib_status mlib_AffineEdges(mlib_affine_param *param,
   }
 
   param->buff_malloc = NULL;
+
+  if (!SAFE_TO_MULT(4, bsize0) || !SAFE_TO_ADD(4 * bsize0, bsize1)) {
+    return MLIB_FAILURE;
+  }
 
   if ((4 * bsize0 + bsize1) > buff_size) {
     buff = param->buff_malloc = mlib_malloc(4 * bsize0 + bsize1);

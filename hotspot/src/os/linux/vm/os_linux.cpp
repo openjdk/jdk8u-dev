@@ -2342,45 +2342,14 @@ void os::Linux::print_container_info(outputStream* st) {
     st->print("%s\n", i == OSCONTAINER_ERROR ? "not supported" : "no shares");
   }
 
-  jlong j = OSContainer::memory_limit_in_bytes();
-  st->print("memory_limit_in_bytes: ");
-  if (j > 0) {
-    st->print(JLONG_FORMAT "\n", j);
-  } else {
-    st->print("%s\n", j == OSCONTAINER_ERROR ? "not supported" : "unlimited");
-  }
+  OSContainer::print_container_helper(st, OSContainer::memory_limit_in_bytes(), "memory_limit_in_bytes");
+  OSContainer::print_container_helper(st, OSContainer::memory_and_swap_limit_in_bytes(), "memory_and_swap_limit_in_bytes");
+  OSContainer::print_container_helper(st, OSContainer::memory_soft_limit_in_bytes(), "memory_soft_limit_in_bytes");
+  OSContainer::print_container_helper(st, OSContainer::memory_usage_in_bytes(), "memory_usage_in_bytes");
+  OSContainer::print_container_helper(st, OSContainer::memory_max_usage_in_bytes(), "memory_max_usage_in_bytes");
 
-  j = OSContainer::memory_and_swap_limit_in_bytes();
-  st->print("memory_and_swap_limit_in_bytes: ");
-  if (j > 0) {
-    st->print(JLONG_FORMAT "\n", j);
-  } else {
-    st->print("%s\n", j == OSCONTAINER_ERROR ? "not supported" : "unlimited");
-  }
+  OSContainer::print_version_specific_info(st);
 
-  j = OSContainer::memory_soft_limit_in_bytes();
-  st->print("memory_soft_limit_in_bytes: ");
-  if (j > 0) {
-    st->print(JLONG_FORMAT "\n", j);
-  } else {
-    st->print("%s\n", j == OSCONTAINER_ERROR ? "not supported" : "unlimited");
-  }
-
-  j = OSContainer::OSContainer::memory_usage_in_bytes();
-  st->print("memory_usage_in_bytes: ");
-  if (j > 0) {
-    st->print(JLONG_FORMAT "\n", j);
-  } else {
-    st->print("%s\n", j == OSCONTAINER_ERROR ? "not supported" : "unlimited");
-  }
-
-  j = OSContainer::OSContainer::memory_max_usage_in_bytes();
-  st->print("memory_max_usage_in_bytes: ");
-  if (j > 0) {
-    st->print(JLONG_FORMAT "\n", j);
-  } else {
-    st->print("%s\n", j == OSCONTAINER_ERROR ? "not supported" : "unlimited");
-  }
   st->cr();
 }
 
@@ -5580,10 +5549,6 @@ int os::stat(const char *path, struct stat *sbuf) {
 
 bool os::check_heap(bool force) {
   return true;
-}
-
-int local_vsnprintf(char* buf, size_t count, const char* format, va_list args) {
-  return ::vsnprintf(buf, count, format, args);
 }
 
 // Is a (classpath) directory empty?
