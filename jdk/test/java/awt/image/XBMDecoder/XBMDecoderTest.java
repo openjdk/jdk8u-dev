@@ -34,8 +34,8 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.PrintStream;
+import java.nio.file.Files;
 import java.util.Arrays;
 import javax.swing.ImageIcon;
 
@@ -55,11 +55,10 @@ public class XBMDecoderTest {
             validCase = fileName.startsWith("valid");
 
             System.out.println("--- Testing " + fileName + " ---");
-            try (FileInputStream fis = new FileInputStream(file);
-                 ByteArrayOutputStream errContent = new ByteArrayOutputStream()) {
+            try (ByteArrayOutputStream errContent = new ByteArrayOutputStream()) {
                 System.setErr(new PrintStream(errContent));
 
-                ImageIcon icon = new ImageIcon(fis.readAllBytes());
+                ImageIcon icon = new ImageIcon(Files.readAllBytes(file.toPath()));
                 boolean isErrEmpty = errContent.toString().isEmpty();
 
                 if (!isErrEmpty) {
