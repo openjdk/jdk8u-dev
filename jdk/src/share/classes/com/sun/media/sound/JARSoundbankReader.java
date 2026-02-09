@@ -84,12 +84,10 @@ public final class JARSoundbankReader extends SoundbankReader {
 
         ArrayList<Soundbank> soundbanks = new ArrayList<Soundbank>();
         URLClassLoader ucl = URLClassLoader.newInstance(new URL[]{url});
-        InputStream stream = ucl.getResourceAsStream(
-                "META-INF/services/javax.sound.midi.Soundbank");
-        if (stream == null)
-            return null;
-        try
-        {
+        try (InputStream stream = ucl.getResourceAsStream(
+                    "META-INF/services/javax.sound.midi.Soundbank")) {
+            if (stream == null)
+                return null;
             BufferedReader r = new BufferedReader(new InputStreamReader(stream));
             String line = r.readLine();
             while (line != null) {
@@ -107,10 +105,6 @@ public final class JARSoundbankReader extends SoundbankReader {
                 }
                 line = r.readLine();
             }
-        }
-        finally
-        {
-            stream.close();
         }
         if (soundbanks.size() == 0)
             return null;
