@@ -25,6 +25,7 @@
  * @test
  * @bug 8341964
  * @summary Add mechanism to disable different parts of TLS cipher suite
+ * @library /lib/testlibrary
  * @run testng/othervm TLSCipherSuiteWildCardMatchingDisablePartsOfCipherSuite
  */
 
@@ -34,7 +35,7 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import java.security.Security;
-import java.util.Arrays;
+import jdk.testlibrary.Utils;
 import java.util.List;
 
 public class TLSCipherSuiteWildCardMatchingDisablePartsOfCipherSuite extends
@@ -55,7 +56,7 @@ public class TLSCipherSuiteWildCardMatchingDisablePartsOfCipherSuite extends
             "TLS_DH_anon_WITH_AES_128_CBC_SHA",
             "TLS_ECDH_anon_WITH_AES_256_CBC_SHA"
     };
-    static final List<Integer> CIPHER_SUITES_IDS = Arrays.asList(
+    static final List<Integer> CIPHER_SUITES_IDS = Utils.listOf(
             0x009D,
             0x009C,
             0x003D,
