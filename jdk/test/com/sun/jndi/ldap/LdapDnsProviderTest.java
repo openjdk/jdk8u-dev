@@ -254,8 +254,7 @@ public class LdapDnsProviderTest {
             // Construct text expected to be present in Exception message
             String expected = "localhost:" + port;
 
-            System.err.printf("Iteration %d: Testing: url='%s', expected content='%s'%n",
-                    attempt, url, expected);
+            System.err.printf("Iteration %d: Testing: %s, %s%n", attempt, url, expected);
 
             FutureTask<Boolean> future = new FutureTask<>(
                     new ProviderTest(url, expected));
