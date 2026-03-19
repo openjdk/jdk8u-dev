@@ -76,18 +76,17 @@ class CgroupController: public CHeapObj<mtInternal> {
 
 PRAGMA_DIAG_PUSH
 PRAGMA_FORMAT_NONLITERAL_IGNORED
+// Parses a subsystem's file, looking for a matching line.
+// If key is null, then the first line will be matched with scan_fmt.
+// If key isn't null, then each line will be matched, looking for something that matches "$key $scan_fmt".
+// The matching value will be assigned to returnval.
+// scan_fmt uses scanf() syntax.
+// Return value: 0 on match, OSCONTAINER_ERROR on error.
 template <typename T> int subsystem_file_line_contents(CgroupController* c,
                                               const char *filename,
-                                              const char *matchline,
+                                              const char *key,
                                               const char *scan_fmt,
                                               T returnval) {
-  FILE *fp = NULL;
-  char *p;
-  char file[MAXPATHLEN+1];
-  char buf[MAXPATHLEN+1];
-  char discard[MAXPATHLEN+1];
-  bool found_match = false;
-
   if (c == NULL) {
     if (PrintContainerInfo) {
       tty->print_cr("subsystem_file_line_contents: CgroupController* is NULL");
@@ -101,60 +100,73 @@ template <typename T> int subsystem_file_line_contents(CgroupController* c,
     return OSCONTAINER_ERROR;
   }
 
-  strncpy(file, c->subsystem_path(), MAXPATHLEN);
-  file[MAXPATHLEN-1] = '\0';
-  int filelen = strlen(file);
-  if ((filelen + strlen(filename)) > (MAXPATHLEN-1)) {
+  stringStream file_path;
+  file_path.print_raw(c->subsystem_path());
+  file_path.print_raw(filename);
+
+  if (file_path.size() > (MAXPATHLEN-1)) {
     if (PrintContainerInfo) {
-      tty->print_cr("File path too long %s, %s", file, filename);
+      tty->print_cr("File path too long %s, %s", file_path.base(), filename);
     }
     return OSCONTAINER_ERROR;
   }
-  strncat(file, filename, MAXPATHLEN-filelen);
+  const char* absolute_path = file_path.freeze();
   if (PrintContainerInfo) {
-    tty->print_cr("Path to %s is %s", filename, file);
+    tty->print_cr("Path to %s is %s", filename, absolute_path);
   }
-  fp = fopen(file, "r");
-  if (fp != NULL) {
-    int err = 0;
-    while ((p = fgets(buf, MAXPATHLEN, fp)) != NULL) {
-      found_match = false;
-      if (matchline == NULL) {
-        // single-line file case
-        int matched = sscanf(p, scan_fmt, returnval);
-        found_match = (matched == 1);
-      } else {
-        // multi-line file case
-        if (strstr(p, matchline) != NULL) {
-          // discard matchline string prefix
-          int matched = sscanf(p, scan_fmt, discard, returnval);
-          found_match = (matched == 2);
-        } else {
-          continue; // substring not found
-        }
-      }
-      if (found_match) {
-        fclose(fp);
-        return 0;
-      } else {
-        err = 1;
-        if (PrintContainerInfo) {
-          tty->print_cr("Type %s not found in file %s", scan_fmt, file);
-        }
-      }
-    }
-    if (err == 0) {
-      if (PrintContainerInfo) {
-        tty->print_cr("Empty file %s", file);
-      }
-    }
-  } else {
+
+  FILE* fp = fopen(absolute_path, "r");
+  if (fp == NULL) {
     if (PrintContainerInfo) {
-      tty->print_cr("Open of file %s failed, %s", file, strerror(errno));
+      tty->print_cr("Open of file %s failed, %s", absolute_path, strerror(errno));
+    }
+    return OSCONTAINER_ERROR;
+  }
+
+  const int buf_len = MAXPATHLEN+1;
+  char buf[buf_len];
+  char* line = fgets(buf, buf_len, fp);
+  if (line == NULL) {
+    if (PrintContainerInfo) {
+      tty->print_cr("Empty file %s", absolute_path);
+    }
+    fclose(fp);
+    return OSCONTAINER_ERROR;
+  }
+
+  bool found_match = false;
+  if (key == NULL) {
+    // File consists of a single line according to caller, with only a value
+    int matched = sscanf(line, scan_fmt, returnval);
+    found_match = matched == 1;
+  } else {
+    // File consists of multiple lines in a "key value"
+    // fashion, we have to find the key.
+    const int key_len = strlen(key);
+    for (; line != NULL; line = fgets(buf, buf_len, fp)) {
+      char* key_substr = strstr(line, key);
+      char after_key = line[key_len];
+      if (key_substr == line
+          && isspace(after_key) != 0
+          && after_key != '\n') {
+        // Skip key, skip space
+        const char* value_substr = line + key_len + 1;
+        int matched = sscanf(value_substr, scan_fmt, returnval);
+        found_match = matched == 1;
+        if (found_match) {
+          break;
+        }
+      }
     }
   }
-  if (fp != NULL)
-    fclose(fp);
+  fclose(fp);
+  if (found_match) {
+    return 0;
+  }
+  if (PrintContainerInfo) {
+    tty->print_cr("Type %s (key == %s) not found in file %s", scan_fmt,
+                  (key == NULL ? "null" : key), absolute_path);
+  }
   return OSCONTAINER_ERROR;
 }
 PRAGMA_DIAG_POP

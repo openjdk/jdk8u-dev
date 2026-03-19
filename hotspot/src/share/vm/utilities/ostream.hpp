@@ -27,6 +27,7 @@
 
 #include "memory/allocation.hpp"
 #include "runtime/timer.hpp"
+#include "utilities/macros.hpp"
 
 class GCId;
 DEBUG_ONLY(class ResourceMark;)
@@ -177,6 +178,7 @@ class ttyUnlocker: StackObj {
 // for writing to strings; buffer will expand automatically
 class stringStream : public outputStream {
  protected:
+  DEBUG_ONLY(bool _is_frozen);
   char*  buffer;
   size_t buffer_pos;
   size_t buffer_length;
@@ -188,8 +190,17 @@ class stringStream : public outputStream {
   ~stringStream();
   virtual void write(const char* c, size_t len);
   size_t      size() { return buffer_pos; }
+  // Returns internal buffer containing the accumulated string.
+  // Returned buffer is only guaranteed to be valid as long as stream is not modified
   const char* base() { return buffer; }
-  void  reset() { buffer_pos = 0; _precount = 0; _position = 0; }
+  // Freezes stringStream (no further modifications possible) and returns pointer to it.
+  // No-op if stream is frozen already.
+  // Returns the internal buffer containing the accumulated string.
+  const char* freeze() NOT_DEBUG(const) {
+    DEBUG_ONLY(_is_frozen = true);
+    return buffer;
+  };
+  void  reset();
   char* as_string();
 };
 
