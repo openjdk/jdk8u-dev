@@ -57,8 +57,8 @@ public final class SerializedFormSize {
     }
 
     private static void test(ICC_Profile p, int min, int max) throws Exception {
-        try (var bos = new ByteArrayOutputStream();
-             var oos = new ObjectOutputStream(bos))
+        try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
+             ObjectOutputStream oos = new ObjectOutputStream(bos))
         {
             oos.writeObject(p);
             int size = bos.size();
