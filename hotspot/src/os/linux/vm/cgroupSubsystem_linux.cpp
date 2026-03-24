@@ -194,8 +194,8 @@ bool CgroupSubsystemFactory::determine_type(CgroupInfo* cg_infos,
   bool all_required_controllers_enabled = true;
 
   // If cgroups v2 is enabled, open /sys/fs/cgroup/cgroup.controllers. If not, open /proc/cgroups.
-  controllers = os::fopen(controllers_file, "r");
-  if (controllers == nullptr) {
+  controllers = fopen(controllers_file, "r");
+  if (controllers == NULL) {
     if (PrintContainerInfo) {
             tty->print_cr("Can't open %s, %s", controllers_file, strerror(errno));
     }
@@ -208,19 +208,17 @@ bool CgroupSubsystemFactory::determine_type(CgroupInfo* cg_infos,
      * cgroups v2 is enabled.  For cgroups v2 (unified hierarchy), the cpu and memory
      * controllers must be enabled.
      */
-    if ((p = fgets(buf, MAXPATHLEN, controllers)) != nullptr) {
-      char* controller = nullptr;
+    if ((p = fgets(buf, MAXPATHLEN, controllers)) != NULL) {
+      char* controller = NULL;
       #define ISSPACE_CHARS " \n\t\r\f\v"
-      while ((controller = strsep(&p, ISSPACE_CHARS)) != nullptr) {
+      while ((controller = strsep(&p, ISSPACE_CHARS)) != NULL) {
         int i;
         if ((i = cg_v2_controller_index(controller)) != -1) {
           cg_infos[i]._name = os::strdup(controller);
           cg_infos[i]._enabled = true;
-          if (i == PIDS_IDX || i == CPUSET_IDX) {
-            if(PrintContainerInfo) {
-                    tty->print_cr("Detected optional %s controller entry in %s",
-                                  controller, controllers_file);
-            }
+          if (i == CPUSET_IDX && PrintContainerInfo) {
+            tty->print_cr("Detected optional %s controller entry in %s",
+                          controller, controllers_file);
           }
         }
       }
@@ -243,8 +241,8 @@ bool CgroupSubsystemFactory::determine_type(CgroupInfo* cg_infos,
       if (i == CPU_IDX || i == MEMORY_IDX) {
         all_required_controllers_enabled = all_required_controllers_enabled && cg_infos[i]._enabled;
       }
-      if (log_is_enabled(Debug, os, container) && !cg_infos[i]._enabled) {
-        log_debug(os, container)("controller %s is not enabled", cg_controller_name[i]);
+      if (PrintContainerInfo && !cg_infos[i]._enabled) {
+        tty->print_cr("controller %s is not enabled", cg_controller_name[i]);
       }
     }
   } else {

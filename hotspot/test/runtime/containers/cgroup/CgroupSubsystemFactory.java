@@ -317,28 +317,28 @@ public class CgroupSubsystemFactory {
             Files.write(cgroupv1MntInfoZeroHierarchy, mntInfoEmpty.getBytes(StandardCharsets.UTF_8));
 
             sysFsCgroupCgroupControllersTypicalPath = Paths.get(existingDirectory.toString(), "sys_fs_cgroup_cgroup_controllers_typical");
-            Files.writeString(sysFsCgroupCgroupControllersTypicalPath, sysFsCgroupCgroupControllersTypicalContent, StandardCharsets.UTF_8);
+            Files.write(sysFsCgroupCgroupControllersTypicalPath, sysFsCgroupCgroupControllersTypicalContent.getBytes(StandardCharsets.UTF_8));
 
             sysFsCgroupCgroupControllersEmptyPath = Paths.get(existingDirectory.toString(), "sys_fs_cgroup_cgroup_controllers_empty");
-            Files.writeString(sysFsCgroupCgroupControllersEmptyPath, sysFsCgroupCgroupControllersEmptyContent, StandardCharsets.UTF_8);
+            Files.write(sysFsCgroupCgroupControllersEmptyPath, sysFsCgroupCgroupControllersEmptyContent.getBytes(StandardCharsets.UTF_8));
 
             sysFsCgroupCgroupControllersBlankLinePath = Paths.get(existingDirectory.toString(), "sys_fs_cgroup_cgroup_controllers_blank_line");
-            Files.writeString(sysFsCgroupCgroupControllersBlankLinePath, sysFsCgroupCgroupControllersBlankLineContent, StandardCharsets.UTF_8);
+            Files.write(sysFsCgroupCgroupControllersBlankLinePath, sysFsCgroupCgroupControllersBlankLineContent.getBytes(StandardCharsets.UTF_8));
 
             sysFsCgroupCgroupControllersNoMemoryPath = Paths.get(existingDirectory.toString(), "sys_fs_cgroup_cgroup_controllers_no_memory");
-            Files.writeString(sysFsCgroupCgroupControllersNoMemoryPath, sysFsCgroupCgroupControllersNoMemoryContent, StandardCharsets.UTF_8);
+            Files.write(sysFsCgroupCgroupControllersNoMemoryPath, sysFsCgroupCgroupControllersNoMemoryContent.getBytes(StandardCharsets.UTF_8));
 
             sysFsCgroupCgroupControllersNoCpuPath = Paths.get(existingDirectory.toString(), "sys_fs_cgroup_cgroup_controllers_no_cpu");
-            Files.writeString(sysFsCgroupCgroupControllersNoCpuPath, sysFsCgroupCgroupControllersNoCpuContent, StandardCharsets.UTF_8);
+            Files.write(sysFsCgroupCgroupControllersNoCpuPath, sysFsCgroupCgroupControllersNoCpuContent.getBytes(StandardCharsets.UTF_8));
 
             sysFsCgroupCgroupControllersNoPidsPath = Paths.get(existingDirectory.toString(), "sys_fs_cgroup_cgroup_controllers_no_pids");
-            Files.writeString(sysFsCgroupCgroupControllersNoPidsPath, sysFsCgroupCgroupControllersNoPidsContent, StandardCharsets.UTF_8);
+            Files.write(sysFsCgroupCgroupControllersNoPidsPath, sysFsCgroupCgroupControllersNoPidsContent.getBytes(StandardCharsets.UTF_8));
 
             sysFsCgroupCgroupControllersCpuMemoryOnlyPath = Paths.get(existingDirectory.toString(), "sys_fs_cgroup_cgroup_controllers_cpu_memory_only");
-            Files.writeString(sysFsCgroupCgroupControllersCpuMemoryOnlyPath, sysFsCgroupCgroupControllersCpuMemoryOnlyContent, StandardCharsets.UTF_8);
+            Files.write(sysFsCgroupCgroupControllersCpuMemoryOnlyPath, sysFsCgroupCgroupControllersCpuMemoryOnlyContent.getBytes(StandardCharsets.UTF_8));
 
             sysFsCgroupCgroupControllersExtraWhitespacePath = Paths.get(existingDirectory.toString(), "sys_fs_cgroup_cgroup_controllers_extra_whitespace");
-            Files.writeString(sysFsCgroupCgroupControllersExtraWhitespacePath, sysFsCgroupCgroupControllersExtraWhitespaceContent, StandardCharsets.UTF_8);
+            Files.write(sysFsCgroupCgroupControllersExtraWhitespacePath, sysFsCgroupCgroupControllersExtraWhitespaceContent.getBytes(StandardCharsets.UTF_8));
 
             cgroupv2MntInfoZeroHierarchy = Paths.get(existingDirectory.toString(), "mountinfo_cgroupv2");
             Files.write(cgroupv2MntInfoZeroHierarchy, mntInfoCgroupsV2Only.getBytes(StandardCharsets.UTF_8));
