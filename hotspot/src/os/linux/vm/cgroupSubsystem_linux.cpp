@@ -193,7 +193,7 @@ bool CgroupSubsystemFactory::determine_type(CgroupInfo* cg_infos,
   // cpuset might not be enabled on newer Linux distros (Fedora 41)
   bool all_required_controllers_enabled = true;
 
-  // If cgroups v2 is enabled, open /sys/fs/cgroup/cgroup.controllers. If not, open /proc/cgroups.
+  // If cgroups v2 is enabled, open /sys/fs/cgroup/cgroup.controllers.  If not, open /proc/cgroups.
   controllers = fopen(controllers_file, "r");
   if (controllers == NULL) {
     if (PrintContainerInfo) {
