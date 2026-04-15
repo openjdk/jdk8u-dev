@@ -316,7 +316,6 @@ stringStream::stringStream(size_t initial_size) : outputStream() {
   buffer_pos    = 0;
   buffer_fixed  = false;
   DEBUG_ONLY(rm = Thread::current()->current_resource_mark();)
-  DEBUG_ONLY(_is_frozen = false);
 }
 
 // useful for output to fixed chunks of memory, such as performance counters
@@ -325,13 +324,11 @@ stringStream::stringStream(char* fixed_buffer, size_t fixed_buffer_size) : outpu
   buffer        = fixed_buffer;
   buffer_pos    = 0;
   buffer_fixed  = true;
-  DEBUG_ONLY(_is_frozen = false);
 }
 
 void stringStream::write(const char* s, size_t len) {
   size_t write_len = len;               // number of non-null bytes to write
   size_t end = buffer_pos + len + 1;    // position after write and final '\0'
-  assert(_is_frozen == false, "Modification forbidden");
   if (end > buffer_length) {
     if (buffer_fixed) {
       // if buffer cannot resize, silently truncate
@@ -372,11 +369,6 @@ char* stringStream::as_string() {
   strncpy(copy, buffer, buffer_pos);
   copy[buffer_pos] = 0;  // terminating null
   return copy;
-}
-
-void stringStream::reset() {
-  assert(_is_frozen == false, "Modification forbidden");
-  buffer_pos = 0; _precount = 0; _position = 0;
 }
 
 stringStream::~stringStream() {}
