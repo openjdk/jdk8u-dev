@@ -100,25 +100,26 @@ template <typename T> int subsystem_file_line_contents(CgroupController* c,
     return OSCONTAINER_ERROR;
   }
 
-  stringStream file_path;
-  file_path.print_raw(c->subsystem_path());
-  file_path.print_raw(filename);
+  char file[MAXPATHLEN+1];
+  strncpy(file, c->subsystem_path(), MAXPATHLEN);
+  file[MAXPATHLEN-1]='\0';
+  int filelen = strlen(file);
 
-  if (file_path.size() > (MAXPATHLEN-1)) {
+  if ((filelen + strlen(filename)) > (MAXPATHLEN-1)) {
     if (PrintContainerInfo) {
-      tty->print_cr("File path too long %s, %s", file_path.base(), filename);
+      tty->print_cr("File path too long %s, %s", file, filename);
     }
     return OSCONTAINER_ERROR;
   }
-  const char* absolute_path = file_path.freeze();
+  strncat(file, filename, MAXPATHLEN-filelen);
   if (PrintContainerInfo) {
-    tty->print_cr("Path to %s is %s", filename, absolute_path);
+    tty->print_cr("Path to %s is %s", filename, file);
   }
 
-  FILE* fp = fopen(absolute_path, "r");
+  FILE* fp = fopen(file, "r");
   if (fp == NULL) {
     if (PrintContainerInfo) {
-      tty->print_cr("Open of file %s failed, %s", absolute_path, strerror(errno));
+      tty->print_cr("Open of file %s failed, %s", file, strerror(errno));
     }
     return OSCONTAINER_ERROR;
   }
@@ -128,7 +129,7 @@ template <typename T> int subsystem_file_line_contents(CgroupController* c,
   char* line = fgets(buf, buf_len, fp);
   if (line == NULL) {
     if (PrintContainerInfo) {
-      tty->print_cr("Empty file %s", absolute_path);
+      tty->print_cr("Empty file %s", file);
     }
     fclose(fp);
     return OSCONTAINER_ERROR;
@@ -165,7 +166,7 @@ template <typename T> int subsystem_file_line_contents(CgroupController* c,
   }
   if (PrintContainerInfo) {
     tty->print_cr("Type %s (key == %s) not found in file %s", scan_fmt,
-                  (key == NULL ? "null" : key), absolute_path);
+                  (key == NULL ? "null" : key), file);
   }
   return OSCONTAINER_ERROR;
 }
