@@ -87,6 +87,9 @@ template <typename T> int subsystem_file_line_contents(CgroupController* c,
                                               const char *key,
                                               const char *scan_fmt,
                                               T returnval) {
+  FILE *fp = NULL;
+  char file[MAXPATHLEN+1];
+
   if (c == NULL) {
     if (PrintContainerInfo) {
       tty->print_cr("subsystem_file_line_contents: CgroupController* is NULL");
@@ -100,11 +103,9 @@ template <typename T> int subsystem_file_line_contents(CgroupController* c,
     return OSCONTAINER_ERROR;
   }
 
-  char file[MAXPATHLEN+1];
   strncpy(file, c->subsystem_path(), MAXPATHLEN);
-  file[MAXPATHLEN-1]='\0';
+  file[MAXPATHLEN-1] = '\0';
   int filelen = strlen(file);
-
   if ((filelen + strlen(filename)) > (MAXPATHLEN-1)) {
     if (PrintContainerInfo) {
       tty->print_cr("File path too long %s, %s", file, filename);
@@ -115,8 +116,7 @@ template <typename T> int subsystem_file_line_contents(CgroupController* c,
   if (PrintContainerInfo) {
     tty->print_cr("Path to %s is %s", filename, file);
   }
-
-  FILE* fp = fopen(file, "r");
+  fp = fopen(file, "r");
   if (fp == NULL) {
     if (PrintContainerInfo) {
       tty->print_cr("Open of file %s failed, %s", file, strerror(errno));
