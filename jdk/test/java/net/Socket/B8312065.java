@@ -28,8 +28,8 @@
  * @requires (os.family == "linux")
  * @library /test/lib
  * @build jtreg.SkippedException
- * @compile NativeThread.java
- * @run main/othervm/timeout=120 B8312065
+ * @build B8312065
+ * @run shell B8312065.sh
  */
 
 import sun.misc.Signal;
