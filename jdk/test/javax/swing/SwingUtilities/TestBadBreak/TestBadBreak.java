@@ -36,6 +36,7 @@ import static java.awt.image.BufferedImage.TYPE_INT_ARGB;
 
 /**
  * @test
+ * @key headful
  * @bug 8015085
  * @summary Shortening via " ... " is broken for Strings containing a combining
  *          diaeresis.
