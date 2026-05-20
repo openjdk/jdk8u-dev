@@ -25,6 +25,7 @@
  * @test
  * @bug 8246330
  * @library /javax/net/ssl/templates
+ *          /lib/security
  * @run main/othervm -Djdk.tls.namedGroups="sect283r1"
         DisabledCurve DISABLE_NONE PASS
  * @run main/othervm -Djdk.tls.namedGroups="sect283r1"
@@ -93,6 +94,9 @@ public class DisabledCurve extends SSLSocketTemplate {
             Security.setProperty("jdk.disabled.namedCurves", "");
         }
         System.setProperty("jdk.sunec.disableNative", "false");
+
+        // Re-enable TLSv1 and TLSv1.1 since test depends on it.
+        SecurityUtils.removeFromDisabledTlsAlgs("TLSv1", "TLSv1.1");
 
         for (index = 0; index < protocols.length; index++) {
             try {
