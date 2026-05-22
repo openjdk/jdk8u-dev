@@ -73,6 +73,16 @@ import sun.misc.SharedSecrets;
 public final class SSLSocketImpl
         extends BaseSSLSocketImpl implements SSLTransport {
 
+    /**
+     * ERROR HANDLING GUIDELINES
+     * (which exceptions to throw and catch and which not to throw and catch)
+     *
+     * - if there is an IOException (SocketException) when accessing the
+     *   underlying Socket, pass it through
+     *
+     * - do not throw IOExceptions, throw SSLExceptions (or a subclass)
+     */
+
     final SSLContextImpl            sslContext;
     final TransportContext          conContext;
 
@@ -439,6 +449,8 @@ public final class SSLSocketImpl
                 if (!conContext.isNegotiated) {
                     readHandshakeRecord();
                 }
+            } catch (SocketException se) {
+                handleException(se);
             } catch (IOException ioe) {
                 throw conContext.fatal(Alert.HANDSHAKE_FAILURE,
                     "Couldn't kickstart handshaking", ioe);
@@ -1311,7 +1323,8 @@ public final class SSLSocketImpl
                         conContext.isNegotiated) {
                     return 0;
                 }
-            } catch (SSLException ssle) {
+            } catch (SSLException | SocketException ssle) {
+                // don't change exception in case of SocketException
                 throw ssle;
             } catch (IOException ioe) {
                 if (!(ioe instanceof SSLException)) {
@@ -1377,7 +1390,8 @@ public final class SSLSocketImpl
                         buffer.position() > 0) {
                     return buffer;
                 }
-            } catch (SSLException ssle) {
+            } catch (SSLException | SocketException ssle) {
+                // don't change exception in case of SocketException.
                 throw ssle;
             } catch (IOException ioe) {
                 if (!(ioe instanceof SSLException)) {
@@ -1567,6 +1581,16 @@ public final class SSLSocketImpl
                 // RuntimeException
                 alert = Alert.INTERNAL_ERROR;
             }
+        }
+
+        if (cause instanceof SocketException) {
+            try {
+                conContext.fatal(alert, cause);
+            } catch (Exception e) {
+                // Just delivering the fatal alert, re-throw the socket exception instead.
+            }
+
+            throw (SocketException)cause;
         }
 
         throw conContext.fatal(alert, cause);
