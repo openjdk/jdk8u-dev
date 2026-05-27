@@ -30,7 +30,7 @@
 //---------------------------------------------------------------------------------
 //
 //  Little Color Management System
-//  Copyright (c) 1998-2020 Marti Maria Saguer
+//  Copyright (c) 1998-2023 Marti Maria Saguer
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the "Software"),
@@ -212,6 +212,7 @@ cmsBool  isFloatMatrixIdentity(const cmsMAT3* a)
 
        return TRUE;
 }
+
 // if two adjacent matrices are found, multiply them.
 static
 cmsBool _MultiplyMatrix(cmsPipeline* Lut)
@@ -408,7 +409,20 @@ Prelin16Data* PrelinOpt16alloc(cmsContext ContextID,
 
 
     p16 -> EvalCurveOut16 = (_cmsInterpFn16*) _cmsCalloc(ContextID, nOutputs, sizeof(_cmsInterpFn16));
+    if (p16->EvalCurveOut16 == NULL)
+    {
+        _cmsFree(ContextID, p16);
+        return NULL;
+    }
+
     p16 -> ParamsCurveOut16 = (cmsInterpParams**) _cmsCalloc(ContextID, nOutputs, sizeof(cmsInterpParams* ));
+    if (p16->ParamsCurveOut16 == NULL)
+    {
+
+        _cmsFree(ContextID, p16->EvalCurveOut16);
+        _cmsFree(ContextID, p16);
+        return NULL;
+    }
 
     for (i=0; i < nOutputs; i++) {
 
@@ -435,7 +449,9 @@ Prelin16Data* PrelinOpt16alloc(cmsContext ContextID,
 // Sampler implemented by another LUT. This is a clean way to precalculate the devicelink 3D CLUT for
 // almost any transform. We use floating point precision and then convert from floating point to 16 bits.
 static
-cmsInt32Number XFormSampler16(CMSREGISTER const cmsUInt16Number In[], CMSREGISTER cmsUInt16Number Out[], CMSREGISTER void* Cargo)
+cmsInt32Number XFormSampler16(CMSREGISTER const cmsUInt16Number In[],
+                              CMSREGISTER cmsUInt16Number Out[],
+                              CMSREGISTER void* Cargo)
 {
     cmsPipeline* Lut = (cmsPipeline*) Cargo;
     cmsFloat32Number InFloat[cmsMAXCHANNELS], OutFloat[cmsMAXCHANNELS];
@@ -661,7 +677,6 @@ cmsBool OptimizeByResampling(cmsPipeline** Lut, cmsUInt32Number Intent, cmsUInt3
 {
     cmsPipeline* Src = NULL;
     cmsPipeline* Dest = NULL;
-    cmsStage* mpe;
     cmsStage* CLUT;
     cmsStage *KeepPreLin = NULL, *KeepPostLin = NULL;
     cmsUInt32Number nGridPoints;
@@ -683,20 +698,13 @@ cmsBool OptimizeByResampling(cmsPipeline** Lut, cmsUInt32Number Intent, cmsUInt3
     if (ColorSpace == (cmsColorSpaceSignature)0 ||
         OutputColorSpace == (cmsColorSpaceSignature)0) return FALSE;
 
-    nGridPoints      = _cmsReasonableGridpointsByColorspace(ColorSpace, *dwFlags);
+    nGridPoints = _cmsReasonableGridpointsByColorspace(ColorSpace, *dwFlags);
 
     // For empty LUTs, 2 points are enough
     if (cmsPipelineStageCount(*Lut) == 0)
         nGridPoints = 2;
 
     Src = *Lut;
-
-    // Named color pipelines cannot be optimized either
-    for (mpe = cmsPipelineGetPtrToFirstStage(Src);
-        mpe != NULL;
-        mpe = cmsStageNext(mpe)) {
-            if (cmsStageType(mpe) == cmsSigNamedColorElemType) return FALSE;
-    }
 
     // Allocate an empty LUT
     Dest =  cmsPipelineAlloc(Src ->ContextID, Src ->InputChannels, Src ->OutputChannels);
@@ -794,7 +802,7 @@ Error:
 
     if (DataSetIn == NULL && DataSetOut == NULL) {
 
-        _cmsPipelineSetOptimizationParameters(Dest, (_cmsOPTeval16Fn) DataCLUT->Params->Interpolation.Lerp16, DataCLUT->Params, NULL, NULL);
+        _cmsPipelineSetOptimizationParameters(Dest, (_cmsPipelineEval16Fn) DataCLUT->Params->Interpolation.Lerp16, DataCLUT->Params, NULL, NULL);
     }
     else {
 
@@ -939,8 +947,8 @@ void* Prelin8dup(cmsContext ContextID, const void* ptr)
 #define DENS(i,j,k) (LutTable[(i)+(j)+(k)+OutChan])
 static CMS_NO_SANITIZE
 void PrelinEval8(CMSREGISTER const cmsUInt16Number Input[],
-                  CMSREGISTER cmsUInt16Number Output[],
-                  CMSREGISTER const void* D)
+                 CMSREGISTER cmsUInt16Number Output[],
+                 CMSREGISTER const void* D)
 {
 
     cmsUInt8Number         r, g, b;
@@ -957,9 +965,9 @@ void PrelinEval8(CMSREGISTER const cmsUInt16Number Input[],
     g = (cmsUInt8Number) (Input[1] >> 8);
     b = (cmsUInt8Number) (Input[2] >> 8);
 
-    X0 = X1 = (cmsS15Fixed16Number) p8->X0[r];
-    Y0 = Y1 = (cmsS15Fixed16Number) p8->Y0[g];
-    Z0 = Z1 = (cmsS15Fixed16Number) p8->Z0[b];
+    X0 = (cmsS15Fixed16Number) p8->X0[r];
+    Y0 = (cmsS15Fixed16Number) p8->Y0[g];
+    Z0 = (cmsS15Fixed16Number) p8->Z0[b];
 
     rx = p8 ->rx[r];
     ry = p8 ->ry[g];
@@ -1065,7 +1073,6 @@ cmsBool OptimizeByComputingLinearization(cmsPipeline** Lut, cmsUInt32Number Inte
     cmsStage* OptimizedCLUTmpe;
     cmsColorSpaceSignature ColorSpace, OutputColorSpace;
     cmsStage* OptimizedPrelinMpe;
-    cmsStage* mpe;
     cmsToneCurve** OptimizedPrelinCurves;
     _cmsStageCLutData* OptimizedPrelinCLUT;
 
@@ -1086,13 +1093,6 @@ cmsBool OptimizeByComputingLinearization(cmsPipeline** Lut, cmsUInt32Number Inte
     }
 
     OriginalLut = *Lut;
-
-   // Named color pipelines cannot be optimized either
-   for (mpe = cmsPipelineGetPtrToFirstStage(OriginalLut);
-         mpe != NULL;
-         mpe = cmsStageNext(mpe)) {
-            if (cmsStageType(mpe) == cmsSigNamedColorElemType) return FALSE;
-    }
 
     ColorSpace       = _cmsICCcolorSpace((int) T_COLORSPACE(*InputFormat));
     OutputColorSpace = _cmsICCcolorSpace((int) T_COLORSPACE(*OutputFormat));
@@ -1143,14 +1143,17 @@ cmsBool OptimizeByComputingLinearization(cmsPipeline** Lut, cmsUInt32Number Inte
 
         // Store result in curve
         for (t=0; t < OriginalLut ->InputChannels; t++)
-            Trans[t] ->Table16[i] = _cmsQuickSaturateWord(Out[t] * 65535.0);
+        {
+            if (Trans[t]->Table16 != NULL)
+                Trans[t] ->Table16[i] = _cmsQuickSaturateWord(Out[t] * 65535.0);
+        }
     }
 
     // Slope-limit the obtained curves
     for (t = 0; t < OriginalLut ->InputChannels; t++)
         SlopeLimiting(Trans[t]);
 
-    // Check for validity
+    // Check for validity. lIsLinear is here for debug purposes
     lIsSuitable = TRUE;
     lIsLinear   = TRUE;
     for (t=0; (lIsSuitable && (t < OriginalLut ->InputChannels)); t++) {
@@ -1361,8 +1364,8 @@ Curves16Data* CurvesAlloc(cmsContext ContextID, cmsUInt32Number nCurves, cmsUInt
 
 static
 void FastEvaluateCurves8(CMSREGISTER const cmsUInt16Number In[],
-                          CMSREGISTER cmsUInt16Number Out[],
-                          CMSREGISTER const void* D)
+                         CMSREGISTER cmsUInt16Number Out[],
+                         CMSREGISTER const void* D)
 {
     Curves16Data* Data = (Curves16Data*) D;
     int x;
@@ -1547,10 +1550,10 @@ void* DupMatShaper(cmsContext ContextID, const void* Data)
 }
 
 
-// A fast matrix-shaper evaluator for 8 bits. This is a bit ticky since I'm using 1.14 signed fixed point
+// A fast matrix-shaper evaluator for 8 bits. This is a bit tricky since I'm using 1.14 signed fixed point
 // to accomplish some performance. Actually it takes 256x3 16 bits tables and 16385 x 3 tables of 8 bits,
 // in total about 50K, and the performance boost is huge!
-static
+static CMS_NO_SANITIZE
 void MatShaperEval16(CMSREGISTER const cmsUInt16Number In[],
                      CMSREGISTER cmsUInt16Number Out[],
                      CMSREGISTER const void* D)
@@ -1725,6 +1728,10 @@ cmsBool OptimizeMatrixShaper(cmsPipeline** Lut, cmsUInt32Number Intent, cmsUInt3
               _cmsStageMatrixData* Data1 = (_cmsStageMatrixData*)cmsStageData(Matrix1);
               _cmsStageMatrixData* Data2 = (_cmsStageMatrixData*)cmsStageData(Matrix2);
 
+              // Only RGB to RGB
+              if (Matrix1->InputChannels != 3 || Matrix1->OutputChannels != 3 ||
+                  Matrix2->InputChannels != 3 || Matrix2->OutputChannels != 3) return FALSE;
+
               // Input offset should be zero
               if (Data1->Offset != NULL) return FALSE;
 
@@ -1749,6 +1756,8 @@ cmsBool OptimizeMatrixShaper(cmsPipeline** Lut, cmsUInt32Number Intent, cmsUInt3
                      &Curve1, &Matrix1, &Curve2)) {
 
                      _cmsStageMatrixData* Data = (_cmsStageMatrixData*)cmsStageData(Matrix1);
+
+                     if (Matrix1->InputChannels != 3 || Matrix1->OutputChannels != 3) return FALSE;
 
                      // Copy the matrix to our result
                      memcpy(&res, Data->Double, sizeof(res));
@@ -1794,7 +1803,7 @@ cmsBool OptimizeMatrixShaper(cmsPipeline** Lut, cmsUInt32Number Intent, cmsUInt3
         _cmsStageToneCurvesData* mpeC2 = (_cmsStageToneCurvesData*) cmsStageData(Curve2);
 
         // In this particular optimization, cache does not help as it takes more time to deal with
-        // the cache that with the pixel handling
+        // the cache than with the pixel handling
         *dwFlags |= cmsFLAGS_NOCACHE;
 
         // Setup the optimizarion routines
@@ -1922,7 +1931,7 @@ cmsBool  _cmsRegisterOptimizationPlugin(cmsContext ContextID, cmsPluginBase* Dat
 }
 
 // The entry point for LUT optimization
-cmsBool _cmsOptimizePipeline(cmsContext ContextID,
+cmsBool CMSEXPORT _cmsOptimizePipeline(cmsContext ContextID,
                              cmsPipeline**    PtrLut,
                              cmsUInt32Number  Intent,
                              cmsUInt32Number* InputFormat,
@@ -1932,6 +1941,7 @@ cmsBool _cmsOptimizePipeline(cmsContext ContextID,
     _cmsOptimizationPluginChunkType* ctx = ( _cmsOptimizationPluginChunkType*) _cmsContextGetClientChunk(ContextID, OptimizationPlugin);
     _cmsOptimizationCollection* Opts;
     cmsBool AnySuccess = FALSE;
+    cmsStage* mpe;
 
     // A CLUT is being asked, so force this specific optimization
     if (*dwFlags & cmsFLAGS_FORCE_CLUT) {
@@ -1944,6 +1954,13 @@ cmsBool _cmsOptimizePipeline(cmsContext ContextID,
     if ((*PtrLut) ->Elements == NULL) {
         _cmsPipelineSetOptimizationParameters(*PtrLut, FastIdentity16, (void*) *PtrLut, NULL, NULL);
         return TRUE;
+    }
+
+    // Named color pipelines cannot be optimized
+    for (mpe = cmsPipelineGetPtrToFirstStage(*PtrLut);
+        mpe != NULL;
+        mpe = cmsStageNext(mpe)) {
+            if (cmsStageType(mpe) == cmsSigNamedColorElemType) return FALSE;
     }
 
     // Try to get rid of identities and trivial conversions.

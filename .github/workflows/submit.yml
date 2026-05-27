@@ -19,7 +19,7 @@ concurrency:
 jobs:
   prerequisites:
     name: Prerequisites
-    runs-on: "ubuntu-20.04"
+    runs-on: "ubuntu-22.04"
     outputs:
       should_run: ${{ steps.check_submit.outputs.should_run }}
       bundle_id: ${{ steps.check_bundle_id.outputs.bundle_id }}
@@ -115,7 +115,7 @@ jobs:
 
   linux_x64_build:
     name: Linux x64
-    runs-on: "ubuntu-20.04"
+    runs-on: "ubuntu-22.04"
     needs: prerequisites
     if: needs.prerequisites.outputs.should_run != 'false' && needs.prerequisites.outputs.platform_linux_x64 != 'false'
 
@@ -175,7 +175,10 @@ jobs:
         working-directory: jdk
 
       - name: Build
-        run: make CONF_NAME=linux-x64 LOG_LEVEL=debug images
+        run: |
+          cat build/linux-x64/spec.gmk
+          cat build/linux-x64/hotspot-spec.gmk
+          make CONF_NAME=linux-x64 LOG_LEVEL=debug images
         working-directory: jdk
 
       - name: Pack artifacts
@@ -191,7 +194,7 @@ jobs:
 
   linux_x64_test:
     name: Linux x64
-    runs-on: "ubuntu-20.04"
+    runs-on: "ubuntu-22.04"
     needs:
       - prerequisites
       - linux_x64_build
@@ -203,6 +206,7 @@ jobs:
           - jdk/tier1
           - langtools/tier1
           - hotspot/tier1
+          - jdk/security_infra
         include:
           - test: jdk/tier1
             suites: jdk_tier1
@@ -210,6 +214,8 @@ jobs:
             suites: langtools_tier1
           - test: hotspot/tier1
             suites: hotspot_tier1
+          - test: jdk/security_infra
+            suites: jdk_security_infra
 
     env:
       JDK_VERSION: "${{ fromJson(needs.prerequisites.outputs.dependencies).JDK_MAJOR_VERSION }}.${{ fromJson(needs.prerequisites.outputs.dependencies).JDK_MINOR_VERSION }}.${{ fromJson(needs.prerequisites.outputs.dependencies).JDK_MICRO_VERSION }}"
@@ -305,7 +311,7 @@ jobs:
 
   linux_additional_build:
     name: Linux additional
-    runs-on: "ubuntu-20.04"
+    runs-on: "ubuntu-22.04"
     needs:
       - prerequisites
     if: needs.prerequisites.outputs.should_run != 'false' && needs.prerequisites.outputs.platform_linux_additional != 'false'
@@ -402,7 +408,7 @@ jobs:
           --verbose
           --include=fakeroot,symlinks,build-essential,libx11-dev,libxext-dev,libxrender-dev,libxrandr-dev,libxtst-dev,libxt-dev,libcups2-dev,libfontconfig1-dev,libasound2-dev,libfreetype6-dev,libpng-dev,libffi-dev
           --resolve-deps
-          bullseye
+          bookworm
           ~/sysroot-${{ matrix.debian-arch }}
           http://httpredir.debian.org/debian/
         if: matrix.debian-arch != '' && steps.cache-sysroot.outputs.cache-hit != 'true'
@@ -461,7 +467,7 @@ jobs:
 
   linux_x86_build:
     name: Linux x86
-    runs-on: "ubuntu-20.04"
+    runs-on: "ubuntu-22.04"
     needs: prerequisites
     if: needs.prerequisites.outputs.should_run != 'false' && needs.prerequisites.outputs.platform_linux_x86 != 'false'
 
@@ -531,7 +537,10 @@ jobs:
         working-directory: jdk
 
       - name: Build
-        run: make CONF_NAME=linux-x86 images
+        run: |
+          cat build/linux-x86/spec.gmk
+          cat build/linux-x86/hotspot-spec.gmk
+          make CONF_NAME=linux-x86 images
         working-directory: jdk
 
       - name: Pack artifacts
@@ -547,7 +556,7 @@ jobs:
 
   linux_x86_test:
     name: Linux x86
-    runs-on: "ubuntu-20.04"
+    runs-on: "ubuntu-22.04"
     needs:
       - prerequisites
       - linux_x86_build
@@ -559,6 +568,7 @@ jobs:
           - jdk/tier1
           - langtools/tier1
           - hotspot/tier1
+          - jdk/security_infra
         include:
           - test: jdk/tier1
             suites: jdk_tier1
@@ -566,6 +576,8 @@ jobs:
             suites: langtools_tier1
           - test: hotspot/tier1
             suites: hotspot_tier1
+          - test: jdk/security_infra
+            suites: jdk_security_infra
 
     # Reduced 32-bit build uses the same boot JDK as 64-bit build
     env:
@@ -670,7 +682,7 @@ jobs:
 
   windows_x64_build:
     name: Windows x64
-    runs-on: "windows-2019"
+    runs-on: "windows-2025"
     needs: prerequisites
     if: needs.prerequisites.outputs.should_run != 'false' && needs.prerequisites.outputs.platform_windows_x64 != 'false'
 
@@ -724,13 +736,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           path: jdk
-
-      - name: Checkout the FreeType source
-        uses: actions/checkout@v4
-        with:
-          repository: "freetype/freetype"
-          ref: VER-2-8-1
-          path: freetype
 
       - name: Restore boot JDK from cache
         id: bootjdk
@@ -792,24 +797,17 @@ jobs:
           'install --productId Microsoft.VisualStudio.Product.Community --channelId VisualStudio.15.Release
           --add Microsoft.VisualStudio.Workload.NativeDesktop
           --add Microsoft.VisualStudio.Component.VC.Tools.x86.x64
-          --add Microsoft.VisualStudio.Component.Windows10SDK.17763
+          --add Microsoft.VisualStudio.Component.Windows10SDK.19041
           --quiet --wait'
 
       - name: Fix OpenJDK permissions
         run: bash -c "chmod -R 0777 jdk"
-
-      - name: Copy FreeType project file
-        run: >
-          Remove-Item "$env:GITHUB_WORKSPACE\freetype\builds\windows\vc2010\freetype.vcxproj" ;
-          Copy-Item -Path "$env:GITHUB_WORKSPACE\jdk\.github\workflows\freetype.vcxproj"
-          -Destination "$env:GITHUB_WORKSPACE\freetype\builds\windows\vc2010\freetype.vcxproj" ;
 
       - name: Configure
         run: >
           $env:Path = "$HOME\cygwin\cygwin64\bin;$HOME\cygwin\cygwin64\bin;$env:Path" ;
           $env:Path = $env:Path -split ";" -match "C:\\Windows|PowerShell|cygwin" -join ";" ;
           $env:BOOT_JDK = cygpath "$HOME/bootjdk/$env:BOOT_JDK_VERSION" ;
-          $env:FREETYPE_HOME = "$env:GITHUB_WORKSPACE\freetype" ;
           $env:JT_HOME = cygpath "$HOME/jtreg" ;
           & bash configure
           --with-toolchain-version=2017
@@ -818,7 +816,6 @@ jobs:
           --with-user-release-suffix="$env:GITHUB_ACTOR-$env:GITHUB_SHA"
           --with-build-number=b00
           --with-boot-jdk="$env:BOOT_JDK"
-          --with-freetype-src="$env:FREETYPE_HOME"
           --with-jtreg="$env:JT_HOME" ;
           bash -c "cat $(find -name config.log)"
         working-directory: jdk
@@ -848,7 +845,7 @@ jobs:
 
   windows_x86_build:
     name: Windows x86
-    runs-on: "windows-2019"
+    runs-on: "windows-2025"
     needs: prerequisites
     if: needs.prerequisites.outputs.should_run != 'false' && needs.prerequisites.outputs.platform_windows_x86 != 'false'
 
@@ -875,6 +872,10 @@ jobs:
       VS2010_TORRENT_URL: "${{ fromJson(needs.prerequisites.outputs.dependencies).VS2010_TORRENT_URL }}"
       VS2010_TORRENT_DIR: "${{ fromJson(needs.prerequisites.outputs.dependencies).VS2010_TORRENT_DIR }}"
       VS2010_SHA256: "${{ fromJson(needs.prerequisites.outputs.dependencies).VS2010_SHA256 }}"
+      PS2DLC_FILENAME: "${{ fromJson(needs.prerequisites.outputs.dependencies).PS2DLC_FILENAME }}"
+      PS2DLC_DIR: "${{ fromJson(needs.prerequisites.outputs.dependencies).PS2DLC_DIR }}"
+      PS2DLC_URL: "${{ fromJson(needs.prerequisites.outputs.dependencies).PS2DLC_URL }}"
+      PS2DLC_SHA256: "${{ fromJson(needs.prerequisites.outputs.dependencies).PS2DLC_SHA256 }}"
 
     steps:
       - name: Restore cygwin installer from cache
@@ -906,13 +907,6 @@ jobs:
         with:
           path: jdk
 
-      - name: Checkout the FreeType source
-        uses: actions/checkout@v4
-        with:
-          repository: "freetype/freetype"
-          ref: VER-2-8-1
-          path: freetype
-
       - name: Restore boot JDK from cache
         id: bootjdk
         uses: actions/cache@v4
@@ -929,6 +923,26 @@ jobs:
           & unzip "$HOME/bootjdk/$env:BOOT_JDK_FILENAME" -d "$HOME/bootjdk/$env:BOOT_JDK_VERSION"
           Get-ChildItem "$HOME\bootjdk\$env:BOOT_JDK_VERSION\*\*" | Move-Item -Destination "$HOME\bootjdk\$env:BOOT_JDK_VERSION"
         if: steps.bootjdk.outputs.cache-hit != 'true'
+
+      - name: Restore PowerShell 2 from cache
+        id: ps2dlc
+        uses: actions/cache@v4
+        with:
+          path: ~/${{ env.PS2DLC_DIR }}
+          key: ps2dlc
+
+      - name: Download and unpack PowerShell 2
+        run: |
+          & curl -L "$env:PS2DLC_URL" -o "$HOME/$env:PS2DLC_FILENAME"
+          $FileHash = Get-FileHash -Algorithm SHA256 "$HOME/$env:PS2DLC_FILENAME"
+          $FileHash.Hash -eq $env:PS2DLC_SHA256
+          & unzip "$HOME/$env:PS2DLC_FILENAME" -d "$HOME"
+        if: steps.ps2dlc.outputs.cache-hit != 'true'
+
+      - name: Install PowerShell 2
+        run: |
+          cd "$HOME/$env:PS2DLC_DIR"
+          & powershell.exe -executionpolicy bypass -file ./loadGAC.ps1
 
       - name: Restore Visual Studio 2010 from cache
         id: vs2010
@@ -970,18 +984,11 @@ jobs:
       - name: Fix OpenJDK permissions
         run: bash -c "chmod -R 0777 jdk"
 
-      - name: Copy FreeType project file
-        run: >
-          Remove-Item "$env:GITHUB_WORKSPACE\freetype\builds\windows\vc2010\freetype.vcxproj" ;
-          Copy-Item -Path "$env:GITHUB_WORKSPACE\jdk\.github\workflows\freetype.vcxproj"
-          -Destination "$env:GITHUB_WORKSPACE\freetype\builds\windows\vc2010\freetype.vcxproj" ;
-
       - name: Configure
         run: >
           $env:Path = "$HOME\cygwin\cygwin64\bin;$HOME\cygwin\cygwin64\bin;$env:Path" ;
           $env:Path = $env:Path -split ";" -match "C:\\Windows|PowerShell|cygwin" -join ";" ;
           $env:BOOT_JDK = cygpath "$HOME/bootjdk/$env:BOOT_JDK_VERSION" ;
-          $env:FREETYPE_HOME = "$env:GITHUB_WORKSPACE\freetype" ;
           $env:JT_HOME = cygpath "$HOME/jtreg" ;
           & bash configure
           --with-conf-name=windows-x86
@@ -992,7 +999,6 @@ jobs:
           --with-user-release-suffix="$env:GITHUB_ACTOR-$env:GITHUB_SHA"
           --with-build-number=b00
           --with-boot-jdk="$env:BOOT_JDK"
-          --with-freetype-src="$env:FREETYPE_HOME"
           --with-jtreg="$env:JT_HOME" ;
           bash -c "cat $(find -name config.log)"
         working-directory: jdk
@@ -1022,7 +1028,7 @@ jobs:
 
   windows_x64_test:
     name: Windows x64
-    runs-on: "windows-2019"
+    runs-on: "windows-2025"
     needs:
       - prerequisites
       - windows_x64_build
@@ -1034,6 +1040,7 @@ jobs:
           - jdk/tier1
           - langtools/tier1
           - hotspot/tier1
+          - jdk/security_infra
         include:
           - test: jdk/tier1
             suites: jdk_tier1
@@ -1041,6 +1048,8 @@ jobs:
             suites: langtools_tier1
           - test: hotspot/tier1
             suites: hotspot_tier1
+          - test: jdk/security_infra
+            suites: jdk_security_infra
 
     env:
       JDK_VERSION: "${{ fromJson(needs.prerequisites.outputs.dependencies).JDK_MAJOR_VERSION }}.${{ fromJson(needs.prerequisites.outputs.dependencies).JDK_MINOR_VERSION }}.${{ fromJson(needs.prerequisites.outputs.dependencies).JDK_MICRO_VERSION }}"
@@ -1180,7 +1189,7 @@ jobs:
 
   windows_x86_test:
     name: Windows x86
-    runs-on: "windows-2019"
+    runs-on: "windows-2025"
     needs:
       - prerequisites
       - windows_x86_build
@@ -1192,6 +1201,7 @@ jobs:
           - jdk/tier1
           - langtools/tier1
           - hotspot/tier1
+          - jdk/security_infra
         include:
           - test: jdk/tier1
             suites: jdk_tier1
@@ -1199,6 +1209,8 @@ jobs:
             suites: langtools_tier1
           - test: hotspot/tier1
             suites: hotspot_tier1
+          - test: jdk/security_infra
+            suites: jdk_security_infra
 
     env:
       JDK_VERSION: "${{ fromJson(needs.prerequisites.outputs.dependencies).JDK_MAJOR_VERSION }}.${{ fromJson(needs.prerequisites.outputs.dependencies).JDK_MINOR_VERSION }}.${{ fromJson(needs.prerequisites.outputs.dependencies).JDK_MICRO_VERSION }}"
@@ -1338,7 +1350,7 @@ jobs:
 
   macos_x64_build:
     name: macOS x64
-    runs-on: "macos-13"
+    runs-on: "macos-15-intel"
     needs: prerequisites
     if: needs.prerequisites.outputs.should_run != 'false' && needs.prerequisites.outputs.platform_macos_x64 != 'false'
 
@@ -1405,7 +1417,23 @@ jobs:
         run: brew install make gawk
 
       - name: Select Xcode version
-        run: sudo xcode-select --switch /Applications/Xcode_14.3.1.app/Contents/Developer
+        run: sudo xcode-select --switch /Applications/Xcode_16.4.app/Contents/Developer
+
+      # Remove once JDK-8376511 has been completed
+      - name: Checkout the Apple Openjdk
+        uses: actions/checkout@v4
+        with:
+          repository: apple/openjdk
+          path: appleopenjdk
+
+      # Remove once JDK-8376511 has been completed
+      - name: Copy missing JNF files
+        run: |
+          sudo mkdir /Applications/Xcode_16.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/System/Library/Frameworks/JavaNativeFoundation.framework/Versions/Current/Headers
+          sudo cp appleopenjdk/apple/JavaNativeFoundation/JavaNativeFoundation/*.h /Applications/Xcode_16.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/System/Library/Frameworks/JavaNativeFoundation.framework/Versions/Current/Headers/
+          sudo cp -R appleopenjdk/apple/JavaNativeFoundation/JavaNativeFoundation/Modules /Applications/Xcode_16.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/System/Library/Frameworks/JavaNativeFoundation.framework/Versions/Current/
+          sudo ln -s Versions/Current/Headers /Applications/Xcode_16.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/System/Library/Frameworks/JavaNativeFoundation.framework/Headers
+          sudo ln -s Versions/Current/Modules /Applications/Xcode_16.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/System/Library/Frameworks/JavaNativeFoundation.framework/Modules
 
       - name: Configure
         run: >
@@ -1420,7 +1448,10 @@ jobs:
         working-directory: jdk
 
       - name: Build
-        run: make CONF_NAME=macos-x64 images
+        run: |
+          cat build/macos-x64/spec.gmk
+          cat build/macos-x64/hotspot-spec.gmk
+          make CONF_NAME=macos-x64 images
         working-directory: jdk
 
       - name: Pack artifacts
@@ -1436,7 +1467,7 @@ jobs:
 
   macos_x64_test:
     name: macOS x64
-    runs-on: "macos-13"
+    runs-on: "macos-15-intel"
     needs:
       - prerequisites
       - macos_x64_build
@@ -1448,6 +1479,7 @@ jobs:
           - jdk/tier1
           - langtools/tier1
           - hotspot/tier1
+          - jdk/security_infra
         include:
           - test: jdk/tier1
             suites: jdk_tier1
@@ -1455,6 +1487,8 @@ jobs:
             suites: langtools_tier1
           - test: hotspot/tier1
             suites: hotspot_tier1
+          - test: jdk/security_infra
+            suites: jdk_security_infra
 
     env:
       JDK_VERSION: "${{ fromJson(needs.prerequisites.outputs.dependencies).JDK_MAJOR_VERSION }}.${{ fromJson(needs.prerequisites.outputs.dependencies).JDK_MINOR_VERSION }}.${{ fromJson(needs.prerequisites.outputs.dependencies).JDK_MICRO_VERSION }}"
@@ -1522,7 +1556,7 @@ jobs:
         run: brew install make gawk
 
       - name: Select Xcode version
-        run: sudo xcode-select --switch /Applications/Xcode_14.3.1.app/Contents/Developer
+        run: sudo xcode-select --switch /Applications/Xcode_16.4.app/Contents/Developer
 
       - name: Run tests
         run: >
@@ -1569,7 +1603,7 @@ jobs:
 
   artifacts:
     name: Post-process artifacts
-    runs-on: "ubuntu-20.04"
+    runs-on: "ubuntu-22.04"
     if: always()
     continue-on-error: true
     needs:
@@ -1588,7 +1622,7 @@ jobs:
               -H 'Accept: application/vnd.github+json' \
               -H 'Authorization: Bearer ${{ github.token }}' \
               -H 'X-GitHub-Api-Version: 2022-11-28' \
-              '${{ github.api_url }}/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts'
+              '${{ github.api_url }}/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts?per_page=100'
 
       - name: Delete transient artifacts
         run: |
@@ -1598,7 +1632,7 @@ jobs:
               -H 'Accept: application/vnd.github+json' \
               -H 'Authorization: Bearer ${{ github.token }}' \
               -H 'X-GitHub-Api-Version: 2022-11-28' \
-              '${{ github.api_url }}/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts')"
+              '${{ github.api_url }}/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts?per_page=100')"
           BUNDLE_ARTIFACT_IDS="$(echo "$ALL_ARTIFACT_IDS" | jq -r -c '.artifacts | map(select(.name|startswith("transient_"))) | .[].id')"
           for id in $BUNDLE_ARTIFACT_IDS; do
             echo "Removing $id"

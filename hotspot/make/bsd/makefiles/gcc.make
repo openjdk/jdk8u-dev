@@ -1,5 +1,5 @@
 #
-# Copyright (c) 1999, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 1999, 2025, Oracle and/or its affiliates. All rights reserved.
 # DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
 #
 # This code is free software; you can redistribute it and/or modify it
@@ -343,12 +343,13 @@ ifeq ($(OS_VENDOR), Darwin)
   # if built on a newer version of the OS.
   # The expected format is X.Y.Z
   ifeq ($(MACOSX_VERSION_MIN),)
-    MACOSX_VERSION_MIN=10.7.0
+    MACOSX_VERSION_MIN=11.00.00
   endif
   # The macro takes the version with no dots, ex: 1070
+  MAC_FLAGS = -mmacosx-version-min=$(MACOSX_VERSION_MIN)
   CFLAGS += -DMAC_OS_X_VERSION_MAX_ALLOWED=$(subst .,,$(MACOSX_VERSION_MIN)) \
-            -mmacosx-version-min=$(MACOSX_VERSION_MIN)
-  LFLAGS += -mmacosx-version-min=$(MACOSX_VERSION_MIN)
+            $(MAC_FLAGS)
+  LFLAGS += $(MAC_FLAGS)
 endif
 
 
