@@ -1956,11 +1956,11 @@ void * os::dll_load(const char *filename, char *ebuf, int ebuflen)
   #ifndef EM_AARCH64
   #define EM_AARCH64    183               /* ARM AARCH64 */
   #endif
-  #ifndef EM_LOONGARCH
-  #define EM_LOONGARCH  258               /* LoongArch */
-  #endif
   #ifndef EM_RISCV
   #define EM_RISCV      243               /* RISC-V */
+  #endif
+  #ifndef EM_LOONGARCH
+  #define EM_LOONGARCH  258               /* LoongArch */
   #endif
 
   static const arch_t arch_array[]={
@@ -1985,8 +1985,8 @@ void * os::dll_load(const char *filename, char *ebuf, int ebuflen)
     {EM_PARISC,      EM_PARISC,  ELFCLASS32, ELFDATA2MSB, (char*)"PARISC"},
     {EM_68K,         EM_68K,     ELFCLASS32, ELFDATA2MSB, (char*)"M68k"},
     {EM_AARCH64,     EM_AARCH64, ELFCLASS64, ELFDATA2LSB, (char*)"AARCH64"},
-    {EM_LOONGARCH,   EM_LOONGARCH, ELFCLASS64, ELFDATA2LSB, (char*)"LoongArch"},
     {EM_RISCV,       EM_RISCV,   ELFCLASS64, ELFDATA2LSB, (char*)"RISC-V"},
+    {EM_LOONGARCH,   EM_LOONGARCH, ELFCLASS64, ELFDATA2LSB, (char*)"LoongArch"},
   };
 
   #if  (defined IA32)
