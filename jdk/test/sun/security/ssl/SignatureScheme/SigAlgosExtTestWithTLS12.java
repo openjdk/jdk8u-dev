@@ -163,9 +163,14 @@ public class SigAlgosExtTestWithTLS12 extends SSLEngineTemplate {
             "EC-SHA384"
     };
 
-    private static final Map<Integer, String> SIG_SCHEMES_MAP = Map.of(
-            0x0403, "ecdsa_secp256r1_sha256",
-            0x0503, "ecdsa_secp384r1_sha384");
+    private static final Map<Integer, String> SIG_SCHEMES_MAP;
+
+    static {
+        Map<Integer, String> tempMap  = new HashMap<>();
+        tempMap.put(0x0403, "ecdsa_secp256r1_sha256");
+        tempMap.put(0x0503, "ecdsa_secp384r1_sha384");
+        SIG_SCHEMES_MAP = Collections.unmodifiableMap(tempMap);
+    }
 
     private static final int TLS_HS_CLI_HELLO = 1;
     private static final int TLS_HS_CERT_REQ = 13;
@@ -333,7 +338,7 @@ public class SigAlgosExtTestWithTLS12 extends SSLEngineTemplate {
                 twistSigSchemesCertReq(buf, (short) 0x0000);
                 byte[] bufBytes = new byte[buf.limit()];
                 buf.get(bufBytes);
-                tlsRecord.position(bufPos).put(bufBytes);
+                ((ByteBuffer)tlsRecord.position(bufPos)).put(bufBytes);
 
                 break;
             } else {
