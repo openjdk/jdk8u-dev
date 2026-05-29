@@ -24,7 +24,7 @@
 /*
  * @test
  * @bug 8164879
- * @library /lib/testlibrary ../../
+ * @library /lib/testlibrary ../../ /javax/net/ssl/templates
  * @summary Verify AES/GCM's limits set in the jdk.tls.keyLimits property
  * start a new handshake sequence to renegotiate the symmetric key with an
  * SSLSocket connection.  This test verifies the handshake method was called
@@ -41,24 +41,20 @@
  * success.
  */
 
-import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
 import javax.net.ssl.SSLEngineResult;
-import javax.net.ssl.TrustManagerFactory;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.PrintWriter;
 import java.nio.ByteBuffer;
-import java.security.KeyStore;
-import java.security.SecureRandom;
 import java.util.Arrays;
 
 import jdk.testlibrary.ProcessTools;
 import jdk.testlibrary.Utils;
 import jdk.testlibrary.OutputAnalyzer;
 
-public class SSLEngineKeyLimit {
+public class SSLEngineKeyLimit extends SSLContextTemplate {
 
     SSLEngine eng;
     static ByteBuffer cTos;
@@ -66,11 +62,6 @@ public class SSLEngineKeyLimit {
     static ByteBuffer outdata;
     ByteBuffer buf;
     static boolean ready = false;
-
-    static String pathToStores = "../../../../javax/net/ssl/etc/";
-    static String keyStoreFile = "keystore";
-    static String passwd = "passphrase";
-    static String keyFilename;
     static int dataLen = 10240;
     static boolean serverwrite = true;
     int totalDataLen = 0;
@@ -154,13 +145,6 @@ public class SSLEngineKeyLimit {
         }
 
         cTos = ByteBuffer.allocateDirect(dataLen*4);
-        keyFilename =
-            System.getProperty("test.src", "./") + "/" + pathToStores +
-                "/" + keyStoreFile;
-
-        System.setProperty("javax.net.ssl.keyStore", keyFilename);
-        System.setProperty("javax.net.ssl.keyStorePassword", passwd);
-
         sToc = ByteBuffer.allocateDirect(dataLen*4);
         outdata = ByteBuffer.allocateDirect(dataLen);
 
@@ -401,19 +385,12 @@ public class SSLEngineKeyLimit {
 
 
     SSLContext initContext() throws Exception {
-        SSLContext sc = SSLContext.getInstance("TLSv1.3");
-        KeyStore ks = KeyStore.getInstance("JKS");
-        ks.load(new FileInputStream(new File(System.getProperty("javax.net.ssl.keyStore"))),
-                passwd.toCharArray());
-        KeyManagerFactory kmf = KeyManagerFactory.getInstance(
-                KeyManagerFactory.getDefaultAlgorithm());
-        kmf.init(ks, passwd.toCharArray());
-        TrustManagerFactory tmf = TrustManagerFactory.getInstance(
-                TrustManagerFactory.getDefaultAlgorithm());
-        tmf.init(ks);
-        sc.init(kmf.getKeyManagers(),
-                tmf.getTrustManagers(), new SecureRandom());
-        return sc;
+        return createServerSSLContext();
+    }
+
+    @Override
+    protected ContextParameters getServerContextParameters() {
+        return new ContextParameters("TLSv1.3", "PKIX", "NewSunX509");
     }
 
     static class Server extends SSLEngineKeyLimit implements Runnable {
