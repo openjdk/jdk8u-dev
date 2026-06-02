@@ -502,11 +502,9 @@
  * @summary Interoperability tests with OISTE WISeKey Global Root GB CA
  * @library /test/lib
  * @build jtreg.SkippedException ValidatePathWithURL CAInterop
- * @run main/othervm/manual -Djava.security.debug=certpath,ocsp CAInterop
+ * @run main/othervm -Djava.security.debug=certpath,ocsp CAInterop
  * wisekeyglobalrootgbca OCSP
- * @run main/othervm/manual -Djava.security.debug=certpath,ocsp
- * CAInterop wisekeyglobalrootgbca OCSP
- * @run main/othervm/manual -Djava.security.debug=certpath CAInterop
+ * @run main/othervm -Djava.security.debug=certpath CAInterop
  * wisekeyglobalrootgbca CRL
  */
 
@@ -516,11 +514,9 @@
  * @summary Interoperability tests with OISTE WISeKey Global Root GC CA
  * @library /test/lib
  * @build jtreg.SkippedException ValidatePathWithURL CAInterop
- * @run main/othervm/manual -Djava.security.debug=certpath,ocsp CAInterop
+ * @run main/othervm -Djava.security.debug=certpath,ocsp CAInterop
  * wisekeyglobalrootgcca OCSP
- * @run main/othervm/manual -Djava.security.debug=certpath,ocsp
- * CAInterop wisekeyglobalrootgcca OCSP
- * @run main/othervm/manual -Djava.security.debug=certpath CAInterop
+ * @run main/othervm -Djava.security.debug=certpath CAInterop
  * wisekeyglobalrootgcca CRL
  */
 
