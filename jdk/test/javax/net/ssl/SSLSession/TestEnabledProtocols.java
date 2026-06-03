@@ -41,6 +41,7 @@
 import java.io.InputStream;
 import java.io.InterruptedIOException;
 import java.io.OutputStream;
+import java.net.SocketException;
 import java.security.Security;
 import java.util.Arrays;
 
