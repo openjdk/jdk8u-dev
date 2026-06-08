@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, 2024, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2015, 2025, Oracle and/or its affiliates. All rights reserved.
  * Copyright (c) 2020, Azul Systems, Inc. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
@@ -25,6 +25,9 @@
  */
 
 package sun.security.ssl;
+
+import static sun.security.ssl.SignatureScheme.CERTIFICATE_SCOPE;
+import static sun.security.ssl.SignatureScheme.HANDSHAKE_SCOPE;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -277,7 +280,16 @@ final class ServerHello {
                     shc.localSupportedSignAlgs =
                         SignatureScheme.getSupportedAlgorithms(
                                 shc.sslConfig,
-                                shc.algorithmConstraints, shc.activeProtocols);
+                                shc.algorithmConstraints, shc.activeProtocols,
+                                HANDSHAKE_SCOPE);
+                }
+
+                if (shc.localSupportedCertSignAlgs == null) {
+                    shc.localSupportedCertSignAlgs =
+                            SignatureScheme.getSupportedAlgorithms(
+                                    shc.sslConfig,
+                                    shc.algorithmConstraints, shc.activeProtocols,
+                                    CERTIFICATE_SCOPE);
                 }
 
                 SSLSessionImpl session =
@@ -506,7 +518,16 @@ final class ServerHello {
                     shc.localSupportedSignAlgs =
                         SignatureScheme.getSupportedAlgorithms(
                                 shc.sslConfig,
-                                shc.algorithmConstraints, shc.activeProtocols);
+                                shc.algorithmConstraints, shc.activeProtocols,
+                                HANDSHAKE_SCOPE);
+                }
+
+                if (shc.localSupportedCertSignAlgs == null) {
+                    shc.localSupportedCertSignAlgs =
+                            SignatureScheme.getSupportedAlgorithms(
+                                    shc.sslConfig,
+                                    shc.algorithmConstraints, shc.activeProtocols,
+                                    CERTIFICATE_SCOPE);
                 }
 
                 SSLSessionImpl session =
