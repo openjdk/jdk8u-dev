@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, 2018, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2015, 2025, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -24,6 +24,8 @@
  */
 
 package sun.security.ssl;
+
+import static sun.security.ssl.SignatureScheme.HANDSHAKE_SCOPE;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -187,7 +189,8 @@ final class SignatureAlgorithmsExtension {
                 chc.localSupportedSignAlgs =
                     SignatureScheme.getSupportedAlgorithms(
                             chc.sslConfig,
-                            chc.algorithmConstraints, chc.activeProtocols);
+                            chc.algorithmConstraints, chc.activeProtocols,
+                            HANDSHAKE_SCOPE);
             }
 
             int vectorLen = SignatureScheme.sizeInRecord() *
@@ -281,7 +284,9 @@ final class SignatureAlgorithmsExtension {
                     SignatureScheme.getSupportedAlgorithms(
                             shc.sslConfig,
                             shc.algorithmConstraints, shc.negotiatedProtocol,
-                            spec.signatureSchemes);
+                            spec.signatureSchemes,
+                            HANDSHAKE_SCOPE);
+
             if (sss == null || sss.isEmpty()) {
                 throw shc.conContext.fatal(Alert.HANDSHAKE_FAILURE,
                         "No supported signature algorithm");
@@ -421,7 +426,8 @@ final class SignatureAlgorithmsExtension {
                     SignatureScheme.getSupportedAlgorithms(
                             shc.sslConfig,
                             shc.algorithmConstraints,
-                            protocols);
+                            protocols,
+                            HANDSHAKE_SCOPE);
 
             int vectorLen = SignatureScheme.sizeInRecord() * sigAlgs.size();
             byte[] extData = new byte[vectorLen + 2];
@@ -522,7 +528,9 @@ final class SignatureAlgorithmsExtension {
                     SignatureScheme.getSupportedAlgorithms(
                             chc.sslConfig,
                             chc.algorithmConstraints, chc.negotiatedProtocol,
-                            spec.signatureSchemes);
+                            spec.signatureSchemes,
+                            HANDSHAKE_SCOPE);
+
             if (sss == null || sss.isEmpty()) {
                 throw chc.conContext.fatal(Alert.HANDSHAKE_FAILURE,
                         "No supported signature algorithm");

@@ -142,6 +142,7 @@ final class ECDHServerKeyExchange {
                 if (useExplicitSigAlgorithm) {
                     Map.Entry<SignatureScheme, Signature> schemeAndSigner =
                             SignatureScheme.getSignerOfPreferableAlgorithm(
+                                shc.algorithmConstraints,
                                 shc.peerRequestedSignatureSchemes,
                                 x509Possession,
                                 shc.negotiatedProtocol);

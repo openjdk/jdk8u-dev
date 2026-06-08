@@ -28,6 +28,8 @@
  * @test
  * @bug 8051498 8145849 8170282
  * @summary JEP 244: TLS Application-Layer Protocol Negotiation Extension
+ * @library /lib/testlibrary
+ * @build jdk.testlibrary.Utils
  *
  * @run main/othervm SSLEngineAlpnTest h2          UNUSED   h2          h2
  * @run main/othervm SSLEngineAlpnTest h2          UNUSED   h2,http/1.1 h2
@@ -128,6 +130,7 @@ import java.io.*;
 import java.security.*;
 import java.nio.*;
 import java.util.Arrays;
+import jdk.testlibrary.Utils;
 
 public class SSLEngineAlpnTest {
 

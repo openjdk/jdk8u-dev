@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, 2018, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2013, 2026, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -1193,7 +1193,16 @@ public final class Utils {
         }
     }
 
-    /* Implementation of ByteBuffer.slice(int, int) for JDK 8u */
+    /**
+     * Implementation of ByteBuffer.slice(int, int) for JDK 8u */
+     * @param buffer The ByteBuffer to operate with (read only).
+     * @param index The position in this buffer at which the content of the
+     * new buffer will start; must be non-negative and no
+     * larger than buffer.limit()
+     * @param length The number of elements the new buffer will contain; must
+     * be non-negative and no larger than buffer.limit() - index
+     * @return The new ByteBuffer.
+     */
     public static final ByteBuffer slice(ByteBuffer buffer, int index, int length) {
         final int limit = buffer.limit();
         final int position = buffer.position();
