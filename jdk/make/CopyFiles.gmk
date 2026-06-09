@@ -262,6 +262,17 @@ COPY_FILES += $(LIBDIR)/jvm.hprof.txt
 ##########################################################################################
 
 #
+# Bootstrap classpath for CreateSymbols. Add needed files not in the boot JDK
+# here. Currently only SSLScope.class since it's needed for DisabledAlgorithmConstraints
+# processing.
+#
+$(eval $(call SetupCopyFiles,COPY_CREATE_SYMBOLS, \
+    SRC := $(JDK_OUTPUTDIR)/classes, \
+    DEST := $(BOOTSTRAP_CLASSES_CREATE_SYMBOLS), \
+    FILES := sun/security/ssl/SSLScope.class))
+COPY_FILES += $(COPY_CREATE_SYMBOLS)
+
+#
 # How to install jvm.cfg.
 #
 ifeq ($(JVM_VARIANT_ZERO), true)
