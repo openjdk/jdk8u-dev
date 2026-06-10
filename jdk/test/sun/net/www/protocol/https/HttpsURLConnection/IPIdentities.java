@@ -29,7 +29,7 @@
 /* @test
  * @summary X509 certificate hostname checking is broken in JDK1.6.0_10
  * @bug 6766775
- * @library /test/lib ../../../../../../java/security/testlibrary
+ * @library /test/lib ../../../../../../java/security/testlibrary /lib/testlibrary
  * @build CertificateBuilder
  * @run main/othervm IPIdentities
  * @author Xuelei Fan
@@ -51,7 +51,7 @@ import java.security.cert.X509Certificate;
 import java.security.cert.Certificate;
 import java.math.BigInteger;
 import jdk.test.lib.Utils;
-import jdk.test.lib.net.URIBuilder;
+import jdk.testlibrary.net.URIBuilder;
 import sun.security.testlibrary.CertificateBuilder;
 import sun.security.testlibrary.CertificateBuilder.KeyUsage;
 import sun.security.x509.AuthorityKeyIdentifierExtension;
