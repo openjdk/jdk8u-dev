@@ -26,14 +26,16 @@
  * @bug 8340321
  * @summary Disable SHA-1 in TLS/DTLS 1.2 signatures.
  *          This test only covers TLS 1.2.
- * @library /javax/net/ssl/templates
- *          /test/lib
+ * @library /javax/net/ssl/templates /lib/testlibrary /test/lib
+ * @build jdk.testlibrary.Utils
  * @run main/othervm DisableSHA1inHandshakeSignatureTLS12
  */
 
 import static jdk.test.lib.Asserts.assertFalse;
 import static jdk.test.lib.Asserts.assertTrue;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class DisableSHA1inHandshakeSignatureTLS12 extends
@@ -74,10 +76,10 @@ public class DisableSHA1inHandshakeSignatureTLS12 extends
 
     // Returns SHA-1 signature schemes supported for TLSv1.2 handshake
     protected List<String> getDisabledSignatureSchemes() {
-        return List.of(
+        return Collections.unmodifiableList(Arrays.asList(new String[]{
                 "ecdsa_sha1",
                 "rsa_pkcs1_sha1",
-                "dsa_sha1"
+                "dsa_sha1"})
         );
     }
 
