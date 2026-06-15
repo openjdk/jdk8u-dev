@@ -48,11 +48,11 @@ public class DisableSignatureSchemePerScopeTLS13
     static final List<String> NOT_SUPPORTED_FOR_HANDSHAKE;
     static {
         List<String> temp = new ArrayList<>();
-	temp.add("rsa_pkcs1_sha1");
-	temp.add("rsa_pkcs1_sha256");
-	temp.add("rsa_pkcs1_sha384");
-	temp.add("rsa_pkcs1_sha512");
-	NOT_SUPPORTED_FOR_HANDSHAKE = Collections.unmodifiableList(temp);
+        temp.add("rsa_pkcs1_sha1");
+        temp.add("rsa_pkcs1_sha256");
+        temp.add("rsa_pkcs1_sha384");
+        temp.add("rsa_pkcs1_sha512");
+        NOT_SUPPORTED_FOR_HANDSHAKE = Collections.unmodifiableList(temp);
     }
 
     protected DisableSignatureSchemePerScopeTLS13() throws Exception {
