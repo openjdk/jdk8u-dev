@@ -25,7 +25,8 @@
  * @test
  * @bug 8326643
  * @summary Test for out-of-sequence change_cipher_spec in TLSv1.3
- * @library /javax/net/ssl/templates
+ * @library /javax/net/ssl/templates /lib/testlibrary
+ * @build jdk.testlibrary.Utils
  * @run main/othervm EngineOutOfSeqCCS
  */
 
@@ -34,6 +35,7 @@ import javax.net.ssl.SSLEngineResult;
 import javax.net.ssl.SSLEngineResult.HandshakeStatus;
 import javax.net.ssl.SSLException;
 import javax.net.ssl.SSLParameters;
+import jdk.testlibrary.Utils;
 
 public class EngineOutOfSeqCCS extends SSLEngineTemplate {
 

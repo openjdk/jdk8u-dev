@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, 2018, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2013, 2026, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -43,6 +43,7 @@ import java.util.List;
 import java.util.LinkedList;
 import java.util.Objects;
 import java.util.Set;
+import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -1191,4 +1192,26 @@ public final class Utils {
                 return Collections.unmodifiableSet(s);
         }
     }
+
+    /**
+     * Implementation of ByteBuffer.slice(int, int) for JDK11.
+     * @param buffer The ByteBuffer to operate with (read only).
+     * @param index The position in this buffer at which the content of the
+     * new buffer will start; must be non-negative and no
+     * larger than buffer.limit()
+     * @param length The number of elements the new buffer will contain; must
+     * be non-negative and no larger than buffer.limit() - index
+     * @return The new ByteBuffer.
+     */
+    public static ByteBuffer slice(ByteBuffer buffer, int index, int length) {
+        final int limit = buffer.limit();
+        final int position = buffer.position();
+        buffer.position(index);
+        buffer.limit(index + length);
+        ByteBuffer slice = buffer.slice();
+        buffer.limit(limit);
+        buffer.position(position);
+        return slice;
+    }
+
 }

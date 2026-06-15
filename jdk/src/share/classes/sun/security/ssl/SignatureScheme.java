@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, 2018, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2015, 2025, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -153,7 +153,7 @@ enum SignatureScheme {
     final String name;                  // literal name
     private final String algorithm;     // signature algorithm
     final String keyAlgorithm;          // signature key algorithm
-    private final AlgorithmParameterSpec signAlgParameter;
+    private final SigAlgParamSpec signAlgParams;
     private final NamedGroup namedGroup;    // associated named group
 
     // The minimal required key size in bits.
@@ -189,6 +189,7 @@ enum SignatureScheme {
         RSA_PSS_SHA512 ("SHA-512", 64);
 
         final private AlgorithmParameterSpec parameterSpec;
+        final private AlgorithmParameters parameters;
         final boolean isAvailable;
 
         SigAlgParamSpec(String hash, int saltLength) {
@@ -196,11 +197,13 @@ enum SignatureScheme {
             PSSParameterSpec pssParamSpec =
                     new PSSParameterSpec(hash, "MGF1",
                             new MGF1ParameterSpec(hash), saltLength, 1);
+            AlgorithmParameters pssParams = null;
 
             boolean mediator = true;
             try {
                 Signature signer = JsseJce.getSignature("RSASSA-PSS");
                 signer.setParameter(pssParamSpec);
+                pssParams = signer.getParameters();
             } catch (InvalidAlgorithmParameterException |
                     NoSuchAlgorithmException exp) {
                 mediator = false;
@@ -213,6 +216,7 @@ enum SignatureScheme {
 
             this.isAvailable = mediator;
             this.parameterSpec = mediator ? pssParamSpec : null;
+            this.parameters = mediator ? pssParams : null;
         }
 
         AlgorithmParameterSpec getParameterSpec() {
@@ -220,10 +224,17 @@ enum SignatureScheme {
         }
     }
 
-    // performance optimization
-    private static final Set<CryptoPrimitive> SIGNATURE_PRIMITIVE_SET =
-        Collections.unmodifiableSet(EnumSet.of(CryptoPrimitive.SIGNATURE));
+    // Handshake signature scope.
+    static final Set<SSLScope> HANDSHAKE_SCOPE =
+            Collections.unmodifiableSet(EnumSet.of(SSLScope.HANDSHAKE_SIGNATURE));
 
+    // Certificate signature scope.
+    static final Set<SSLScope> CERTIFICATE_SCOPE =
+            Collections.unmodifiableSet(EnumSet.of(SSLScope.CERTIFICATE_SIGNATURE));
+
+    // Non-TLS specific SIGNATURE CryptoPrimitive.
+    private static final Set<CryptoPrimitive> SIGNATURE_PRIMITIVE_SET =
+            Collections.unmodifiableSet(EnumSet.of(CryptoPrimitive.SIGNATURE));
 
     private SignatureScheme(int id, String name,
             String algorithm, String keyAlgorithm,
@@ -267,8 +278,7 @@ enum SignatureScheme {
         this.name = name;
         this.algorithm = algorithm;
         this.keyAlgorithm = keyAlgorithm;
-        this.signAlgParameter =
-            signAlgParamSpec != null ? signAlgParamSpec.parameterSpec : null;
+        this.signAlgParams = signAlgParamSpec;
         this.namedGroup = namedGroup;
         this.minimalKeySize = minimalKeySize;
         this.supportedProtocols = Arrays.asList(supportedProtocols);
@@ -357,12 +367,24 @@ enum SignatureScheme {
         return 2;
     }
 
+    private boolean isPermitted(
+            SSLAlgorithmConstraints constraints, Set<SSLScope> scopes) {
+        return constraints.permits(this.name, scopes)
+                && constraints.permits(this.keyAlgorithm, scopes)
+                && constraints.permits(this.algorithm, scopes)
+                && constraints.permits(SIGNATURE_PRIMITIVE_SET, this.name, null)
+                && constraints.permits(SIGNATURE_PRIMITIVE_SET, this.keyAlgorithm, null)
+                && constraints.permits(SIGNATURE_PRIMITIVE_SET, this.algorithm,
+                (signAlgParams != null ? signAlgParams.parameters : null));
+     }
+
     // Get local supported algorithm collection complying to algorithm
-    // constraints.
+    // constraints and SSL scopes.
     static List<SignatureScheme> getSupportedAlgorithms(
             SSLConfiguration config,
-            AlgorithmConstraints constraints,
-            List<ProtocolVersion> activeProtocols) {
+            SSLAlgorithmConstraints constraints,
+            List<ProtocolVersion> activeProtocols,
+            Set<SSLScope> scopes) {
         List<SignatureScheme> supported = new LinkedList<>();
         for (SignatureScheme ss: SignatureScheme.values()) {
             if (!ss.isAvailable ||
@@ -378,15 +400,14 @@ enum SignatureScheme {
 
             boolean isMatch = false;
             for (ProtocolVersion pv : activeProtocols) {
-                if (ss.supportedProtocols.contains(pv)) {
+                if (ss.isSupportedProtocol(pv, scopes)) {
                     isMatch = true;
                     break;
                 }
             }
 
             if (isMatch) {
-                if (constraints.permits(
-                        SIGNATURE_PRIMITIVE_SET, ss.algorithm, null)) {
+                if (ss.isPermitted(constraints, scopes)) {
                     supported.add(ss);
                 } else if (SSLLogger.isOn &&
                         SSLLogger.isOn("ssl,handshake,verbose")) {
@@ -405,8 +426,10 @@ enum SignatureScheme {
 
     static List<SignatureScheme> getSupportedAlgorithms(
             SSLConfiguration config,
-            AlgorithmConstraints constraints,
-            ProtocolVersion protocolVersion, int[] algorithmIds) {
+            SSLAlgorithmConstraints constraints,
+            ProtocolVersion protocolVersion,
+            int[] algorithmIds,
+            Set<SSLScope> scopes) {
         List<SignatureScheme> supported = new LinkedList<>();
         for (int ssid : algorithmIds) {
             SignatureScheme ss = SignatureScheme.valueOf(ssid);
@@ -416,12 +439,9 @@ enum SignatureScheme {
                             "Unsupported signature scheme: " +
                             SignatureScheme.nameOf(ssid));
                 }
-            } else if (ss.isAvailable &&
-                    ss.supportedProtocols.contains(protocolVersion) &&
-                    (config.signatureSchemes.isEmpty() ||
-                        config.signatureSchemes.contains(ss)) &&
-                    constraints.permits(SIGNATURE_PRIMITIVE_SET,
-                           ss.algorithm, null)) {
+            } else if ((config.signatureSchemes.isEmpty()
+                        || config.signatureSchemes.contains(ss))
+                    && ss.isAllowed(constraints, protocolVersion, scopes)) {
                 supported.add(ss);
             } else {
                 if (SSLLogger.isOn && SSLLogger.isOn("ssl,handshake")) {
@@ -435,15 +455,14 @@ enum SignatureScheme {
     }
 
     static SignatureScheme getPreferableAlgorithm(
+            SSLAlgorithmConstraints constraints,
             List<SignatureScheme> schemes,
             SignatureScheme certScheme,
             ProtocolVersion version) {
 
         for (SignatureScheme ss : schemes) {
-            if (ss.isAvailable &&
-                    ss.handshakeSupportedProtocols.contains(version) &&
-                    certScheme.keyAlgorithm.equalsIgnoreCase(ss.keyAlgorithm)) {
-
+            if (certScheme.keyAlgorithm.equalsIgnoreCase(ss.keyAlgorithm)
+                    && ss.isAllowed(constraints, version, HANDSHAKE_SCOPE)) {
                 return ss;
             }
         }
@@ -452,6 +471,7 @@ enum SignatureScheme {
     }
 
     static Map.Entry<SignatureScheme, Signature> getSignerOfPreferableAlgorithm(
+            SSLAlgorithmConstraints constraints,
             List<SignatureScheme> schemes,
             X509Possession x509Possession,
             ProtocolVersion version) {
@@ -467,9 +487,9 @@ enum SignatureScheme {
             keySize = Integer.MAX_VALUE;
         }
         for (SignatureScheme ss : schemes) {
-            if (ss.isAvailable && (keySize >= ss.minimalKeySize) &&
-                ss.handshakeSupportedProtocols.contains(version) &&
-                keyAlgorithm.equalsIgnoreCase(ss.keyAlgorithm)) {
+            if (keySize >= ss.minimalKeySize &&
+                keyAlgorithm.equalsIgnoreCase(ss.keyAlgorithm) &&
+                    ss.isAllowed(constraints, version, HANDSHAKE_SCOPE)) {
                 if (ss.namedGroup != null &&
                     ss.namedGroup.type == NamedGroupType.NAMED_GROUP_ECDHE) {
                     ECParameterSpec params =
@@ -529,6 +549,26 @@ enum SignatureScheme {
         return null;
     }
 
+    // Returns true if this signature scheme is supported for the given
+    // protocol version and SSL scopes.
+    private boolean isSupportedProtocol(
+            ProtocolVersion version, Set<SSLScope> scopes) {
+        if (scopes != null && scopes.equals(HANDSHAKE_SCOPE)) {
+            return this.handshakeSupportedProtocols.contains(version);
+        } else {
+            return this.supportedProtocols.contains(version);
+        }
+    }
+
+    // Returns true if this signature scheme is available, supported and
+    // permitted for the given constraints, protocol version and SSL scopes.
+    private boolean isAllowed(SSLAlgorithmConstraints constraints,
+            ProtocolVersion version, Set<SSLScope> scopes) {
+        return isAvailable
+                && isSupportedProtocol(version, scopes)
+                && isPermitted(constraints, scopes);
+    }
+
     static String[] getAlgorithmNames(Collection<SignatureScheme> schemes) {
         if (schemes != null) {
             ArrayList<String> names = new ArrayList<>(schemes.size());
@@ -554,7 +594,7 @@ enum SignatureScheme {
         }
 
         Signature verifier = Signature.getInstance(algorithm);
-        SignatureUtil.initVerifyWithParam(verifier, publicKey, signAlgParameter);
+        SignatureUtil.initVerifyWithParam(verifier, publicKey, (signAlgParams != null ? signAlgParams.parameterSpec : null));
 
         return verifier;
     }
@@ -571,7 +611,7 @@ enum SignatureScheme {
         try {
             Signature signer = Signature.getInstance(algorithm);
             SignatureUtil.initSignWithParam(signer, privateKey,
-                signAlgParameter,
+                (signAlgParams != null ? signAlgParams.parameterSpec : null),
                 null);
             return signer;
         } catch (NoSuchAlgorithmException | InvalidKeyException |
