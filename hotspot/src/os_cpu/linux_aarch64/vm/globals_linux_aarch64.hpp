@@ -40,7 +40,7 @@ define_pd_global(bool, DontYieldALot,            false);
 define_pd_global(intx, ThreadStackSize,          2040); // 0 => use system default
 define_pd_global(intx, VMThreadStackSize,        2040);
 
-define_pd_global(intx, CompilerThreadStackSize,  2040);
+define_pd_global(intx, CompilerThreadStackSize,  0);
 
 define_pd_global(uintx,JVMInvokeMethodSlack,     8192);
 
