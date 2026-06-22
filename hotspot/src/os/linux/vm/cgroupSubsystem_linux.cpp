@@ -236,8 +236,8 @@ bool CgroupSubsystemFactory::determine_type(CgroupInfo* cg_infos,
       if (i == CPUACCT_IDX) {
         continue;
       }
-      // For cgroups v2, cpuacct is rolled into cpu, and the pids and cpuset controllers
-      // are optional; the remaining controllers, cpu and memory, are required.
+      // For cgroups v2, cpuacct is rolled into cpu, the cpuset controller
+      // is optional; the remaining controllers, cpu and memory, are required.
       if (i == CPU_IDX || i == MEMORY_IDX) {
         all_required_controllers_enabled = all_required_controllers_enabled && cg_infos[i]._enabled;
       }
