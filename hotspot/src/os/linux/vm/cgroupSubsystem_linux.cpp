@@ -189,7 +189,6 @@ bool CgroupSubsystemFactory::determine_type(CgroupInfo* cg_infos,
   char *p;
   // true iff all required controllers, memory, cpu, cpuacct are enabled
   // at the kernel level.
-  // pids might not be enabled on older Linux distros (SLES 12.1, RHEL 7.1)
   // cpuset might not be enabled on newer Linux distros (Fedora 41)
   bool all_required_controllers_enabled = true;
 
