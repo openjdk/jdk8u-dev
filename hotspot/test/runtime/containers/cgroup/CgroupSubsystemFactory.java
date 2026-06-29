@@ -331,9 +331,6 @@ public class CgroupSubsystemFactory {
             sysFsCgroupCgroupControllersNoCpuPath = Paths.get(existingDirectory.toString(), "sys_fs_cgroup_cgroup_controllers_no_cpu");
             Files.write(sysFsCgroupCgroupControllersNoCpuPath, sysFsCgroupCgroupControllersNoCpuContent.getBytes(StandardCharsets.UTF_8));
 
-            sysFsCgroupCgroupControllersNoPidsPath = Paths.get(existingDirectory.toString(), "sys_fs_cgroup_cgroup_controllers_no_pids");
-            Files.write(sysFsCgroupCgroupControllersNoPidsPath, sysFsCgroupCgroupControllersNoPidsContent.getBytes(StandardCharsets.UTF_8));
-
             sysFsCgroupCgroupControllersCpuMemoryOnlyPath = Paths.get(existingDirectory.toString(), "sys_fs_cgroup_cgroup_controllers_cpu_memory_only");
             Files.write(sysFsCgroupCgroupControllersCpuMemoryOnlyPath, sysFsCgroupCgroupControllersCpuMemoryOnlyContent.getBytes(StandardCharsets.UTF_8));
 
