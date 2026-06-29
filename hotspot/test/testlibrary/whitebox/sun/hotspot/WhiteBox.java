@@ -260,8 +260,4 @@ public class WhiteBox {
                                    String procSelfCgroup,
                                    String procSelfMountinfo);
   public native void printOsInfo();
-  public native int validateCgroup(String procCgroups,
-                                   String procSelfCgroup,
-                                   String procSelfMountinfo);
-
 }
