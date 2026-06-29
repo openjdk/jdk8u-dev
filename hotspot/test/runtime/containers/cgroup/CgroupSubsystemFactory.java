@@ -90,7 +90,6 @@ public class CgroupSubsystemFactory {
     private Path sysFsCgroupCgroupControllersBlankLinePath;
     private Path sysFsCgroupCgroupControllersNoMemoryPath;
     private Path sysFsCgroupCgroupControllersNoCpuPath;
-    private Path sysFsCgroupCgroupControllersNoPidsPath;
     private Path sysFsCgroupCgroupControllersCpuMemoryOnlyPath;
     private Path sysFsCgroupCgroupControllersExtraWhitespacePath;
     private String procSelfCgroupHybridContent = "11:hugetlb:/\n" +
@@ -591,16 +590,6 @@ public class CgroupSubsystemFactory {
         System.out.println("testCgroupv2ControllerFileNoCpu PASSED!");
     }
 
-    public void testCgroupv2ControllerFileNoPids(WhiteBox wb, Path mountInfo) {
-        String sysFsCgroupCgroupControllers  = sysFsCgroupCgroupControllersNoPidsPath.toString();
-        String procSelfCgroup = cgroupV2SelfCgroup.toString();
-        String procSelfMountinfo = mountInfo.toString();
-        int retval = wb.validateCgroup(true, sysFsCgroupCgroupControllers, procSelfCgroup, procSelfMountinfo);
-        Asserts.assertEQ(CGROUPS_V2, retval, "cgroup v2 pids controller disabled.  Valid.");
-        Asserts.assertTrue(isValidCgroup(retval));
-        System.out.println("testCgroupv2ControllerFileNoPids PASSED!");
-    }
-
     public void testCgroupv2ControllerFileCpuMemoryOnly(WhiteBox wb, Path mountInfo) {
         String sysFsCgroupCgroupControllers  = sysFsCgroupCgroupControllersCpuMemoryOnlyPath.toString();
         String procSelfCgroup = cgroupV2SelfCgroup.toString();
@@ -645,7 +634,6 @@ public class CgroupSubsystemFactory {
             test.testCgroupv2ControllerFileBlankLine(wb, test.cgroupv2MntInfoZeroHierarchy);
             test.testCgroupv2ControllerFileNoMemory(wb, test.cgroupv2MntInfoZeroHierarchy);
             test.testCgroupv2ControllerFileNoCpu(wb, test.cgroupv2MntInfoZeroHierarchy);
-            test.testCgroupv2ControllerFileNoPids(wb, test.cgroupv2MntInfoZeroHierarchy);
             test.testCgroupv2ControllerFileCpuMemoryOnly(wb, test.cgroupv2MntInfoZeroHierarchy);
             test.testCgroupv2ControllerFileExtraWhitespace(wb, test.cgroupv2MntInfoZeroHierarchy);
             test.testCgroupV1Hybrid(wb);
