@@ -33,7 +33,7 @@
  * @test
  * @bug 8001183
  * @summary incorrect results of char vectors right shift operation
- * @requires vm.compiler2.enabled | vm.graal.enabled
+ * @requires vm.flavor == "server"
  *
  * @run main/othervm/timeout=400 -Xbatch -Xmx128m -XX:MaxVectorSize=8 compiler.codegen.TestCharVect2
  * @run main/othervm/timeout=400 -Xbatch -Xmx128m -XX:MaxVectorSize=16 compiler.codegen.TestCharVect2
