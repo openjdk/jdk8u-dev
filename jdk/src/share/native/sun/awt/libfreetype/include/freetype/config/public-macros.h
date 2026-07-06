@@ -4,7 +4,7 @@
  *
  *   Define a set of compiler macros used in public FreeType headers.
  *
- * Copyright (C) 2020 by
+ * Copyright (C) 2020-2025 by
  * David Turner, Robert Wilhelm, and Werner Lemberg.
  *
  * This file is part of the FreeType project, and may only be used,
@@ -62,8 +62,8 @@ FT_BEGIN_HEADER
    * because it is needed by `FT_EXPORT`.
    */
 
-  /* Visual C, mingw */
-#if defined( _WIN32 )
+  /* Visual C, MinGW, Cygwin */
+#if defined( _WIN32 ) || defined( __CYGWIN__ )
 
 #if defined( FT2_BUILD_LIBRARY ) && defined( DLL_EXPORT )
 #define FT_PUBLIC_FUNCTION_ATTRIBUTE  __declspec( dllexport )
@@ -103,6 +103,7 @@ FT_BEGIN_HEADER
    */
 #define FT_EXPORT( x )  FT_PUBLIC_FUNCTION_ATTRIBUTE extern x
 
+
   /*
    * `FT_UNUSED` indicates that a given parameter is not used -- this is
    * only used to get rid of unpleasant compiler warnings.
@@ -112,6 +113,23 @@ FT_BEGIN_HEADER
    */
 #ifndef FT_UNUSED
 #define FT_UNUSED( arg )  ( (arg) = (arg) )
+#endif
+
+
+  /*
+   * Support for casts in both C and C++.
+   */
+#ifdef __cplusplus
+#define FT_STATIC_CAST( type, var )       static_cast<type>(var)
+#define FT_REINTERPRET_CAST( type, var )  reinterpret_cast<type>(var)
+
+#define FT_STATIC_BYTE_CAST( type, var )                         \
+          static_cast<type>( static_cast<unsigned char>( var ) )
+#else
+#define FT_STATIC_CAST( type, var )       (type)(var)
+#define FT_REINTERPRET_CAST( type, var )  (type)(var)
+
+#define FT_STATIC_BYTE_CAST( type, var )  (type)(unsigned char)(var)
 #endif
 
 

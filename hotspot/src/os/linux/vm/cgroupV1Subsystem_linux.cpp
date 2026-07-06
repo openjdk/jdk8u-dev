@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019, 2020, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2019, 2022, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -111,10 +111,8 @@ jlong CgroupV1Subsystem::read_memory_limit_in_bytes() {
     }
     CgroupV1MemoryController* mem_controller = reinterpret_cast<CgroupV1MemoryController*>(_memory->controller());
     if (mem_controller->is_hierarchical()) {
-      const char* matchline = "hierarchical_memory_limit";
-      const char* format = "%s " JULONG_FORMAT;
-      GET_CONTAINER_INFO_LINE(julong, _memory->controller(), "/memory.stat", matchline,
-                             "Hierarchical Memory Limit is: " JULONG_FORMAT, format, hier_memlimit)
+      GET_CONTAINER_INFO_LINE(julong, _memory->controller(), "/memory.stat", "hierarchical_memory_limit",
+                             "Hierarchical Memory Limit is: " JULONG_FORMAT, JULONG_FORMAT, hier_memlimit)
       if (hier_memlimit >= os::Linux::physical_memory()) {
         if (PrintContainerInfo) {
           tty->print_cr("Hierarchical Memory Limit is: Unlimited");
@@ -142,15 +140,14 @@ jlong CgroupV1Subsystem::memory_and_swap_limit_in_bytes() {
     CgroupV1MemoryController* mem_controller = reinterpret_cast<CgroupV1MemoryController*>(_memory->controller());
     if (mem_controller->is_hierarchical()) {
       const char* matchline = "hierarchical_memsw_limit";
-      const char* format = "%s " JULONG_FORMAT;
       GET_CONTAINER_INFO_LINE(julong, _memory->controller(), "/memory.stat", matchline,
-                             "Hierarchical Memory and Swap Limit is : " JULONG_FORMAT, format, hier_memlimit)
-      if (hier_memlimit >= host_total_memsw) {
+                             "Hierarchical Memory and Swap Limit is : " JULONG_FORMAT, JULONG_FORMAT, hier_memswlimit)
+      if (hier_memswlimit >= host_total_memsw) {
         if (PrintContainerInfo) {
           tty->print_cr("Hierarchical Memory and Swap Limit is: Unlimited");
         }
       } else {
-        return (jlong)hier_memlimit;
+        return (jlong)hier_memswlimit;
       }
     }
     return (jlong)-1;
@@ -199,6 +196,49 @@ jlong CgroupV1Subsystem::memory_max_usage_in_bytes() {
   GET_CONTAINER_INFO(jlong, _memory->controller(), "/memory.max_usage_in_bytes",
                      "Maximum Memory Usage is: " JLONG_FORMAT, JLONG_FORMAT, memmaxusage);
   return memmaxusage;
+}
+
+jlong CgroupV1Subsystem::rss_usage_in_bytes() {
+  GET_CONTAINER_INFO_LINE(julong, _memory->controller(), "/memory.stat",
+                          "rss", JULONG_FORMAT, JULONG_FORMAT, rss);
+  return rss;
+}
+
+jlong CgroupV1Subsystem::cache_usage_in_bytes() {
+  GET_CONTAINER_INFO_LINE(julong, _memory->controller(), "/memory.stat",
+                          "cache", JULONG_FORMAT, JULONG_FORMAT, cache);
+  return cache;
+}
+
+jlong CgroupV1Subsystem::kernel_memory_usage_in_bytes() {
+  GET_CONTAINER_INFO(jlong, _memory->controller(), "/memory.kmem.usage_in_bytes",
+                     "Kernel Memory Usage is: " JLONG_FORMAT, JLONG_FORMAT, kmem_usage);
+  return kmem_usage;
+}
+
+jlong CgroupV1Subsystem::kernel_memory_limit_in_bytes() {
+  GET_CONTAINER_INFO(julong, _memory->controller(), "/memory.kmem.limit_in_bytes",
+                     "Kernel Memory Limit is: " JULONG_FORMAT, JULONG_FORMAT, kmem_limit);
+  if (kmem_limit >= os::Linux::physical_memory()) {
+    return (jlong)-1;
+  }
+  return (jlong)kmem_limit;
+}
+
+jlong CgroupV1Subsystem::kernel_memory_max_usage_in_bytes() {
+  GET_CONTAINER_INFO(jlong, _memory->controller(), "/memory.kmem.max_usage_in_bytes",
+                     "Maximum Kernel Memory Usage is: " JLONG_FORMAT, JLONG_FORMAT, kmem_max_usage);
+  return kmem_max_usage;
+}
+
+void CgroupV1Subsystem::print_version_specific_info(outputStream* st) {
+  jlong kmem_usage = kernel_memory_usage_in_bytes();
+  jlong kmem_limit = kernel_memory_limit_in_bytes();
+  jlong kmem_max_usage = kernel_memory_max_usage_in_bytes();
+
+  OSContainer::print_container_helper(st, kmem_usage, "kernel_memory_usage_in_bytes");
+  OSContainer::print_container_helper(st, kmem_limit, "kernel_memory_max_usage_in_bytes");
+  OSContainer::print_container_helper(st, kmem_max_usage, "kernel_memory_limit_in_bytes");
 }
 
 char * CgroupV1Subsystem::cpu_cpuset_cpus() {

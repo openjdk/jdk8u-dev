@@ -4,7 +4,7 @@
  *
  *   FreeType integer types definitions.
  *
- * Copyright (C) 1996-2020 by
+ * Copyright (C) 1996-2025 by
  * David Turner, Robert Wilhelm, and Werner Lemberg.
  *
  * This file is part of the FreeType project, and may only be used,
@@ -16,6 +16,8 @@
  */
 #ifndef FREETYPE_CONFIG_INTEGER_TYPES_H_
 #define FREETYPE_CONFIG_INTEGER_TYPES_H_
+
+FT_BEGIN_HEADER
 
   /* There are systems (like the Texas Instruments 'C54x) where a `char`  */
   /* has 16~bits.  ANSI~C says that `sizeof(char)` is always~1.  Since an */
@@ -59,6 +61,18 @@
 #endif
 
 #endif /* !defined(FT_SIZEOF_LONG) */
+
+#ifndef FT_SIZEOF_LONG_LONG
+
+  /* The size of a `long long` type if available */
+#if defined( FT_ULLONG_MAX ) && FT_ULLONG_MAX >= 0xFFFFFFFFFFFFFFFFULL
+#define FT_SIZEOF_LONG_LONG  ( 64 / FT_CHAR_BIT )
+#else
+#define FT_SIZEOF_LONG_LONG  0
+#endif
+
+#endif /* !defined(FT_SIZEOF_LONG_LONG) */
+
 
   /**************************************************************************
    *
@@ -174,14 +188,16 @@
 #endif
 
 
-  /* determine whether we have a 64-bit `int` type for platforms without */
-  /* Autoconf                                                            */
+  /* determine whether we have a 64-bit integer type */
 #if FT_SIZEOF_LONG == ( 64 / FT_CHAR_BIT )
 
-  /* `FT_LONG64` must be defined if a 64-bit type is available */
-#define FT_LONG64
 #define FT_INT64   long
 #define FT_UINT64  unsigned long
+
+#elif FT_SIZEOF_LONG_LONG >= ( 64 / FT_CHAR_BIT )
+
+#define FT_INT64   long long int
+#define FT_UINT64  unsigned long long int
 
   /**************************************************************************
    *
@@ -192,16 +208,9 @@
    */
 #elif !defined( __STDC__ ) || defined( FT_CONFIG_OPTION_FORCE_INT64 )
 
-#if defined( __STDC_VERSION__ ) && __STDC_VERSION__ >= 199901L
-
-#define FT_LONG64
-#define FT_INT64   long long int
-#define FT_UINT64  unsigned long long int
-
-#elif defined( _MSC_VER ) && _MSC_VER >= 900 /* Visual C++ (and Intel C++) */
+#if defined( _MSC_VER ) && _MSC_VER >= 900 /* Visual C++ (and Intel C++) */
 
   /* this compiler provides the `__int64` type */
-#define FT_LONG64
 #define FT_INT64   __int64
 #define FT_UINT64  unsigned __int64
 
@@ -211,35 +220,58 @@
   /*       to test the compiler version.                                 */
 
   /* this compiler provides the `__int64` type */
-#define FT_LONG64
 #define FT_INT64   __int64
 #define FT_UINT64  unsigned __int64
 
-#elif defined( __WATCOMC__ )   /* Watcom C++ */
+#elif defined( __WATCOMC__ ) && __WATCOMC__ >= 1100  /* Watcom C++ */
 
-  /* Watcom doesn't provide 64-bit data types */
+#define FT_INT64   long long int
+#define FT_UINT64  unsigned long long int
 
 #elif defined( __MWERKS__ )    /* Metrowerks CodeWarrior */
 
-#define FT_LONG64
 #define FT_INT64   long long int
 #define FT_UINT64  unsigned long long int
 
 #elif defined( __GNUC__ )
 
   /* GCC provides the `long long` type */
-#define FT_LONG64
 #define FT_INT64   long long int
 #define FT_UINT64  unsigned long long int
 
-#endif /* __STDC_VERSION__ >= 199901L */
+#endif /* !__STDC__ */
 
 #endif /* FT_SIZEOF_LONG == (64 / FT_CHAR_BIT) */
 
-#ifdef FT_LONG64
+#ifdef FT_INT64
+
   typedef FT_INT64   FT_Int64;
   typedef FT_UINT64  FT_UInt64;
-#endif
 
+#  define FT_INT64_ZERO  0
+
+#else  /* !FT_INT64 */
+
+  /* we need to emulate 64-bit data types if none are available */
+
+  typedef struct  FT_Int64_
+  {
+    FT_UInt32  lo;
+    FT_UInt32  hi;
+
+  } FT_Int64;
+
+  typedef struct  FT_UInt64_
+  {
+    FT_UInt32  lo;
+    FT_UInt32  hi;
+
+  } FT_UInt64;
+
+#  define FT_INT64_ZERO  { 0, 0 }
+
+#endif /* !FT_INT64 */
+
+FT_END_HEADER
 
 #endif  /* FREETYPE_CONFIG_INTEGER_TYPES_H_ */

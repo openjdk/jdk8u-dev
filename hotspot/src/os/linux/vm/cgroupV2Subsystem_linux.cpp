@@ -160,6 +160,18 @@ jlong CgroupV2Subsystem::memory_max_usage_in_bytes() {
   return OSCONTAINER_ERROR; // not supported
 }
 
+jlong CgroupV2Subsystem::rss_usage_in_bytes() {
+  GET_CONTAINER_INFO_LINE(julong, _memory->controller(), "/memory.stat",
+                          "anon", JULONG_FORMAT, JULONG_FORMAT, rss);
+  return rss;
+}
+
+jlong CgroupV2Subsystem::cache_usage_in_bytes() {
+  GET_CONTAINER_INFO_LINE(julong, _memory->controller(), "/memory.stat",
+                          "file", JULONG_FORMAT, JULONG_FORMAT, cache);
+  return cache;
+}
+
 char* CgroupV2Subsystem::mem_soft_limit_val() {
   GET_CONTAINER_INFO_CPTR(cptr, _unified, "/memory.low",
                          "Memory Soft Limit is: %s", "%s", mem_soft_limit_str, 1024);
@@ -192,6 +204,16 @@ char* CgroupV2Subsystem::mem_swp_limit_val() {
     return NULL;
   }
   return os::strdup(mem_swp_limit_str);
+}
+
+// memory.swap.current : total amount of swap currently used by the cgroup and its descendants
+char* CgroupV2Subsystem::mem_swp_current_val() {
+  GET_CONTAINER_INFO_CPTR(cptr, _unified, "/memory.swap.current",
+                         "Swap currently used is: %s", "%s", mem_swp_current_str, 1024);
+  if (mem_swp_current_str == NULL) {
+    return NULL;
+  }
+  return os::strdup(mem_swp_current_str);
 }
 
 /* memory_limit_in_bytes
@@ -240,6 +262,17 @@ char* CgroupV2Subsystem::mem_limit_val() {
     return NULL;
   }
   return os::strdup(mem_limit_str);
+}
+
+void CgroupV2Subsystem::print_version_specific_info(outputStream* st) {
+  char* mem_swp_current_str = mem_swp_current_val();
+  jlong swap_current = limit_from_str(mem_swp_current_str);
+
+  char* mem_swp_limit_str = mem_swp_limit_val();
+  jlong swap_limit = limit_from_str(mem_swp_limit_str);
+
+  OSContainer::print_container_helper(st, swap_current, "memory_swap_current_in_bytes");
+  OSContainer::print_container_helper(st, swap_limit, "memory_swap_max_limit_in_bytes");
 }
 
 char* CgroupV2Controller::construct_path(char* mount_path, char *cgroup_path) {

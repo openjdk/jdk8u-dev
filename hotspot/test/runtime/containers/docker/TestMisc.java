@@ -102,11 +102,26 @@ public class TestMisc {
             "Memory Soft Limit",
             "Memory Usage",
             "Maximum Memory Usage",
-            "memory_max_usage_in_bytes"
+            "memory_max_usage_in_bytes",
+            "rss_usage_in_bytes",
+            "cache_usage_in_bytes"
         };
 
         for (String s : expectedToContain) {
             out.shouldContain(s);
+        }
+        String str = out.getOutput();
+        if (str.contains("cgroupv1")) {
+            out.shouldContain("kernel_memory_usage_in_bytes");
+            out.shouldContain("kernel_memory_max_usage_in_bytes");
+            out.shouldContain("kernel_memory_limit_in_bytes");
+        } else {
+            if (str.contains("cgroupv2")) {
+                out.shouldContain("memory_swap_current_in_bytes");
+                out.shouldContain("memory_swap_max_limit_in_bytes");
+            } else {
+                throw new RuntimeException("Output has to contain information about cgroupv1 or cgroupv2");
+            }
         }
     }
 

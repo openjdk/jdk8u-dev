@@ -62,6 +62,7 @@
 #include "services/attachListener.hpp"
 #include "services/memTracker.hpp"
 #include "services/runtimeService.hpp"
+#include "utilities/align.hpp"
 #include "utilities/decoder.hpp"
 #include "utilities/defaultStream.hpp"
 #include "utilities/events.hpp"
@@ -901,6 +902,16 @@ bool os::create_thread(Thread* thread, ThreadType thr_type, size_t stack_size) {
     }
 
     stack_size = MAX2(stack_size, os::Linux::min_stack_allowed);
+
+    // Add an additional page to the stack size to reduce its chances of getting large page aligned
+    // so that the stack does not get backed by a transparent huge page.
+    size_t default_large_page_size = os::large_page_size();
+    if (default_large_page_size != 0 &&
+        stack_size >= default_large_page_size &&
+        is_aligned(stack_size, default_large_page_size)) {
+      stack_size += os::vm_page_size();
+    }
+
     pthread_attr_setstacksize(&attr, stack_size);
   } else {
     // let pthread_create() pick the default value.
@@ -1956,6 +1967,9 @@ void * os::dll_load(const char *filename, char *ebuf, int ebuflen)
   #ifndef EM_AARCH64
   #define EM_AARCH64    183               /* ARM AARCH64 */
   #endif
+  #ifndef EM_RISCV
+  #define EM_RISCV      243               /* RISC-V */
+  #endif
   #ifndef EM_LOONGARCH
   #define EM_LOONGARCH  258               /* LoongArch */
   #endif
@@ -1982,6 +1996,7 @@ void * os::dll_load(const char *filename, char *ebuf, int ebuflen)
     {EM_PARISC,      EM_PARISC,  ELFCLASS32, ELFDATA2MSB, (char*)"PARISC"},
     {EM_68K,         EM_68K,     ELFCLASS32, ELFDATA2MSB, (char*)"M68k"},
     {EM_AARCH64,     EM_AARCH64, ELFCLASS64, ELFDATA2LSB, (char*)"AARCH64"},
+    {EM_RISCV,       EM_RISCV,   ELFCLASS64, ELFDATA2LSB, (char*)"RISC-V"},
     {EM_LOONGARCH,   EM_LOONGARCH, ELFCLASS64, ELFDATA2LSB, (char*)"LoongArch"},
   };
 
@@ -2017,9 +2032,11 @@ void * os::dll_load(const char *filename, char *ebuf, int ebuflen)
     static  Elf32_Half running_arch_code=EM_AARCH64;
   #elif  (defined LOONGARCH64)
     static  Elf32_Half running_arch_code=EM_LOONGARCH;
+  #elif  (defined RISCV)
+    static  Elf32_Half running_arch_code=EM_RISCV;
   #else
     #error Method os::dll_load requires that one of following is defined:\
-         IA32, AMD64, IA64, __sparc, __powerpc__, ARM, S390, ALPHA, MIPS, MIPSEL, PARISC, M68K, AARCH64, LOONGARCH64
+         IA32, AMD64, IA64, __sparc, __powerpc__, ARM, S390, ALPHA, MIPS, MIPSEL, PARISC, M68K, AARCH64, LOONGARCH64, RISCV
   #endif
 
   // Identify compatability class for VM's architecture and library's architecture
@@ -2300,46 +2317,58 @@ void os::Linux::print_container_info(outputStream* st) {
   st->print("container (cgroup) information:\n");
 
   const char *p_ct = OSContainer::container_type();
-  st->print("container_type: %s\n", p_ct != NULL ? p_ct : "failed");
+  st->print("container_type: %s\n", p_ct != NULL ? p_ct : "not supported");
 
   char *p = OSContainer::cpu_cpuset_cpus();
-  st->print("cpu_cpuset_cpus: %s\n", p != NULL ? p : "failed");
+  st->print("cpu_cpuset_cpus: %s\n", p != NULL ? p : "not supported");
   free(p);
 
   p = OSContainer::cpu_cpuset_memory_nodes();
-  st->print("cpu_memory_nodes: %s\n", p != NULL ? p : "failed");
+  st->print("cpu_memory_nodes: %s\n", p != NULL ? p : "not supported");
   free(p);
 
   int i = OSContainer::active_processor_count();
+  st->print("active_processor_count: ");
   if (i > 0) {
-    st->print("active_processor_count: %d\n", i);
+    st->print("%d\n", i);
   } else {
-    st->print("active_processor_count: failed\n");
+    st->print("not supported\n");
   }
 
   i = OSContainer::cpu_quota();
-  st->print("cpu_quota: %d\n", i);
+  st->print("cpu_quota: ");
+  if (i > 0) {
+    st->print("%d\n", i);
+  } else {
+    st->print("%s\n", i == OSCONTAINER_ERROR ? "not supported" : "no quota");
+  }
 
   i = OSContainer::cpu_period();
-  st->print("cpu_period: %d\n", i);
+  st->print("cpu_period: ");
+  if (i > 0) {
+    st->print("%d\n", i);
+  } else {
+    st->print("%s\n", i == OSCONTAINER_ERROR ? "not supported" : "no period");
+  }
 
   i = OSContainer::cpu_shares();
-  st->print("cpu_shares: %d\n", i);
+  st->print("cpu_shares: ");
+  if (i > 0) {
+    st->print("%d\n", i);
+  } else {
+    st->print("%s\n", i == OSCONTAINER_ERROR ? "not supported" : "no shares");
+  }
 
-  jlong j = OSContainer::memory_limit_in_bytes();
-  st->print("memory_limit_in_bytes: " JLONG_FORMAT "\n", j);
+  OSContainer::print_container_helper(st, OSContainer::memory_limit_in_bytes(), "memory_limit_in_bytes");
+  OSContainer::print_container_helper(st, OSContainer::memory_and_swap_limit_in_bytes(), "memory_and_swap_limit_in_bytes");
+  OSContainer::print_container_helper(st, OSContainer::memory_soft_limit_in_bytes(), "memory_soft_limit_in_bytes");
+  OSContainer::print_container_helper(st, OSContainer::memory_usage_in_bytes(), "memory_usage_in_bytes");
+  OSContainer::print_container_helper(st, OSContainer::memory_max_usage_in_bytes(), "memory_max_usage_in_bytes");
+  OSContainer::print_container_helper(st, OSContainer::rss_usage_in_bytes(), "rss_usage_in_bytes");
+  OSContainer::print_container_helper(st, OSContainer::cache_usage_in_bytes(), "cache_usage_in_bytes");
 
-  j = OSContainer::memory_and_swap_limit_in_bytes();
-  st->print("memory_and_swap_limit_in_bytes: " JLONG_FORMAT "\n", j);
+  OSContainer::print_version_specific_info(st);
 
-  j = OSContainer::memory_soft_limit_in_bytes();
-  st->print("memory_soft_limit_in_bytes: " JLONG_FORMAT "\n", j);
-
-  j = OSContainer::OSContainer::memory_usage_in_bytes();
-  st->print("memory_usage_in_bytes: " JLONG_FORMAT "\n", j);
-
-  j = OSContainer::OSContainer::memory_max_usage_in_bytes();
-  st->print("memory_max_usage_in_bytes: " JLONG_FORMAT "\n", j);
   st->cr();
 }
 
@@ -3609,6 +3638,10 @@ bool os::Linux::setup_large_page_type(size_t page_size) {
 }
 
 void os::large_page_init() {
+  // Always initialize the default large page size even if large pages are not being used.
+  size_t large_page_size = Linux::setup_large_page_size();
+
+  // Handle the case where we do not want to use huge pages
   if (!UseLargePages &&
       !UseTransparentHugePages &&
       !UseHugeTLBFS &&
@@ -3626,7 +3659,6 @@ void os::large_page_init() {
     return;
   }
 
-  size_t large_page_size = Linux::setup_large_page_size();
   UseLargePages          = Linux::setup_large_page_type(large_page_size);
 
   set_coredump_filter();
@@ -5539,10 +5571,6 @@ int os::stat(const char *path, struct stat *sbuf) {
 
 bool os::check_heap(bool force) {
   return true;
-}
-
-int local_vsnprintf(char* buf, size_t count, const char* format, va_list args) {
-  return ::vsnprintf(buf, count, format, args);
 }
 
 // Is a (classpath) directory empty?
