@@ -35,6 +35,7 @@ import sun.awt.OSInfo;
 
 /**
  * @test
+ * @key headful
  * @bug 8033000 8147994
  * @author Alexander Scherbatiy
  * @summary No Horizontal Mouse Wheel Support In BasicScrollPaneUI
