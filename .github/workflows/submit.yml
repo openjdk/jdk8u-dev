@@ -1444,7 +1444,7 @@ jobs:
           --with-build-number=b00
           --with-boot-jdk=${HOME}/bootjdk/${BOOT_JDK_VERSION}/Contents/Home
           --with-jtreg=${HOME}/jtreg
-          --with-zlib=system
+          --with-zlib=bundled
         working-directory: jdk
 
       - name: Build
