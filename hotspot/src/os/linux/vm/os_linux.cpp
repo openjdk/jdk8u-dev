@@ -951,7 +951,16 @@ bool os::create_thread(Thread* thread, ThreadType thr_type, size_t stack_size) {
     // Yes, this means we have two guard sections - the glibc and the JVM one - per thread. But the
     // cost for that one extra protected page is dwarfed from a large win in performance and memory
     // that avoiding interference by khugepaged buys us.
-    guard_size = MAX2((size_t)os::vm_page_size(), guard_size);
+
+    // Note JDK8-specific: Glibc<2.27 has a bug that causes the libc to *deduct* the guard size from
+    // the stack size. Later JDKs deal with that. JDK8 lacks those patches (e.g. JDK-8229147).
+    // This bug could cause SOE on glic<2.27 (eg RHEL 7) on platforms with large page sizes. To
+    // mitigate this problem, instead of unconditionally creating guard pages like we do in later
+    // releases - where it causes no harm - we avoid creating guard pages for stacks that are
+    // significantly smaller than a THP page size.
+    if (stack_size > (os::large_page_size() / 8)) {
+      guard_size = os::vm_page_size();
+    }
   }
   pthread_attr_setguardsize(&attr, guard_size);
 
