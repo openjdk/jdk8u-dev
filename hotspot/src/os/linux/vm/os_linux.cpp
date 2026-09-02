@@ -951,16 +951,7 @@ bool os::create_thread(Thread* thread, ThreadType thr_type, size_t stack_size) {
     // Yes, this means we have two guard sections - the glibc and the JVM one - per thread. But the
     // cost for that one extra protected page is dwarfed from a large win in performance and memory
     // that avoiding interference by khugepaged buys us.
-
-    // Note JDK8-specific: Glibc<2.27 has a bug that causes the libc to *deduct* the guard size from
-    // the stack size. Later JDKs deal with that. JDK8 lacks those patches (e.g. JDK-8229147).
-    // This bug could cause SOE on glic<2.27 (eg RHEL 7) on platforms with large page sizes. To
-    // mitigate this problem, instead of unconditionally creating guard pages like we do in later
-    // releases - where it causes no harm - we avoid creating guard pages for stacks that are
-    // significantly smaller than a THP page size.
-    if (stack_size > (os::large_page_size() / 8)) {
-      guard_size = os::vm_page_size();
-    }
+    guard_size = os::vm_page_size();
   }
   pthread_attr_setguardsize(&attr, guard_size);
 
@@ -3699,6 +3690,33 @@ static bool is_thp_always_mode() {
   return result;
 }
 
+// JDK8-specific helper for os::large_page_init()
+static bool is_glibc_2_27_or_later(void) {
+  int major = -1, minor = -1;
+  const char *version_str = gnu_get_libc_version();
+  assert(version_str != nullptr, "gnu_get_libc_version returns null?");
+
+  if (sscanf(version_str, "%d.%d", &major, &minor) != 2) {
+    // if unsure, just assume we are running on a newer glibc; that is
+    // the safer bet now (2026 and beyond)
+    return true;
+  }
+
+  if (major > 2 || (major == 2 && minor >= 27)) {
+    return true;
+  }
+
+  return false;
+}
+
+// JDK8-specific helper for os::large_page_init()
+// (replacement for log_info(os))
+static void log_info_os(const char* txt) {
+  if(Verbose && PrintMiscellaneous) {
+    tty->print_cr("%s");
+  }
+}
+
 void os::large_page_init() {
   // Always initialize the default large page size even if large pages are not being used.
   size_t large_page_size = Linux::setup_large_page_size();
@@ -3709,12 +3727,19 @@ void os::large_page_init() {
   // thread stacks unless the user explicitly allowed THP formation by manually disabling
   // -XX:-THPStackMitigation.
   if (is_thp_always_mode()) {
-    if(Verbose && PrintMiscellaneous) {
-      if (THPStackMitigation) {
-        tty->print_cr("JVM will attempt to prevent THPs in thread stacks.");
+    if (THPStackMitigation) {
+      // Note JDK8-specific: Glibc<2.27 has a bug that causes the libc to *deduct* the guard size from
+      // the stack size. Later JDKs deal with that. JDK8 lacks those patches (e.g. JDK-8229147).
+      // This bug could cause SOE on glic<2.27 (eg RHEL 7) on platforms with large page sizes. To
+      // mitigate this problem, we just disable THP mitigation on older glibc versions altogether.
+      if (!is_glibc_2_27_or_later()) {
+        log_info_os("THP mitigation not supported on glibc < 2.27.");
+        FLAG_SET_ERGO(bool, THPStackMitigation, false);
       } else {
-        tty->print_cr("JVM will *not* prevent THPs in thread stacks. This may cause high RSS.");
+        log_info_os("JVM will attempt to prevent THPs in thread stacks.");
       }
+    } else {
+      log_info_os("JVM will *not* prevent THPs in thread stacks. This may cause high RSS.");
     }
   } else {
     FLAG_SET_ERGO(bool, THPStackMitigation, false); // Mitigation not needed
