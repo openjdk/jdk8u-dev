@@ -23,6 +23,7 @@
 
 /*
  @test
+ @key headful
  @bug 8040322
  @summary Test TextArea APIs replaceRange, insert, append & setText
  @run main TextAreaEditing
