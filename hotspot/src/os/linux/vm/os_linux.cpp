@@ -3691,22 +3691,15 @@ static bool is_thp_always_mode() {
 }
 
 // JDK8-specific helper for os::large_page_init()
-static bool is_glibc_2_27_or_later(void) {
+static bool is_glibc_older_than_2_27(void) {
   int major = -1, minor = -1;
   const char *version_str = gnu_get_libc_version();
   assert(version_str != NULL, "gnu_get_libc_version returns null?");
 
   if (sscanf(version_str, "%d.%d", &major, &minor) != 2) {
-    // if unsure, just assume we are running on a newer glibc; that is
-    // the safer bet now (2026 and beyond)
-    return true;
+    return true; // prefer compatibility if unsure
   }
-
-  if (major > 2 || (major == 2 && minor >= 27)) {
-    return true;
-  }
-
-  return false;
+  return (major < 2 || (major == 2 && minor < 27));
 }
 
 // JDK8-specific helper for os::large_page_init()
@@ -3732,7 +3725,7 @@ void os::large_page_init() {
       // the stack size. Later JDKs deal with that. JDK8 lacks those patches (e.g. JDK-8229147).
       // This bug could cause SOE on glic<2.27 (eg RHEL 7) on platforms with large page sizes. To
       // mitigate this problem, we just disable THP mitigation on older glibc versions altogether.
-      if (!is_glibc_2_27_or_later()) {
+      if (is_glibc_older_than_2_27()) {
         log_info_os("THP mitigation not supported on glibc < 2.27.");
         FLAG_SET_ERGO(bool, THPStackMitigation, false);
       } else {
