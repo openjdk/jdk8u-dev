@@ -59,6 +59,9 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
+import java.io.InputStreamReader;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class THPsInThreadStackPreventionTest {
 
@@ -167,6 +170,28 @@ public class THPsInThreadStackPreventionTest {
         }
     }
 
+    // JDK8-specific helper
+    private static int glibcVersion = 0x0227;
+    static {
+        try {
+            Process process = Runtime.getRuntime().exec(new String[]{"getconf", "GNU_LIBC_VERSION"});
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+                String line = reader.readLine();
+                if (line != null) {
+                    final Matcher mat = Pattern.compile("glibc\\s+(\\d+)\\.(\\d+)").matcher(line);
+                    if (mat.matches()) {
+                        int major = Integer.parseInt(mat.group(1));
+                        int minor = Integer.parseInt(mat.group(2));
+                        glibcVersion = (major << 8) + minor;
+                        System.out.println("glibcVersion: " + Integer.toHexString(glibcVersion));
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Failed to determine glibc version");
+        }
+    }
+
     public static void main(String[] args) throws Exception {
 
         // This issue is bound to THP=always
@@ -195,6 +220,12 @@ public class THPsInThreadStackPreventionTest {
 
                 OutputAnalyzer output = new OutputAnalyzer(pb.start());
                 output.shouldHaveExitValue(0);
+
+                // JDK8-specific: We disabled the patch on glibc < 2.27
+                if (glibcVersion < 0x0227) {
+                    output.shouldContain("THP mitigation not supported on glibc < 2.27.");
+                    throw new SkippedException("Running on glibc < 2.27, skipping test");
+                }
 
                 // this line indicates the mitigation is active:
                 output.shouldContain("JVM will attempt to prevent THPs in thread stacks.");
@@ -234,7 +265,7 @@ public class THPsInThreadStackPreventionTest {
                 output.shouldHaveExitValue(0);
 
                 // We deliberately switched off mitigation, VM should tell us:
-                output.shouldContain("[pagesize] JVM will *not* prevent THPs in thread stacks. This may cause high RSS.");
+                output.shouldContain("JVM will *not* prevent THPs in thread stacks. This may cause high RSS.");
 
                 // Parse output from self/status
                 ProcSelfStatus status = ProcSelfStatus.parse(output);
