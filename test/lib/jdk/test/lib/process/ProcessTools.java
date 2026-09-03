@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.concurrent.CountDownLatch;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -316,7 +317,17 @@ public final class ProcessTools {
         return 42;
     }
 
-
+    /**
+     * Create ProcessBuilder using the java launcher from the jdk to be tested.
+     * <p>
+     * @param command Arguments to pass to the java command.
+     * @return The ProcessBuilder instance representing the java command.
+     */
+    public static ProcessBuilder createJavaProcessBuilder(List<String> command) {
+        String[] argsArr = new String[command.size()];
+        argsArr = command.toArray(argsArr);
+        return createJavaProcessBuilder(argsArr);
+    }
 
     /**
      * Create ProcessBuilder using the java launcher from the jdk to be tested and
