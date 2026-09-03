@@ -171,7 +171,8 @@ public class THPsInThreadStackPreventionTest {
     }
 
     // JDK8-specific helper
-    private static int glibcVersion = 0x0227;
+    private static int glibcMajor = 2;
+    private static int glibcMinor = 27;
     static {
         try {
             Process process = Runtime.getRuntime().exec(new String[]{"getconf", "GNU_LIBC_VERSION"});
@@ -180,10 +181,9 @@ public class THPsInThreadStackPreventionTest {
                 if (line != null) {
                     final Matcher mat = Pattern.compile("glibc\\s+(\\d+)\\.(\\d+)").matcher(line);
                     if (mat.matches()) {
-                        int major = Integer.parseInt(mat.group(1));
-                        int minor = Integer.parseInt(mat.group(2));
-                        glibcVersion = (major << 8) + minor;
-                        System.out.println("glibcVersion: " + Integer.toHexString(glibcVersion));
+                        glibcMajor = Integer.parseInt(mat.group(1));
+                        glibcMinor = Integer.parseInt(mat.group(2));
+                        System.out.println(String.format("glibcVersion: %d.%d", glibcMajor, glibcMinor));
                     }
                 }
             }
@@ -222,7 +222,7 @@ public class THPsInThreadStackPreventionTest {
                 output.shouldHaveExitValue(0);
 
                 // JDK8-specific: We disabled the patch on glibc < 2.27
-                if (glibcVersion < 0x0227) {
+                if (glibcMajor < 2 || (glibcMajor == 2 && glibcMinor < 27)) {
                     output.shouldContain("THP mitigation not supported on glibc < 2.27.");
                     throw new SkippedException("Running on glibc < 2.27, skipping test");
                 }
