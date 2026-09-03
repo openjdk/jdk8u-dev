@@ -3694,7 +3694,7 @@ static bool is_thp_always_mode() {
 static bool is_glibc_2_27_or_later(void) {
   int major = -1, minor = -1;
   const char *version_str = gnu_get_libc_version();
-  assert(version_str != nullptr, "gnu_get_libc_version returns null?");
+  assert(version_str != NULL, "gnu_get_libc_version returns null?");
 
   if (sscanf(version_str, "%d.%d", &major, &minor) != 2) {
     // if unsure, just assume we are running on a newer glibc; that is
@@ -3713,7 +3713,7 @@ static bool is_glibc_2_27_or_later(void) {
 // (replacement for log_info(os))
 static void log_info_os(const char* txt) {
   if(Verbose && PrintMiscellaneous) {
-    tty->print_cr("%s");
+    tty->print_cr("%s", txt);
   }
 }
 

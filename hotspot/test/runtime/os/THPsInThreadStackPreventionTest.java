@@ -174,11 +174,11 @@ public class THPsInThreadStackPreventionTest {
             throw new SkippedException("Test only makes sense in THP \"always\" mode");
         }
 
+        // JDK8-specific: no UL; use -XX:+Verbose -XX:+PrintMiscellaneous instead
         String[] defaultArgs = {
-            "-Xlog:pagesize",
+            "-XX:+Verbose", "-XX:+PrintMiscellaneous",
             "-Xmx" + heapSizeMB + "m", "-Xms" + heapSizeMB + "m", "-XX:+AlwaysPreTouch", // stabilize RSS
             "-Xss" + threadStackSizeMB + "m",
-            "-XX:-CreateCoredumpOnCrash",
             // Limits the number of JVM-internal threads, which depends on the available cores of the
             // machine. RSS+Swap could exceed acceptableRSSLimitMB when JVM creates many internal threads.
             "-XX:ActiveProcessorCount=2",
@@ -197,7 +197,7 @@ public class THPsInThreadStackPreventionTest {
                 output.shouldHaveExitValue(0);
 
                 // this line indicates the mitigation is active:
-                output.shouldContain("[pagesize] JVM will attempt to prevent THPs in thread stacks.");
+                output.shouldContain("JVM will attempt to prevent THPs in thread stacks.");
 
                 ProcSelfStatus status = ProcSelfStatus.parse(output);
                 if (status.numLifeThreads < numThreads) {
