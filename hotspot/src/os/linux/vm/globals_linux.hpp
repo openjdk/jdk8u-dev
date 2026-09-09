@@ -55,7 +55,17 @@
   product(bool, PreferContainerQuotaForCPUCount, true,                  \
           "Calculate the container CPU availability based on the value" \
           " of quotas (if set), when true. Otherwise, use the CPU"      \
-          " shares value, provided it is less than quota.")
+          " shares value, provided it is less than quota.")             \
+                                                                        \
+  diagnostic(bool, THPStackMitigation, true,                            \
+          "If THPs are unconditionally enabled on the system (mode "    \
+          "\"always\"), the JVM will prevent THP from forming in "      \
+          "thread stacks. When disabled, the absence of this mitigation"\
+          "allows THPs to form in thread stacks.")                      \
+                                                                        \
+  develop(bool, DelayThreadStartALot, false,                            \
+          "Artificially delay thread starts randomly for testing.")     \
+                                                                        \
 
 //
 // Defines Linux-specific default values. The flags are available on all
