@@ -35,6 +35,7 @@ import javax.swing.SwingUtilities;
 
 /**
  * @test
+ * @key headful
  * @bug 8008657
  * @summary JSpinner setComponentOrientation doesn't affect on text orientation
  * @run main bug8008657

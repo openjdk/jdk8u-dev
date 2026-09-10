@@ -21,14 +21,16 @@
  * questions.
  */
 
-/* @test
+/*
+   @test
+   @key headful
    @bug 4199622
    @summary RFE: JComboBox shouldn't send ActionEvents for keyboard navigation
    @author Vladislav Karnaukhov
    @library ../../../../lib/testlibrary
    @build jdk.testlibrary.OSInfo
    @run main bug4199622
-*/
+ */
 
 import com.sun.java.swing.plaf.windows.WindowsLookAndFeel;
 import jdk.testlibrary.OSInfo;
