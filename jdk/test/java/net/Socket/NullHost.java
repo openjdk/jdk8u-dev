@@ -74,9 +74,9 @@ public class NullHost {
         int port = s.getPort();
         s.start();
         try {
-            try (var sock = new Socket((String)null, port)) {}
-            try (var sock = new Socket((String)null, port, true)) {}
-            try (var sock = new Socket((String)null, port, null, 0)) {}
+            try (Socket sock = new Socket((String)null, port)) {}
+            try (Socket sock = new Socket((String)null, port, true)) {}
+            try (Socket sock = new Socket((String)null, port, null, 0)) {}
         } catch (NullPointerException e) {
             throw new RuntimeException("Got a NPE");
         } finally {
