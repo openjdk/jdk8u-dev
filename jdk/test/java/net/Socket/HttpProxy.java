@@ -129,6 +129,7 @@ public class HttpProxy {
             public void run() {
                 try { simpleWrite(os, start); }
                 catch (Exception e) {unexpected(e); }
+                finally { out.println(threadName + ": done"); }
             }}, threadName)).start();
     }
 
@@ -139,6 +140,7 @@ public class HttpProxy {
             b[1] = (byte) (i % 256);
             os.write(b);
         }
+        out.println("Wrote " + start + " -> " + (start + 100));
     }
 
     void simpleRead(InputStream is, int start) throws Exception {
@@ -153,6 +155,7 @@ public class HttpProxy {
             if (r != i)
                 throw new Exception("read " + r + " expected " +i);
         }
+        out.println("Read " + start + " -> " + (start + 100));
     }
 
     int bytes(byte b1, byte b2) {
@@ -204,6 +207,7 @@ public class HttpProxy {
 
             // retrieve the host and port info from the status-line
             InetSocketAddress serverAddr = getConnectInfo(statusLine);
+            out.println("Proxy serving CONNECT request to " + serverAddr);
 
             //open socket to the server
             try (Socket serverSocket = new Socket(serverAddr.getAddress(),

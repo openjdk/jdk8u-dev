@@ -43,8 +43,10 @@ public class NullHost {
             return svr.getLocalPort();
         }
 
+        volatile boolean done;
         public void shutdown() {
             try {
+                done = true;
                 svr.close();
             } catch (IOException e) {
             }
@@ -53,11 +55,12 @@ public class NullHost {
         public void run() {
             Socket s;
             try {
-                while (true) {
+                while (!done) {
                     s = svr.accept();
                     s.close();
                 }
             } catch (IOException e) {
+                if (!done) e.printStackTrace();
             }
         }
     }
@@ -71,13 +74,9 @@ public class NullHost {
         int port = s.getPort();
         s.start();
         try {
-            Socket sock = new Socket((String)null, port);
-            sock.close();
-            sock = new Socket((String)null, port, true);
-            sock.close();
-            sock = new Socket((String)null, port, null, 0);
-            sock.close();
-
+            try (Socket sock = new Socket((String)null, port)) {}
+            try (Socket sock = new Socket((String)null, port, true)) {}
+            try (Socket sock = new Socket((String)null, port, null, 0)) {}
         } catch (NullPointerException e) {
             throw new RuntimeException("Got a NPE");
         } finally {
