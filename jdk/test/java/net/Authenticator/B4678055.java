@@ -35,8 +35,8 @@ import java.net.*;
 
 public class B4678055 implements HttpCallback {
 
-    static int count = 0;
-    static String authstring;
+    static volatile int count = 0;
+    static volatile String authstring;
 
     void errorReply (HttpTransaction req, String reply) throws IOException {
         req.addResponseHeader ("Connection", "close");
@@ -53,6 +53,7 @@ public class B4678055 implements HttpCallback {
 
     public void request (HttpTransaction req) {
         try {
+            System.out.println("Server handling case: "+ count);
             authstring = req.getRequestHeader ("Authorization");
             System.out.println (authstring);
             switch (count) {
@@ -92,6 +93,7 @@ public class B4678055 implements HttpCallback {
             }
             count ++;
         } catch (IOException e) {
+            System.err.println("Unexpected exception for case " + count + ": " + e);
             e.printStackTrace();
         }
     }
@@ -131,6 +133,8 @@ public class B4678055 implements HttpCallback {
             client ("http://localhost:"+server.getLocalPort()+"/d2/foo.html");
             client ("http://localhost:"+server.getLocalPort()+"/d2/foo.html");
         } catch (Exception e) {
+            System.out.println("Client got exception: " + e);
+            System.out.println("Terminating server");
             if (server != null) {
                 server.terminate();
             }
@@ -144,10 +148,13 @@ public class B4678055 implements HttpCallback {
         if (!checkFinalAuth()) {
             except ("Wrong authorization string received from client");
         }
+        System.out.println("Terminating server");
         server.terminate();
     }
 
     public static void except (String s) {
+        System.out.println("Check failed: " + s);
+        System.out.println("Terminating server");
         server.terminate();
         throw new RuntimeException (s);
     }
@@ -157,7 +164,7 @@ public class B4678055 implements HttpCallback {
             super ();
         }
 
-        int count = 0;
+        volatile int count = 0;
 
         public PasswordAuthentication getPasswordAuthentication () {
             PasswordAuthentication pw;

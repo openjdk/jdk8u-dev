@@ -68,7 +68,9 @@ class RedirLimitServer extends Thread {
     // Read until the end of a HTTP request
     void readOneRequest(InputStream is) throws IOException {
         int requestEndCount = 0, r;
+        StringBuilder sb = new StringBuilder();
         while ((r = is.read()) != -1) {
+            sb.append((char)r);
             if (r == requestEnd[requestEndCount]) {
                 requestEndCount++;
                 if (requestEndCount == 4) {
@@ -78,21 +80,26 @@ class RedirLimitServer extends Thread {
                 requestEndCount = 0;
             }
         }
+        System.out.println("Server got request: " + sb.toString());
     }
 
     public void run() {
         try {
             for (int i=0; i<NUM_REDIRECTS; i++) {
                 try (Socket s = ss.accept()) {
+                    System.out.println("Server accepted socket: " + s);
                     s.setSoTimeout(TIMEOUT);
                     readOneRequest(s.getInputStream());
+                    System.out.println("Redirecting to: /redirect" + i);
                     String reply = reply1 + port + "/redirect" + i + reply2;
                     s.getOutputStream().write(reply.getBytes());
                 }
             }
             try (Socket s = ss.accept()) {
+                System.out.println("Server accepted socket: " + s);
                 s.setSoTimeout(TIMEOUT);
                 readOneRequest(s.getInputStream());
+                System.out.println("Replying...");
                 s.getOutputStream().write(reply3.getBytes());
             }
         } catch (Exception e) {
