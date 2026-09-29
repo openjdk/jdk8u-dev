@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, 2019, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2015, 2024, Oracle and/or its affiliates. All rights reserved.
  * Copyright (c) 2020, Azul Systems, Inc. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
@@ -743,6 +743,15 @@ final class ServerHello {
         public byte[] produce(ConnectionContext context,
                 HandshakeMessage message) throws IOException {
             ServerHandshakeContext shc = (ServerHandshakeContext) context;
+
+
+            if (shc.sentHRR) {
+                throw shc.conContext.fatal(
+                        Alert.HANDSHAKE_FAILURE,
+                        "TLS 1.3 server MUST NOT send a second HelloRetryRequest " +
+                        "in the same connection");
+            }
+
             ClientHelloMessage clientHello = (ClientHelloMessage) message;
 
             // negotiate the cipher suite.
@@ -778,6 +787,16 @@ final class ServerHello {
             // Output the handshake message.
             hhrm.write(shc.handshakeOutput);
             shc.handshakeOutput.flush();
+            shc.sentHRR = true;
+
+            // In TLS1.3 middlebox compatibility mode the server sends a
+            // dummy change_cipher_spec record immediately after its
+            // first handshake message. This may either be after
+            // a ServerHello or a HelloRetryRequest.
+            // (RFC 8446, Appendix D.4)
+            shc.conContext.outputRecord.changeWriteCiphers(
+                SSLWriteCipher.nullTlsWriteCipher(),
+                    (clientHello.sessionId.length() != 0));
 
             // Stateless, shall we clean up the handshake context as well?
             shc.handshakeHash.finish();     // forgot about the handshake hash
