@@ -41,10 +41,10 @@
 <h2 id="contents">Contents</h2>
 <ul>
 <li><a href="#introduction">Introduction</a></li>
-<li><a href="#hg">Use of Mercurial</a>
+<li><a href="#source-code">Source code</a>
 <ul>
-<li><a href="#get_source">Getting the Source</a></li>
-<li><a href="#repositories">Repositories</a></li>
+<li><a href="#getting-the-source">Getting the Source</a></li>
+<li><a href="#directories">Directories</a></li>
 </ul></li>
 <li><a href="#building">Building</a>
 <ul>
@@ -72,19 +72,13 @@
 <li><a href="#buildenvironments">Appendix C: Build Environments</a></li>
 </ul>
 <hr />
-<h2 id="use-of-mercurial">Use of Mercurial</h2>
-<p>The OpenJDK sources are maintained with the revision control system <a href="http://mercurial.selenic.com/wiki/Mercurial">Mercurial</a>. If you are new to Mercurial, please see the <a href="http://mercurial.selenic.com/wiki/BeginnersGuides">Beginner Guides</a> or refer to the <a href="http://hgbook.red-bean.com/">Mercurial Book</a>. The first few chapters of the book provide an excellent overview of Mercurial, what it is and how it works.</p>
-<p>For using Mercurial with the OpenJDK refer to the <a href="http://openjdk.java.net/guide/repositories.html#installConfig">Developer Guide: Installing and Configuring Mercurial</a> section for more information.</p>
+<h2 id="source-code">Source code</h2>
+<p>The OpenJDK sources are maintained with the revision control system <a href="https://git-scm.com/">Git</a>.</p>
+<p>If you are new to Git, a good place to start is the book <a href="https://git-scm.com/book/en/v2">Pro Git</a>. The rest of this document assumes a working knowledge of Git.</p>
 <h3 id="getting-the-source">Getting the Source</h3>
-<p>To get the entire set of OpenJDK Mercurial repositories use the script <code>get_source.sh</code> located in the root repository:</p>
-<pre><code>  hg clone http://hg.openjdk.java.net/jdk8/jdk8 YourOpenJDK
-  cd YourOpenJDK
-  bash ./get_source.sh</code></pre>
-<p>Once you have all the repositories, keep in mind that each repository is its own independent repository. You can also re-run <code>./get_source.sh</code> anytime to pull over all the latest changesets in all the repositories. This set of nested repositories has been given the term “forest” and there are various ways to apply the same <code>hg</code> command to each of the repositories. For example, the script <code>make/scripts/hgforest.sh</code> can be used to repeat the same <code>hg</code> command on every repository, e.g.</p>
-<pre><code>  cd YourOpenJDK
-  bash ./make/scripts/hgforest.sh status</code></pre>
-<h3 id="repositories">Repositories</h3>
-<p>The set of repositories and what they contain:</p>
+<pre><code>git clone https://github.com/openjdk/jdk8u-dev</code></pre>
+<h3 id="directories">Directories</h3>
+<p>The set of directories and what they contain:</p>
 <ul>
 <li><strong>. (root)</strong> contains common configure and makefile logic</li>
 <li><strong>hotspot</strong> contains source code and make files for building the OpenJDK Hotspot Virtual Machine</li>
@@ -102,7 +96,7 @@
 <li>Files with execute permissions should not be added to the source repositories.</li>
 <li>All generated files need to be kept isolated from the files maintained or managed by the source control system. The standard area for generated files is the top level <code>build/</code> directory.</li>
 <li>The default build process should be to build the product and nothing else, in one form, e.g. a product (optimized), debug (non-optimized, -g plus assert logic), or fastdebug (optimized, -g plus assert logic).</li>
-<li>The <code>.hgignore</code> file in each repository must exist and should include <code>^build/</code>, <code>^dist/</code> and optionally any <code>nbproject/private</code> directories. <strong>It should NEVER</strong> include anything in the <code>src/</code> or <code>test/</code> or any managed directory area of a repository.</li>
+<li>The <code>.gitignore</code> file must exist and should include <code>/build/</code>, <code>/dist/</code> and optionally any <code>nbproject/private</code> directories. <strong>It should NEVER</strong> include anything in the <code>src/</code> or <code>test/</code> or any managed directory area of a repository.</li>
 <li>Directory names and file names should never contain blanks or non-printing characters.</li>
 <li>Generated source or binary files should NEVER be added to the repository (that includes <code>javah</code> output). There are some exceptions to this rule, in particular with some of the generated configure scripts.</li>
 <li>Files not needed for typical building or testing of the repository should not be added to the repository.</li>
@@ -138,6 +132,7 @@
 <ul>
 <li>Install one of <a href="#cygwin">CYGWIN</a> or <a href="#msys">MinGW/MSYS</a></li>
 <li>Install <a href="#vs2010">Visual Studio 2010</a></li>
+<li>Install <a href="#git-client">git client</a></li>
 </ul></li>
 <li><p><strong>Mac OS X</strong></p>
 <p>Install <a href="https://developer.apple.com/xcode/">XCode 4.5.2</a> and also install the “Command line tools” found under the preferences pane “Downloads”</p></li>
@@ -265,6 +260,12 @@
 <p>The 32-bit and 64-bit OpenJDK Windows build requires Microsoft Visual Studio C++ 2010 (VS2010) Professional Edition or Express compiler. The compiler and other tools are expected to reside in the location defined by the variable <code>VS100COMNTOOLS</code> which is set by the Microsoft Visual Studio installer.</p>
 <p>Only the C++ part of VS2010 is needed. Try to let the installation go to the default install directory. Always reboot your system after installing VS2010. The system environment variable VS100COMNTOOLS should be set in your environment.</p>
 <p>Make sure that TMP and TEMP are also set in the environment and refer to Windows paths that exist, like <code>C:\temp</code>, not <code>/tmp</code>, not <code>/cygdrive/c/temp</code>, and not <code>C:/temp</code>. <code>C:\temp</code> is just an example, it is assumed that this area is private to the user, so by default after installs you should see a unique user path in these variables.</p>
+<h5 id="git-client">Git client</h5>
+<p>You need to install a git client. You have two choices, Cygwin git or Git for Windows. Unfortunately there are pros and cons with each choice.</p>
+<ul>
+<li><p>The Cygwin <code>git</code> client has no line ending issues and understands Cygwin paths (which are used throughout the JDK build system). However, it does not currently work well with the Skara CLI tooling. Please see the <a href="https://wiki.openjdk.java.net/display/SKARA/Skara#Skara-Git">Skara wiki on Git clients</a> for up-to-date information about the Skara git client support.</p></li>
+<li><p>The <a href="https://gitforwindows.org">Git for Windows</a> client has issues with line endings, and do not understand Cygwin paths. It does work well with the Skara CLI tooling, however. To alleviate the line ending problems, make sure you set <code>core.autocrlf</code> to <code>false</code> (this is asked during installation).</p></li>
+</ul>
 <h4 id="mac-os-x">Mac OS X</h4>
 <p>Make sure you get the right XCode version.</p>
 <hr />
@@ -452,7 +453,7 @@ give some help on using <code>make</code>, including some interesting make targe
 <p><strong>Q:</strong> Do you require a specific version of autoconf for regenerating <code>generated-configure.sh</code>?<br />
 <strong>A:</strong> Yes, version 2.69 is required and should be easy enough to aquire on all supported operating systems. The reason for this is to avoid large spurious changes in <code>generated-configure.sh</code>.</p>
 <p><strong>Q:</strong> How do you regenerate <code>generated-configure.sh</code> after making changes to the input files?<br />
-<strong>A:</strong> Regnerating <code>generated-configure.sh</code> should always be done using the script <code>common/autoconf/autogen.sh</code> to ensure that the correct files get updated. This script should also be run after mercurial tries to merge <code>generated-configure.sh</code> as a merge of the generated file is not guaranteed to be correct.</p>
+<strong>A:</strong> Regnerating <code>generated-configure.sh</code> should always be done using the script <code>common/autoconf/autogen.sh</code> to ensure that the correct files get updated. This script should also be run after git tries to merge <code>generated-configure.sh</code> as a merge of the generated file is not guaranteed to be correct.</p>
 <p><strong>Q:</strong> What are the files in <code>common/makefiles/support/*</code> for? They look like gibberish.<br />
 <strong>A:</strong> They are a somewhat ugly hack to compensate for command line length limitations on certain platforms (Windows, Solaris). Due to a combination of limitations in make and the shell, command lines containing too many files will not work properly. These helper files are part of an elaborate hack that will compress the command line in the makefile and then uncompress it safely. We’re not proud of it, but it does fix the problem. If you have any better suggestions, we’re all ears! :-)</p>
 <p><strong>Q:</strong> I want to see the output of the commands that make runs, like in the old build. How do I do that?<br />
