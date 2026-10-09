@@ -500,8 +500,11 @@ JARSIGNER=@FIXPATH@ $(BOOT_JDK)/bin/jarsigner
 
 # You run the new javac using the boot jdk with $(BOOT_JDK)/bin/java $(NEW_JAVAC) ...
 BOOTSTRAP_JAVAC_JAR:=$(LANGTOOLS_OUTPUTDIR)/dist/bootstrap/lib/javac.jar
+BOOTSTRAP_CLASSES_CREATE_SYMBOLS:=$(BUILD_OUTPUT)/jdk/createSymbolsBP
 BOOTSTRAP_JAVAC_ARGS:="-Xbootclasspath/p:$(BOOTSTRAP_JAVAC_JAR)" -cp $(BOOTSTRAP_JAVAC_JAR)
+BOOTSTRAP_JAVAC_ARGS_EXTRA:="-Xbootclasspath/p:$(BOOTSTRAP_JAVAC_JAR)$(PATH_SEP)$(BOOTSTRAP_CLASSES_CREATE_SYMBOLS)" -cp $(BOOTSTRAP_JAVAC_JAR)
 NEW_JAVAC   = $(BOOTSTRAP_JAVAC_ARGS) com.sun.tools.javac.Main
+NEW_JAVAC_CREATESYMBOLS   = $(BOOTSTRAP_JAVAC_ARGS_EXTRA) com.sun.tools.javac.Main
 NEW_JAVADOC = $(BOOTSTRAP_JAVAC_ARGS) com.sun.tools.javadoc.Main
 
 # Base flags for RC

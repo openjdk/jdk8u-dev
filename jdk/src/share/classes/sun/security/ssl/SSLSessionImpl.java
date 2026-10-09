@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1996, 2018, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1996, 2025, Oracle and/or its affiliates. All rights reserved.
  * Copyright (c) 2020, Azul Systems, Inc. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
@@ -189,10 +189,10 @@ final class SSLSessionImpl extends ExtendedSSLSession {
         this.sessionId = id;
         this.host = hc.conContext.transport.getPeerHost();
         this.port = hc.conContext.transport.getPeerPort();
-        this.localSupportedSignAlgs = hc.localSupportedSignAlgs == null ?
+        this.localSupportedSignAlgs = hc.localSupportedCertSignAlgs == null ?
                 Collections.emptySet() :
                 Collections.unmodifiableCollection(
-                        new ArrayList<>(hc.localSupportedSignAlgs));
+                        new ArrayList<>(hc.localSupportedCertSignAlgs));
         this.serverNameIndication = hc.negotiatedServerName;
         this.requestedServerNames = Collections.unmodifiableList(
                 new ArrayList<>(hc.getRequestedServerNames()));
