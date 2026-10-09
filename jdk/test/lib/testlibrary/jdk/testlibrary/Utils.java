@@ -1194,7 +1194,7 @@ public final class Utils {
     }
 
     /**
-     * Implementation of ByteBuffer.slice(int, int) for JDK 8u */
+     * Implementation of ByteBuffer.slice(int, int) for JDK 8u
      * @param buffer The ByteBuffer to operate with (read only).
      * @param index The position in this buffer at which the content of the
      * new buffer will start; must be non-negative and no
