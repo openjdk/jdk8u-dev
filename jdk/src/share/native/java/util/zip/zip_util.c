@@ -1174,7 +1174,8 @@ ZIP_GetEntry(jzfile *zip, const char *name, jint ulen)
     return ZIP_GetEntry2(zip, name, ulen, JNI_TRUE);
 }
 
-jboolean equals(const char* name1, int len1, const char* name2, int len2) {
+static jboolean
+equals(const char* name1, int len1, const char* name2, int len2) {
     if (len1 != len2) {
         return JNI_FALSE;
     }
@@ -1184,6 +1185,10 @@ jboolean equals(const char* name1, int len1, const char* name2, int len2) {
         }
     }
     return JNI_TRUE;
+}
+
+static jboolean endsWithSlash(const char *name, jsize name_len) {
+    return name_len > 0 && name[name_len - 1] == '/';
 }
 
 /*
@@ -1207,27 +1212,21 @@ ZIP_GetEntry2(jzfile *zip, const char *name, jint ulen, jboolean autoSlash)
 
     idx = zip->table[hsh % zip->tablelen];
 
-    /* Check the cached entry first */
-    ze = zip->cache;
-    if (ze != NULL && ze->nlen > 0) {
-        jsize nlen = ze->nlen;
-        if (autoSlash && ze->name[nlen - 1] == '/' && name[ulen - 1] != '/' ) {
-            --nlen;
-        }
-        if (equals(ze->name, nlen, name, ulen)) {
-            /* Cache hit! Remove and return the cached entry. */
-            zip->cache = 0;
-            ZIP_Unlock(zip);
-            return ze;
-        }
-    }
-    ze = 0;
-
     /*
      * This while loop is an optimization where a double lookup
      * for name and name+/ is being performed.
      */
     while(1) {
+
+        /* Check the cached entry first */
+        ze = zip->cache;
+        if (ze && equals(ze->name, ze->nlen, name, ulen)) {
+            /* Cache hit!  Remove and return the cached entry. */
+            zip->cache = 0;
+            ZIP_Unlock(zip);
+            return ze;
+        }
+        ze = 0;
 
         /*
          * Search down the target hash chain for a cell whose
@@ -1247,7 +1246,7 @@ ZIP_GetEntry2(jzfile *zip, const char *name, jint ulen, jboolean autoSlash)
                  * we keep searching.
                  */
                 ze = newEntry(zip, zc, ACCESS_RANDOM);
-                if (ze && (skip_slash == 0 || ( ze->nlen > 0 && ze->name[ze->nlen - 1] == '/')) &&
+                if (ze && (skip_slash == 0 || endsWithSlash(ze->name, ze->nlen)) &&
                         equals(ze->name, ze->nlen - skip_slash, name, ulen)) {
                     break;
                 }
@@ -1273,7 +1272,7 @@ ZIP_GetEntry2(jzfile *zip, const char *name, jint ulen, jboolean autoSlash)
         }
 
         /* Slash is already there? */
-        if (ulen > 0 && name[ulen-1] == '/') {
+        if (endsWithSlash(name, ulen)) {
             break;
         }
 
