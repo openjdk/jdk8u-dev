@@ -274,13 +274,16 @@ void JNICALL
 ZIP_Close(jzfile *zip);
 
 /*
- * Returns the ZIP entry corresponding to the given (NULL terminated)
- * entry name. Returns NULL if no entry is found by that name.
+ * Returns the ZIP entry corresponding to the specified name, or
+ * NULL if not found.
+ * This method supports embedded null character in "name", use ulen
+ * for the length of "name".
  */
-jzentry * ZIP_GetEntry(jzfile *zip, const char *name);
+jzentry * ZIP_GetEntry(jzfile *zip, const char *name, jint ulen);
 void ZIP_Lock(jzfile *zip);
 void ZIP_Unlock(jzfile *zip);
 jint ZIP_Read(jzfile *zip, jzentry *entry, jlong pos, void *buf, jint len);
 void ZIP_FreeEntry(jzfile *zip, jzentry *ze);
 jlong ZIP_GetEntryDataOffset(jzfile *zip, jzentry *entry);
+jzentry * ZIP_GetEntry2(jzfile *zip, const char *name, jint ulen, jboolean autoSlash);
 #endif /* !_ZIP_H_ */
