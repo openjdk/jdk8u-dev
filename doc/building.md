@@ -32,9 +32,9 @@ Some Headlines:
 ## Contents
 
   * [Introduction](#introduction)
-  * [Use of Mercurial](#hg)
-      * [Getting the Source](#get_source)
-      * [Repositories](#repositories)
+  * [Source code](#source-code)
+      * [Getting the Source](#getting-the-source)
+      * [Directories](#directories)
   * [Building](#building)
       * [System Setup](#setup)
           * [Linux](#linux)
@@ -56,43 +56,24 @@ Some Headlines:
 
 -------------------------------------------------------------------------------
 
-## Use of Mercurial
+## Source code
 
 The OpenJDK sources are maintained with the revision control system
-[Mercurial](http://mercurial.selenic.com/wiki/Mercurial). If you are new to
-Mercurial, please see the [Beginner
-Guides](http://mercurial.selenic.com/wiki/BeginnersGuides) or refer to the
-[Mercurial Book](http://hgbook.red-bean.com/). The first few chapters of the
-book provide an excellent overview of Mercurial, what it is and how it works.
+[Git](https://git-scm.com/).
 
-For using Mercurial with the OpenJDK refer to the [Developer Guide: Installing
-and Configuring
-Mercurial](http://openjdk.java.net/guide/repositories.html#installConfig)
-section for more information.
+If you are new to Git, a good place to start is the book [Pro
+Git](https://git-scm.com/book/en/v2). The rest of this document
+assumes a working knowledge of Git.
 
 ### Getting the Source
 
-To get the entire set of OpenJDK Mercurial repositories use the script
-`get_source.sh` located in the root repository:
+```
+git clone https://github.com/openjdk/jdk8u-dev
+```
 
-      hg clone http://hg.openjdk.java.net/jdk8/jdk8 YourOpenJDK
-      cd YourOpenJDK
-      bash ./get_source.sh
+### Directories
 
-Once you have all the repositories, keep in mind that each repository is its
-own independent repository. You can also re-run `./get_source.sh` anytime to
-pull over all the latest changesets in all the repositories. This set of nested
-repositories has been given the term "forest" and there are various ways to
-apply the same `hg` command to each of the repositories. For example, the
-script `make/scripts/hgforest.sh` can be used to repeat the same `hg` command
-on every repository, e.g.
-
-      cd YourOpenJDK
-      bash ./make/scripts/hgforest.sh status
-
-### Repositories
-
-The set of repositories and what they contain:
+The set of directories and what they contain:
 
  * **. (root)** contains common configure and makefile logic
  * **hotspot** contains source code and make files for building the OpenJDK
@@ -120,8 +101,8 @@ There are some very basic guidelines:
  * The default build process should be to build the product and nothing else,
    in one form, e.g. a product (optimized), debug (non-optimized, -g plus
    assert logic), or fastdebug (optimized, -g plus assert logic).
- * The `.hgignore` file in each repository must exist and should include
-   `^build/`, `^dist/` and optionally any `nbproject/private` directories. **It
+ * The `.gitignore` file must exist and should include
+   `/build/`, `/dist/` and optionally any `nbproject/private` directories. **It
    should NEVER** include anything in the `src/` or `test/` or any managed
    directory area of a repository.
  * Directory names and file names should never contain blanks or non-printing
@@ -208,6 +189,7 @@ And for specific systems:
 
    * Install one of [CYGWIN](#cygwin) or [MinGW/MSYS](#msys)
    * Install [Visual Studio 2010](#vs2010)
+   * Install [git client](#git-client)
 
  * **Mac OS X**
 
@@ -379,6 +361,24 @@ Windows paths that exist, like `C:\temp`, not `/tmp`, not `/cygdrive/c/temp`,
 and not `C:/temp`. `C:\temp` is just an example, it is assumed that this area
 is private to the user, so by default after installs you should see a unique
 user path in these variables.
+
+##### Git client
+
+You need to install a git client. You have two choices, Cygwin git or
+Git for Windows. Unfortunately there are pros and cons with each choice.
+
+  * The Cygwin `git` client has no line ending issues and understands
+    Cygwin paths (which are used throughout the JDK build system).
+    However, it does not currently work well with the Skara CLI tooling.
+    Please see the [Skara wiki on Git clients](
+    https://wiki.openjdk.java.net/display/SKARA/Skara#Skara-Git) for
+    up-to-date information about the Skara git client support.
+
+  * The [Git for Windows](https://gitforwindows.org) client has issues
+    with line endings, and do not understand Cygwin paths. It does work
+    well with the Skara CLI tooling, however. To alleviate the line ending
+    problems, make sure you set `core.autocrlf` to `false` (this is asked
+    during installation).
 
 #### Mac OS X
 
@@ -625,7 +625,7 @@ changes in `generated-configure.sh`.
 the input files? \
 **A:** Regnerating `generated-configure.sh` should always be done using the
 script `common/autoconf/autogen.sh` to ensure that the correct files get
-updated. This script should also be run after mercurial tries to merge
+updated. This script should also be run after git tries to merge
 `generated-configure.sh` as a merge of the generated file is not guaranteed to
 be correct.
 
