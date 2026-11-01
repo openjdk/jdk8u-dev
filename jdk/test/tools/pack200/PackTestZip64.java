@@ -40,6 +40,10 @@ import java.util.zip.ZipEntry;
  */
 
 public class PackTestZip64 {
+
+    private static final boolean bigJarEnabled
+            = Boolean.getBoolean("PackTestZip64.enableBigJar");
+
     public static void main(String... args) throws Exception {
         testPacking();
         Utils.cleanup();
@@ -49,10 +53,14 @@ public class PackTestZip64 {
     private static final byte[] BUFFER = new byte[1024];
 
     static void testPacking() throws IOException {
-        // make a copy of the test specimen to local directory
         File testFile = new File("tools_java.jar");
-        // Add a large number of small files to the golden jar
-        generateLargeJar(testFile, Utils.locateJar("golden.jar"));
+        if (bigJarEnabled) {
+            // Add a large number of small files to the golden jar
+            generateLargeJar(testFile, Utils.locateJar("golden.jar"));
+        } else {
+            // make a copy of the test specimen to local directory
+            Utils.copyFile(Utils.locateJar("golden.jar"), testFile);
+        }
 
         List<String> cmdsList = new ArrayList<>();
 
