@@ -30,6 +30,7 @@ import java.awt.event.MouseMotionAdapter;
 
 /**
  * @test
+ * @key headful
  * @bug 8012026 8027154
  * @summary Component.getMousePosition() does not work in an applet on MacOS
  * @author Petr Pchelko
