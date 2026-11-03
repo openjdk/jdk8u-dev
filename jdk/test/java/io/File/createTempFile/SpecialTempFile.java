@@ -30,11 +30,17 @@
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class SpecialTempFile {
-
+    //
+    // If exceptionExpected == null, then any IOException thrown by
+    // File.createTempFile is ignored.
+    //
     private static void test(String name, String[] prefix, String[] suffix,
-                             boolean exceptionExpected) throws IOException
+                             Boolean exceptionExpected) throws IOException
     {
         if (prefix == null || suffix == null
             || prefix.length != suffix.length)
@@ -45,35 +51,37 @@ public class SpecialTempFile {
         final String exceptionMsg = "Unable to create temporary file";
         String[] dirs = { null, "." };
 
+        Path testPath = Paths.get(System.getProperty("test.dir", "."));
         for (int i = 0; i < prefix.length; i++) {
             boolean exceptionThrown = false;
             File f = null;
 
             for (String dir: dirs) {
+                Path tempDir = Files.createTempDirectory(testPath, dir);
                 System.out.println("In test " + name +
                                    ", creating temp file with prefix, " +
                                    prefix[i] + ", suffix, " + suffix[i] +
-                                   ", in dir, " + dir);
+                                   ", in dir, " + tempDir);
 
                 try {
-                    if (dir == null || dir.isEmpty())
-                        f = File.createTempFile(prefix[i], suffix[i]);
-                    else
-                        f = File.createTempFile(prefix[i], suffix[i], new File(dir));
+                    f = File.createTempFile(prefix[i], suffix[i],
+                    tempDir.toFile());
                 } catch (IOException e) {
-                    if (exceptionExpected) {
-                        if (e.getMessage().startsWith(exceptionMsg))
-                            exceptionThrown = true;
-                        else
-                            System.out.println("Wrong error message:" +
-                                               e.getMessage());
-                    } else {
-                        throw e;
+                    if (exceptionExpected != null) {
+                        if (exceptionExpected) {
+                            if (e.getMessage().startsWith(exceptionMsg))
+                                exceptionThrown = true;
+                            else
+                                System.out.println("Wrong error message:" +
+                                                   e.getMessage());
+                        } else {
+                            throw e;
+                        }
+
+                        if (exceptionExpected && (!exceptionThrown || f != null))
+                            throw new RuntimeException("IOException expected");
                     }
                 }
-
-                if (exceptionExpected && (!exceptionThrown || f != null))
-                    throw new RuntimeException("IOException is expected");
             }
         }
     }
@@ -81,10 +89,6 @@ public class SpecialTempFile {
     public static void main(String[] args) throws Exception {
         // Common test
         final String name = "SpecialTempFile";
-        File f = new File(System.getProperty("java.io.tmpdir"), name);
-        if (!f.exists()) {
-            f.createNewFile();
-        }
         String[] nulPre = { name + "\u0000" };
         String[] nulSuf = { ".test" };
         test("NulName", nulPre, nulSuf, true);
@@ -106,6 +110,11 @@ public class SpecialTempFile {
         // Test JDK-8013827
         String[] resvPre = { "LPT1.package.zip", "com7.4.package.zip" };
         String[] resvSuf = { ".temp", ".temp" };
-        test("ReservedName", resvPre, resvSuf, true);
+        System.out.println("OS name:    " + System.getProperty("os.name") + "\n" +
+                           "OS version: " + System.getProperty("os.version"));
+
+        // Here the test is for whether File.createTempFile hangs, so whether
+        // an exception is thrown is ignored: expectedException == null
+        test("ReservedName", resvPre, resvSuf, null);
     }
 }
