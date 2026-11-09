@@ -26,15 +26,17 @@
 package sun.security.testlibrary;
 
 import java.io.*;
+import java.security.cert.*;
+import java.security.cert.Extension;
 import java.net.IDN;
 import java.util.*;
 import java.security.*;
-import java.security.cert.X509Certificate;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
-import java.security.cert.Extension;
+import java.time.temporal.ChronoUnit;
+import java.time.Instant;
 import javax.security.auth.x500.X500Principal;
 import java.math.BigInteger;
+
+import jdk.test.lib.Utils;
 
 import sun.security.util.DerOutputStream;
 import sun.security.util.DerValue;
@@ -43,6 +45,7 @@ import sun.security.x509.AccessDescription;
 import sun.security.x509.AlgorithmId;
 import sun.security.x509.AuthorityInfoAccessExtension;
 import sun.security.x509.AuthorityKeyIdentifierExtension;
+import sun.security.x509.IPAddressName;
 import sun.security.x509.CRLDistributionPointsExtension;
 import sun.security.x509.GeneralSubtrees;
 import sun.security.x509.NameConstraintsExtension;
@@ -59,6 +62,7 @@ import sun.security.x509.SubjectAlternativeNameExtension;
 import sun.security.x509.URIName;
 import sun.security.x509.KeyIdentifier;
 import sun.security.x509.X500Name;
+
 
 /**
  * Helper class that builds and signs X.509 certificates.
@@ -103,6 +107,89 @@ public class CertificateBuilder {
     private final Map<String, Extension> extensions = new HashMap<>();
     private byte[] tbsCertBytes;
     private byte[] signatureBytes;
+
+    public enum KeyUsage {
+        DIGITAL_SIGNATURE,
+        NONREPUDIATION,
+        KEY_ENCIPHERMENT,
+        DATA_ENCIPHERMENT,
+        KEY_AGREEMENT,
+        KEY_CERT_SIGN,
+        CRL_SIGN,
+        ENCIPHER_ONLY,
+        DECIPHER_ONLY;
+    }
+
+    /**
+     * Create a new CertificateBuilder instance. This method sets the subject name,
+     * public key, authority key id, and serial number.
+     *
+     * @param subjectName entity associated with the public key
+     * @param publicKey the entity's public key
+     * @param caKey public key of certificate signer
+     * @param keyUsages list of key uses
+     * @return
+     * @throws CertificateException
+     * @throws IOException
+     */
+    public static CertificateBuilder newCertificateBuilder(String subjectName,
+                           PublicKey publicKey, PublicKey caKey, KeyUsage... keyUsages)
+            throws CertificateException, IOException {
+        SecureRandom random = new SecureRandom();
+
+        boolean [] keyUsage = new boolean[KeyUsage.values().length];
+        for (KeyUsage ku : keyUsages) {
+            keyUsage[ku.ordinal()] = true;
+        }
+
+        CertificateBuilder builder = new CertificateBuilder()
+                .setSubjectName(subjectName)
+                .setPublicKey(publicKey)
+                .setSerialNumber(BigInteger.valueOf(Utils.nextLong(random, 1000000)+1))
+                .addSubjectKeyIdExt(publicKey)
+                .addAuthorityKeyIdExt(caKey);
+        if (keyUsages.length != 0) {
+            builder.addKeyUsageExt(keyUsage);
+        }
+        return builder;
+    }
+
+    /**
+     * Create a Subject Alternative Name extension for the given DNS name
+     * @param critical Sets the extension to critical or non-critical
+     * @param dnsName DNS name to use in the extension
+     * @throws IOException
+     */
+    public static SubjectAlternativeNameExtension createDNSSubjectAltNameExt(
+            boolean critical, String dnsName) throws IOException {
+        GeneralNames gns = new GeneralNames();
+        gns.add(new GeneralName(new DNSName(dnsName)));
+        return new SubjectAlternativeNameExtension(critical, gns);
+    }
+
+    /**
+     * Create a Subject Alternative Name extension for the given IP address
+     * @param critical Sets the extension to critical or non-critical
+     * @param ipAddress IP address to use in the extension
+     * @throws IOException
+     */
+    public static SubjectAlternativeNameExtension createIPSubjectAltNameExt(
+            boolean critical, String ipAddress) throws IOException {
+        GeneralNames gns = new GeneralNames();
+        gns.add(new GeneralName(new IPAddressName(ipAddress)));
+        return new SubjectAlternativeNameExtension(critical, gns);
+    }
+
+    public static void printCertificate(X509Certificate certificate, PrintStream ps) {
+        try {
+            Base64.Encoder encoder = Base64.getEncoder();
+            ps.println("-----BEGIN CERTIFICATE-----");
+            ps.println(encoder.encodeToString(certificate.getEncoded()));
+            ps.println("-----END CERTIFICATE-----");
+        } catch (CertificateEncodingException exc) {
+            exc.printStackTrace(ps);
+        }
+    }
 
     /**
      * Default constructor for a {@code CertificateBuilder} object.
@@ -162,8 +249,9 @@ public class CertificateBuilder {
      * @throws NullPointerException if the {@code pubKey} parameter
      * is {@code null}
      */
-    public void setPublicKey(PublicKey pubKey) {
+    public CertificateBuilder setPublicKey(PublicKey pubKey) {
         publicKey = Objects.requireNonNull(pubKey, "Caught null public key");
+        return this;
     }
 
     /**
@@ -175,9 +263,10 @@ public class CertificateBuilder {
      * @throws NullPointerException if the {@code nbDate} parameter
      * is {@code null}
      */
-    public void setNotBefore(Date nbDate) {
+    public CertificateBuilder setNotBefore(Date nbDate) {
         Objects.requireNonNull(nbDate, "Caught null notBefore date");
         notBefore = (Date)nbDate.clone();
+        return this;
     }
 
     /**
@@ -189,9 +278,10 @@ public class CertificateBuilder {
      * @throws NullPointerException if the {@code naDate} parameter
      * is {@code null}
      */
-    public void setNotAfter(Date naDate) {
+    public CertificateBuilder setNotAfter(Date naDate) {
         Objects.requireNonNull(naDate, "Caught null notAfter date");
         notAfter = (Date)naDate.clone();
+        return this;
     }
 
     /**
@@ -205,9 +295,13 @@ public class CertificateBuilder {
      * @throws NullPointerException if either the {@code nbDate} or
      * {@code naDate} parameters are {@code null}
      */
-    public void setValidity(Date nbDate, Date naDate) {
-        setNotBefore(nbDate);
-        setNotAfter(naDate);
+    public CertificateBuilder setValidity(Date nbDate, Date naDate) {
+        return setNotBefore(nbDate).setNotAfter(naDate);
+    }
+
+    public CertificateBuilder setOneHourValidity() {
+        return setNotBefore(Date.from(Instant.now().minus(5, ChronoUnit.MINUTES)))
+                .setNotAfter(Date.from(Instant.now().plus(1, ChronoUnit.HOURS)));
     }
 
     /**
@@ -217,9 +311,10 @@ public class CertificateBuilder {
      *
      * @throws NullPointerException if {@code serial} is {@code null}
      */
-    public void setSerialNumber(BigInteger serial) {
+    public CertificateBuilder setSerialNumber(BigInteger serial) {
         Objects.requireNonNull(serial, "Caught null serial number");
         serialNumber = serial;
+        return this;
     }
 
 
@@ -242,11 +337,12 @@ public class CertificateBuilder {
      *
      * @throws NullPointerException if {@code extList} is {@code null}
      */
-    public void addExtensions(List<Extension> extList) {
+    public CertificateBuilder addExtensions(List<Extension> extList) {
         Objects.requireNonNull(extList, "Caught null extension list");
         for (Extension ext : extList) {
             extensions.put(ext.getId(), ext);
         }
+        return this;
     }
 
     /**
@@ -256,7 +352,8 @@ public class CertificateBuilder {
      *
      * @throws IOException if an encoding error occurs.
      */
-    public void addSubjectAltNameDNSExt(List<String> dnsNames) throws IOException {
+    public CertificateBuilder addSubjectAltNameDNSExt(List<String> dnsNames)
+            throws IOException {
         if (!dnsNames.isEmpty()) {
             GeneralNames gNames = new GeneralNames();
             for (String name : dnsNames) {
@@ -266,6 +363,7 @@ public class CertificateBuilder {
             addExtension(new SubjectAlternativeNameExtension(false,
                     gNames));
         }
+        return this;
     }
 
     /**
@@ -301,7 +399,7 @@ public class CertificateBuilder {
      *
      * @throws IOException if an encoding error occurs.
      */
-    public void addAIAExt(List<String> locations)
+    public CertificateBuilder addAIAExt(List<String> locations)
             throws IOException {
         if (!locations.isEmpty()) {
             List<AccessDescription> acDescList = new ArrayList<>();
@@ -312,7 +410,9 @@ public class CertificateBuilder {
             }
             addExtension(new AuthorityInfoAccessExtension(acDescList));
         }
+        return this;
     }
+
 
     /**
      * Set a Key Usage extension for the certificate.  The extension will
@@ -323,8 +423,9 @@ public class CertificateBuilder {
      *
      * @throws IOException if an encoding error occurs.
      */
-    public void addKeyUsageExt(boolean[] bitSettings) throws IOException {
-        addExtension(new KeyUsageExtension(bitSettings));
+    public CertificateBuilder addKeyUsageExt(boolean[] bitSettings)
+            throws IOException {
+        return addExtension(new KeyUsageExtension(bitSettings));
     }
 
     /**
@@ -339,9 +440,10 @@ public class CertificateBuilder {
      *
      * @throws IOException if an encoding error occurs.
      */
-    public void addBasicConstraintsExt(boolean crit, boolean isCA,
+    public CertificateBuilder addBasicConstraintsExt(boolean crit, boolean isCA,
             int maxPathLen) throws IOException {
-        addExtension(new BasicConstraintsExtension(crit, isCA, maxPathLen));
+        return addExtension(new BasicConstraintsExtension(crit, isCA,
+                maxPathLen));
     }
 
     /**
@@ -351,9 +453,9 @@ public class CertificateBuilder {
      *
      * @throws IOException if an encoding error occurs.
      */
-    public void addAuthorityKeyIdExt(X509Certificate authorityCert)
+    public CertificateBuilder addAuthorityKeyIdExt(X509Certificate authorityCert)
             throws IOException {
-        addAuthorityKeyIdExt(authorityCert.getPublicKey());
+        return addAuthorityKeyIdExt(authorityCert.getPublicKey());
     }
 
     /**
@@ -376,9 +478,11 @@ public class CertificateBuilder {
      *
      * @throws IOException if an encoding error occurs.
      */
-    public void addAuthorityKeyIdExt(PublicKey authorityKey) throws IOException {
+    public CertificateBuilder addAuthorityKeyIdExt(PublicKey authorityKey)
+            throws IOException {
         KeyIdentifier kid = new KeyIdentifier(authorityKey);
-        addExtension(new AuthorityKeyIdentifierExtension(kid, null, null));
+        return addExtension(new AuthorityKeyIdentifierExtension(kid,
+                null, null));
     }
 
     /**
@@ -388,9 +492,10 @@ public class CertificateBuilder {
      *
      * @throws IOException if an encoding error occurs.
      */
-    public void addSubjectKeyIdExt(PublicKey subjectKey) throws IOException {
+    public CertificateBuilder addSubjectKeyIdExt(PublicKey subjectKey)
+            throws IOException {
         byte[] keyIdBytes = new KeyIdentifier(subjectKey).getIdentifier();
-        addExtension(new SubjectKeyIdentifierExtension(keyIdBytes));
+        return addExtension(new SubjectKeyIdentifierExtension(keyIdBytes));
     }
 
     /**
@@ -400,7 +505,7 @@ public class CertificateBuilder {
      *
      * @throws IOException if an encoding error occurs.
      */
-    public void addExtendedKeyUsageExt(List<String> ekuOids)
+    public CertificateBuilder addExtendedKeyUsageExt(List<String> ekuOids)
             throws IOException {
         if (!ekuOids.isEmpty()) {
             Vector<ObjectIdentifier> oidVector = new Vector<>();
@@ -409,13 +514,14 @@ public class CertificateBuilder {
             }
             addExtension(new ExtendedKeyUsageExtension(oidVector));
         }
+        return this;
     }
 
     /**
      * Clear all settings and return the {@code CertificateBuilder} to
      * its default state.
      */
-    public void reset() {
+    public CertificateBuilder reset() {
         extensions.clear();
         subjectName = null;
         notBefore = null;
@@ -424,6 +530,7 @@ public class CertificateBuilder {
         publicKey = null;
         signatureBytes = null;
         tbsCertBytes = null;
+        return this;
     }
 
     /**
