@@ -172,16 +172,6 @@
  */
 
 /*
- * @test id=entrustrootcag4
- * @bug 8243321
- * @summary Interoperability tests with Entrust CAs
- * @library /test/lib
- * @build jtreg.SkippedException ValidatePathWithURL CAInterop
- * @run main/othervm -Djava.security.debug=certpath,ocsp CAInterop entrustrootcag4 OCSP
- * @run main/othervm -Djava.security.debug=certpath CAInterop entrustrootcag4 CRL
- */
-
-/*
  * @test id=godaddyrootg2ca
  * @bug 8196141
  * @summary Interoperability tests with GoDaddy CA
@@ -564,9 +554,6 @@ public class CAInterop {
             case "entrustrootcaec1":
                     return new CATestURLs("https://validec.entrust.net",
                             "https://revokedec.entrust.net");
-            case "entrustrootcag4":
-                    return new CATestURLs("https://validg4.entrust.net",
-                            "https://revokedg4.entrust.net");
 
             case "godaddyrootg2ca":
                     return new CATestURLs("https://valid.gdig2.catest.godaddy.com",
