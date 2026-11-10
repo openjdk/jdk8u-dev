@@ -89,10 +89,24 @@ public class DefaultCaching {
         }
     }
 
-    static void sleep (int seconds) {
+    static void sleep(int seconds) {
         try {
-            Thread.sleep (seconds * 1000);
-        } catch (InterruptedException e) {}
+            sleepms(seconds * 1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    static long sleepms(long millis) throws InterruptedException {
+        long start = System.nanoTime();
+        long ms = millis;
+        while (ms > 0) {
+            assert ms < Long.MAX_VALUE/1000_000L;
+            Thread.sleep(ms);
+            long elapsedms = (System.nanoTime() - start)/1000_000L;
+            ms = millis - elapsedms;
+        }
+        return millis - ms;
     }
 
     static void test (String host, String address, boolean shouldSucceed) {
@@ -104,7 +118,8 @@ public class DefaultCaching {
 
             }
             if (!address.equals(addr.getHostAddress())) {
-                throw new RuntimeException(host+":"+address+": compare failed");
+                throw new RuntimeException(host+"/"+address+": compare failed (found "
+                                           + addr + ")");
             }
         } catch (UnknownHostException e) {
             if (shouldSucceed) {
