@@ -238,6 +238,11 @@ ifeq ($(USE_FORMAT_OVERFLOW), 1)
   CFLAGS_WARN/os_linux.o = $(CFLAGS_WARN/DEFAULT) -Wno-error=format-overflow
 endif
 
+ifeq ($(JVM_VARIANT_ZERO), true)
+  CFLAGS_WARN/compiledIC.o = $(CFLAGS_WARN/DEFAULT) -Wno-error=nonnull
+  CFLAGS_WARN/sharedRuntime.o = $(CFLAGS_WARN/DEFAULT) -Wno-error=nonnull
+endif
+
 # The flags to use for an Optimized g++ build
 OPT_CFLAGS/SIZE=-Os
 OPT_CFLAGS/SPEED=-O3
